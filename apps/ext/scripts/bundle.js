@@ -1,0 +1,19 @@
+const path = require('path');
+const fs = require('fs-extra');
+
+(async function() {
+  const rootDir = path.resolve(__dirname, '../');
+  const distDir = path.join(rootDir, 'dist');
+  await fs.copy(
+    path.resolve(rootDir, '../ext-ui/build'),
+    distDir,
+    {
+      overwrite: true,
+    });
+  await fs.copy(
+    path.join(rootDir, 'manifest.json'),
+    path.join(distDir, 'manifest.json'),
+    {
+      overwrite: true,
+    });
+})();

@@ -1,0 +1,25 @@
+{
+  "name": "ext",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "background": "*",
+    "content": "*"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.1",
+    "@types/lodash": "^4.14.196",
+    "eslint-config-custom": "*",
+    "fs-extra": "^11.1.1",
+    "ts-loader": "^9.4.4",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  },
+  "scripts": {
+    "build": "npm run build:background && npm run build:content",
+    "build:background": "webpack --config webpack.background.config.js",
+    "build:content": "webpack --config webpack.content.config.js",
+    "bundle": "node scripts/clean.js dist && npm run build && node scripts/bundle.js",
+    "clean": "node scripts/clean.js dist .turbo node_modules"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "name": "content",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "node scripts/clean.js dist .turbo node_modules",
+    "dev": "tsc -w",
+    "lint": "eslint \"src/**/*.ts*\"",
+    "test": "jest"
+  },
+  "jest": {
+    "preset": "jest-presets/jest/node"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.5.2",
+    "@types/node": "^20.4.6",
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "*",
+    "fs-extra": "^11.1.1",
+    "jest": "^27.5.1",
+    "tsconfig": "*",
+    "typescript": "^4.8.3"
+  }
+}

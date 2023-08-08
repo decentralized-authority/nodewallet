@@ -1,0 +1,25 @@
+{
+  "name": "POKT Browser Wallet",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "background_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "background.js"
+      ]
+    }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
+  "action": {
+    "default_title": "POKT Browser Wallet",
+    "default_popup": "index.html"
+  }
+}
