@@ -1,4 +1,14 @@
 {
+  "name": "pokt-browser-wallet",
+  "description": "POKT Browser Wallet",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/decentralized-authority/pokt-browser-wallet#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/decentralized-authority/pokt-browser-wallet.git"
+  },
+  "keywords": [],
+  "author": "Ryan Burgett <ryan@burgettdev.net>",
   "private": true,
   "scripts": {
     "dev": "turbo run dev",
@@ -19,7 +29,6 @@
     "prettier": "^2.5.1",
     "turbo": "latest"
   },
-  "name": "pokt-browser-wallet",
   "packageManager": "npm@9.6.7",
   "workspaces": [
     "apps/*",
