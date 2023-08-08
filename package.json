@@ -1,6 +1,7 @@
 {
   "name": "pokt-browser-wallet",
   "description": "POKT Browser Wallet",
+  "version": "0.1.0",
   "license": "Apache-2.0",
   "homepage": "https://github.com/decentralized-authority/pokt-browser-wallet#readme",
   "repository": {
@@ -16,6 +17,7 @@
     "clean": "turbo run clean",
     "build:ext": "turbo run build --filter=ext",
     "build:ext-ui": "turbo run build --filter=ext-ui",
+    "build:background": "turbo run build --filter=background",
     "build:content": "turbo run build --filter=content",
     "build:ui": "turbo run build --filter=ui",
     "bundle": "turbo run bundle",
