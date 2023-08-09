@@ -2,8 +2,19 @@ import React from 'react';
 import { Container } from './shared/container';
 import { WalletCard } from './shared/wallet-card';
 import { generateFakeAddress } from '../util';
+import { useDispatch } from 'react-redux';
+import { setActiveView } from '../reducers/app-reducer';
+import { appView } from '../constants';
 
 export const ManageWallets = () => {
+
+  const dispatch = useDispatch();
+
+  const onNewWalletClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    dispatch(setActiveView({activeView: appView.NEW_HD_WALLET}));
+  };
+
   return (
     <Container>
       <h3 className={'ps-2 pe-2'}>Manage wallets</h3>
@@ -16,7 +27,7 @@ export const ManageWallets = () => {
       </div>
       <div className={'d-flex flex-row justify-content-start p-2'}>
         <button className={'btn btn-primary flex-grow-1 me-2'}><i className={'mdi mdi-upload'} /> Import wallet</button>
-        <button className={'btn btn-primary flex-grow-1'}><i className={'mdi mdi-plus-thick'} /> New HD wallet</button>
+        <button className={'btn btn-primary flex-grow-1'} onClick={onNewWalletClick}><i className={'mdi mdi-plus-thick'} /> New HD wallet</button>
       </div>
     </Container>
   );

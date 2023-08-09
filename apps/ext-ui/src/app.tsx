@@ -6,6 +6,7 @@ import { Container } from './components/shared/container';
 import { RootState } from './store';
 import { appView } from './constants';
 import { ManageWallets } from './components/manage-wallets';
+import { NewHdWallet } from './components/new-hd-wallet';
 
 export const App = () => {
 
@@ -24,7 +25,10 @@ export const App = () => {
             activeView === appView.MANAGE_WALLETS ?
               <ManageWallets />
               :
-              <div />
+              activeView === appView.NEW_HD_WALLET ?
+                <NewHdWallet />
+                :
+                <div />
         }
       </div>
     </Container>

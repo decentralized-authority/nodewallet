@@ -4,6 +4,9 @@ import './index.scss';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { App } from './app';
+import { Buffer } from 'buffer';
+
+window.Buffer = Buffer;
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
