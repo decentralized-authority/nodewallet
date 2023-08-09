@@ -1,6 +1,11 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import { setActiveView } from '../../reducers/app-reducer';
+import { appView } from '../../constants';
 
 export const BalanceCard = () => {
+
+  const dispatch = useDispatch();
 
   const styles = {
     button: {
@@ -8,11 +13,16 @@ export const BalanceCard = () => {
     },
   };
 
+  const onViewWalletsClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    dispatch(setActiveView({activeView: appView.WALLETS}))
+  };
+
   return (
     <div className={'card mb-0'}>
       <div className={'card-body pt-2 pb-2 ps-2 pe-2'}>
         <h5 className={'d-flex flex-row justify-content-between align-items-center mt-0 mb-0'}>
-          <div><a href={"#"} title={'View wallets'}><i className={'mdi mdi-menu-left'} />HD Wallet 1</a></div>
+          <div><a href={"#"} title={'View wallets'} onClick={onViewWalletsClick}><i className={'mdi mdi-menu-left'} />HD Wallet 1</a></div>
           <div className={'font-monospace'}>54cf7...4eb38 <a href={'#'} title={'Copy address'}><i className={'mdi mdi-content-copy'} /></a></div>
         </h5>
         <div className={'d-flex flex-row justify-content-center pt-3 pb-3'}>
