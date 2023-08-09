@@ -45,6 +45,10 @@
     ]
   },
   "devDependencies": {
-    "fs-extra": "^11.1.1"
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/uuid": "^9.0.2",
+    "bootstrap": "^5.3.1",
+    "fs-extra": "^11.1.1",
+    "uuid": "^9.0.0"
   }
 }
