@@ -1,17 +1,5 @@
 import React from 'react';
-import * as uuid from 'uuid';
-
-const getRandom = (min: number, max: number) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1) + min);
-};
-const generateFakeAddress = () => {
-  return uuid.v4().replace(/-/g, '');
-}
-const truncateAddress = (address: string) => {
-  return `${address.slice(0, 6)}...${address.slice(-6)}`;
-};
+import { generateFakeAddress, getRandomInt, truncateAddress } from '../../util';
 
 export const TransactionList = () => {
   return (
@@ -23,23 +11,23 @@ export const TransactionList = () => {
             <table className={'table mb-0'}>
               <tbody>
                 {[
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
-                  [getRandom(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
                 ]
                   .map(([amount, address], i) => {
-                    const isSent = !!getRandom(0, 1);
+                    const isSent = !!getRandomInt(0, 1);
                     return (
                       <tr key={`tx-${i}`}>
                         <td className={'font-monospace'}>{amount}</td>

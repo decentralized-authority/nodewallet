@@ -15,7 +15,7 @@ export const BalanceCard = () => {
 
   const onViewWalletsClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: appView.WALLETS}))
+    dispatch(setActiveView({activeView: appView.MANAGE_WALLETS}))
   };
 
   return (

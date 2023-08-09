@@ -21,7 +21,7 @@ export const App = () => {
           activeView === appView.ACCOUNT_DETAIL ?
             <AccountDetail />
             :
-            activeView === appView.WALLETS ?
+            activeView === appView.MANAGE_WALLETS ?
               <ManageWallets />
               :
               <div />
