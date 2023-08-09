@@ -10,6 +10,10 @@ export const ManageWallets = () => {
 
   const dispatch = useDispatch();
 
+  const onImportWalletClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    dispatch(setActiveView({activeView: appView.SELECT_IMPORT_TYPE}));
+  };
   const onNewWalletClick = (e: React.MouseEvent) => {
     e.preventDefault();
     dispatch(setActiveView({activeView: appView.NEW_HD_WALLET}));
@@ -26,7 +30,7 @@ export const ManageWallets = () => {
         </div>
       </div>
       <div className={'d-flex flex-row justify-content-start p-2'}>
-        <button className={'btn btn-primary flex-grow-1 me-2'}><i className={'mdi mdi-upload'} /> Import wallet</button>
+        <button className={'btn btn-primary flex-grow-1 me-2'} onClick={onImportWalletClick}><i className={'mdi mdi-upload'} /> Import wallet</button>
         <button className={'btn btn-primary flex-grow-1'} onClick={onNewWalletClick}><i className={'mdi mdi-plus-thick'} /> New HD wallet</button>
       </div>
     </Container>

@@ -7,6 +7,7 @@ import { RootState } from './store';
 import { appView } from './constants';
 import { ManageWallets } from './components/manage-wallets';
 import { NewHdWallet } from './components/new-hd-wallet';
+import { SelectImportType } from './components/select-import-type';
 
 export const App = () => {
 
@@ -28,7 +29,10 @@ export const App = () => {
               activeView === appView.NEW_HD_WALLET ?
                 <NewHdWallet />
                 :
-                <div />
+                activeView === appView.SELECT_IMPORT_TYPE ?
+                  <SelectImportType />
+                  :
+                  <div />
         }
       </div>
     </Container>
