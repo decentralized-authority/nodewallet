@@ -13,6 +13,8 @@
   "private": true,
   "scripts": {
     "dev": "turbo run dev",
+    "test": "turbo run test",
+    "test:account-utils": "turbo run test --filter=account-utils",
     "build": "turbo run build",
     "force-build": "turbo run build --no-cache",
     "clean": "turbo run clean",

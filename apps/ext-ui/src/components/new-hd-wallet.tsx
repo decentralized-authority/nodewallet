@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container } from './shared/container';
-import { generateMnemonic } from 'bip39';
+import { generateMnemonic } from 'account-utils';
 import { useDispatch } from 'react-redux';
 import { setActiveView } from '../reducers/app-reducer';
 import { appView } from '../constants';
@@ -10,8 +10,6 @@ export const NewHdWallet = () => {
   const dispatch = useDispatch();
 
   const mnemonic = generateMnemonic();
-  const splitMnemonic = mnemonic
-    .split(/\s+/);
 
   const onBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -33,7 +31,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>1.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[0]}</strong>
+                <strong>{mnemonic[0]}</strong>
               </div>
             </div>
           </div>
@@ -41,7 +39,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>2.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[1]}</strong>
+                <strong>{mnemonic[1]}</strong>
               </div>
             </div>
           </div>
@@ -49,7 +47,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>3.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[2]}</strong>
+                <strong>{mnemonic[2]}</strong>
               </div>
             </div>
           </div>
@@ -60,7 +58,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>4.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[3]}</strong>
+                <strong>{mnemonic[3]}</strong>
               </div>
             </div>
           </div>
@@ -68,7 +66,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>5.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[4]}</strong>
+                <strong>{mnemonic[4]}</strong>
               </div>
             </div>
           </div>
@@ -76,7 +74,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>6.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[5]}</strong>
+                <strong>{mnemonic[5]}</strong>
               </div>
             </div>
           </div>
@@ -87,7 +85,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>7.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[6]}</strong>
+                <strong>{mnemonic[6]}</strong>
               </div>
             </div>
           </div>
@@ -95,7 +93,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>8.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[7]}</strong>
+                <strong>{mnemonic[7]}</strong>
               </div>
             </div>
           </div>
@@ -103,7 +101,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>9.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[8]}</strong>
+                <strong>{mnemonic[8]}</strong>
               </div>
             </div>
           </div>
@@ -114,7 +112,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>10.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[9]}</strong>
+                <strong>{mnemonic[9]}</strong>
               </div>
             </div>
           </div>
@@ -122,7 +120,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>11.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[10]}</strong>
+                <strong>{mnemonic[10]}</strong>
               </div>
             </div>
           </div>
@@ -130,7 +128,7 @@ export const NewHdWallet = () => {
             <div className={'text-center'}>
               <div>12.</div>
               <div className={'fs-4'}>
-                <strong>{splitMnemonic[11]}</strong>
+                <strong>{mnemonic[11]}</strong>
               </div>
             </div>
           </div>

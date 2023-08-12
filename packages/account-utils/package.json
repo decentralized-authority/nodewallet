@@ -1,0 +1,37 @@
+{
+  "name": "account-utils",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "node scripts/clean.js dist .turbo node_modules",
+    "dev": "tsc -w",
+    "lint": "eslint \"src/**/*.ts*\"",
+    "test": "ts-mocha -p ./tsconfig.json './src/**/*.spec.ts'"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.197",
+    "@types/mocha": "^8.2.3",
+    "@types/node": "^20.4.6",
+    "eslint": "^7.32.0",
+    "eslint-config-custom": "*",
+    "fs-extra": "^11.1.1",
+    "mocha": "^8.0.0",
+    "should": "^13.2.3",
+    "ts-mocha": "^8.0.0",
+    "tsconfig": "*",
+    "typescript": "^4.8.3"
+  },
+  "dependencies": {
+    "@pokt-foundation/pocketjs-provider": "^2.1.3",
+    "bip39": "^3.1.0",
+    "lodash": "^4.17.21",
+    "mathjs": "^11.9.1"
+  }
+}
