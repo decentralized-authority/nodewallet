@@ -8,6 +8,7 @@ describe('PoktUtils', function() {
   const endpoint = process.env.POKT_ENDPOINT;
   const address = process.env.POKT_ADDRESS;
   const key = process.env.POKT_KEY;
+  const recipient = process.env.POKT_RECIPIENT;
 
   if(!endpoint) {
     throw new Error('POKT_ENDPOINT env var not set');
@@ -15,6 +16,8 @@ describe('PoktUtils', function() {
     throw new Error('POKT_ADDRESS env var not set');
   } else if(!key) {
     throw new Error('POKT_KEY env var not set');
+  } else if(!recipient) {
+    throw new Error('POKT_RECIPIENT env var not set');
   }
 
   describe('static denom', function() {
@@ -60,6 +63,14 @@ describe('PoktUtils', function() {
       const balance = await PoktUtils.getBalance(endpoint, address);
       should(math.typeOf(balance)).equal('BigNumber');
       console.log('balance', balance.toString());
+    });
+  });
+
+  describe('static send()', function() {
+    it('should send coin from one account to another', async function() {
+      const txHash = await PoktUtils.send(endpoint, key, recipient, PoktUtils.network.TESTNET, '100000', '10000');
+      should(txHash).be.a.String();
+      txHash.length.should.be.greaterThan(0);
     });
   });
 
