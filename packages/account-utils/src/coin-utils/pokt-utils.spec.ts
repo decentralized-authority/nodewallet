@@ -68,7 +68,7 @@ describe('PoktUtils', function() {
 
   describe('static send()', function() {
     it('should send coin from one account to another', async function() {
-      const txHash = await PoktUtils.send(endpoint, key, recipient, PoktUtils.network.TESTNET, '100000', '10000');
+      const txHash = await PoktUtils.send(endpoint, key, recipient, PoktUtils.chain.TESTNET, '100000', undefined, '10000');
       should(txHash).be.a.String();
       txHash.length.should.be.greaterThan(0);
     });
