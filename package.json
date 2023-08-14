@@ -12,9 +12,10 @@
   "author": "Ryan Burgett <ryan@burgettdev.net>",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --concurrency 20",
     "test": "turbo run test",
     "test:account-utils": "turbo run test --filter=account-utils",
+    "test:util": "turbo run test --filter=util",
     "build": "turbo run build",
     "force-build": "turbo run build --no-cache",
     "clean": "turbo run clean",

@@ -21,6 +21,13 @@ module.exports = {
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
+    fallback: {
+      fs: false,
+      path: false,
+      // stream: require.resolve("stream-browserify"),
+      // process: require.resolve("process/browser"),
+      crypto: require.resolve("crypto-browserify"),
+    },
   },
   output: {
     filename: "background.js",
