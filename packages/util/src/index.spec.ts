@@ -1,5 +1,6 @@
 import should from 'should';
-import { defaultSaltBits, generateRandom, generateSalt, pbkdf2 } from './index';
+import { generateRandom, generateSalt, pbkdf2 } from './index';
+import { defaultSaltBits } from 'pbw-constants';
 
 describe('pbkdf2()', function() {
   it('should hash a password using pbkdf2', async function() {

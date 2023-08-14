@@ -28,6 +28,6 @@
     "jest": "^27.5.1",
     "tsconfig": "*",
     "typescript": "^4.8.3",
-    "pbw-util": "*"
+    "pbw-utils": "*"
   }
 }

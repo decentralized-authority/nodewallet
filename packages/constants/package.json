@@ -1,5 +1,5 @@
 {
-  "name": "pbw-utils",
+  "name": "pbw-constants",
   "version": "0.1.0",
   "private": true,
   "main": "./dist/index.js",
@@ -10,13 +10,5 @@
     "clean": "node scripts/clean.js dist .turbo node_modules",
     "dev": "tsc -w",
     "test": "ts-mocha -p ./tsconfig.json './src/**/*.spec.ts'"
-  },
-  "devDependencies": {
-    "@ethersproject/pbkdf2": "^5.7.0",
-    "@ethersproject/strings": "^5.7.0",
-    "@types/mocha": "^8.2.3",
-    "mocha": "^8.0.0",
-    "pbw-constants": "*",
-    "should": "^13.2.3"
   }
 }

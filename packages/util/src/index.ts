@@ -1,11 +1,7 @@
 import { pbkdf2 as _pbkdf2 } from '@ethersproject/pbkdf2';
 import { toUtf8Bytes } from '@ethersproject/strings';
 import crypto from 'crypto';
-
-export const defaultHashIterations = 100000;
-export const defaultHashLength = 64;
-export const defaultHashAlgorithm = 'sha512';
-export const defaultSaltBits = 512;
+import { defaultSaltBits } from 'pbw-constants';
 
 export const pbkdf2 = async (password: string, salt: string): Promise<string> => {
   return _pbkdf2(toUtf8Bytes(password), toUtf8Bytes(salt), 100000, 64, 'sha512');
