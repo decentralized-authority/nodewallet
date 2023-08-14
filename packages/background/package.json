@@ -27,6 +27,7 @@
     "fs-extra": "^11.1.1",
     "jest": "^27.5.1",
     "tsconfig": "*",
-    "typescript": "^4.8.3"
+    "typescript": "^4.8.3",
+    "pbw-util": "*"
   }
 }
