@@ -1,9 +1,10 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = {
   entry: "./background/index.ts",
   mode: "production",
   module: {
+    noParse: /\.wasm$/,
     rules: [
       {
         test: /\.ts?$/,
@@ -17,7 +18,15 @@ module.exports = {
         ],
         exclude: /node_modules/,
       },
+      { // reference: https://github.com/antelle/argon2-browser/blob/d73916b8efad2ef47140a52acd48b166a4ba97bf/examples/webpack/webpack.config.js#L26
+        test: /\.wasm$/,
+        loader: 'base64-loader',
+        type: 'javascript/auto',
+      },
     ],
+  },
+  experiments: {
+    asyncWebAssembly: true,
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
