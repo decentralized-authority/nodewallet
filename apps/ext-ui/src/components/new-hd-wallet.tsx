@@ -1,6 +1,5 @@
 import React from 'react';
 import { Container } from './shared/container';
-import { generateMnemonic } from 'account-utils';
 import { useDispatch } from 'react-redux';
 import { setActiveView } from '../reducers/app-reducer';
 import { appView } from '../constants';
@@ -9,7 +8,20 @@ export const NewHdWallet = () => {
 
   const dispatch = useDispatch();
 
-  const mnemonic = generateMnemonic();
+  const mnemonic = [
+    'word',
+    'word',
+    'word',
+    'word',
+    'word',
+    'word',
+    'word',
+    'word',
+    'word',
+    'word',
+    'word',
+    'word',
+  ];
 
   const onBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
