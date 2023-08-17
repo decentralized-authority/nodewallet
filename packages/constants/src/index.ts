@@ -46,3 +46,7 @@ export const defaultAES256GCMConfig: AES256GCMConfig = {
   keyLength: 32, // bytes
   ivLength: 12,  // bytes
 }
+
+export const storageKeys = {
+  LOGS: 'LOGS',
+};

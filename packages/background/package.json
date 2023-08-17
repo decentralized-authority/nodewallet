@@ -27,10 +27,14 @@
     "fs-extra": "^11.1.1",
     "jest": "^27.5.1",
     "mocha": "^8.0.0",
+    "pbw-utils": "*",
     "should": "^13.2.3",
     "ts-mocha": "^8.0.0",
     "tsconfig": "*",
-    "typescript": "^4.8.3",
-    "pbw-utils": "*"
+    "typescript": "^4.8.3"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.9",
+    "events": "^3.3.0"
   }
 }
