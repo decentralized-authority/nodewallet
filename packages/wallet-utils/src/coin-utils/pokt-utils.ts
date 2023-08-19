@@ -17,6 +17,8 @@ export class PoktUtils {
   static denom = PoktDenom.POKT;
   static baseDenom = PoktDenom.UPOKT;
 
+  static bip32Path = `m/44'/635'/0'/0`; // https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+
   static chain = {
     MAINNET: PoktChain.MAINNET,
     TESTNET: PoktChain.TESTNET,
@@ -43,6 +45,10 @@ export class PoktUtils {
     const bn = isString(value) ? bignumber(value) : value;
     return bn.div(PoktUtils.baseMultiplier);
   }
+
+  /**
+   * RPC Utilities
+   */
 
   /**
    * Gets the balance of an account
@@ -88,6 +94,18 @@ export class PoktUtils {
       txMsg,
     });
     return txHash;
+  }
+
+  /**
+   * Key Utilities
+   */
+
+  static derivePath(): string {
+    return PoktUtils.bip32Path;
+  }
+
+  static fromSeed(): string {
+    return '';
   }
 
 }

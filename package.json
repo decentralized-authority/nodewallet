@@ -1,6 +1,6 @@
 {
-  "name": "pokt-browser-wallet",
-  "description": "POKT Browser Wallet",
+  "name": "nodewallet",
+  "description": "Node Wallet",
   "version": "0.1.0",
   "license": "Apache-2.0",
   "homepage": "https://github.com/decentralized-authority/pokt-browser-wallet#readme",
