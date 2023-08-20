@@ -1,5 +1,5 @@
 {
-  "name": "ext",
+  "name": "@nodewallet/extension",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
