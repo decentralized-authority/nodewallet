@@ -1,6 +1,6 @@
 import should from 'should';
 import { Logger } from './logger';
-import { timeout } from 'pbw-utils';
+import { timeout } from '@nodewallet/util';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import escapeRegExp from 'lodash/escapeRegExp';

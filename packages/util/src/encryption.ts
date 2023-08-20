@@ -9,7 +9,7 @@ import {
   defaultPBKDF2Config,
   EncryptionAlgorithm,
   PBKDF2Config
-} from 'pbw-constants';
+} from '@nodewallet/constants';
 
 export const argon2 = async (password: string, salt: string, hashLength: number, config: Argon2Config = defaultArgon2Config): Promise<string> => {
   const { hashHex } = await _argon2.hash({

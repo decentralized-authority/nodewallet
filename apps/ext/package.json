@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "background": "*",
-    "content": "*"
+    "@nodewallet/background": "*",
+    "@nodewallet/content": "*"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",

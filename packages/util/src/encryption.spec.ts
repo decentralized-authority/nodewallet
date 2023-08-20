@@ -1,6 +1,6 @@
 import should from 'should';
 import { argon2, decrypt, encryptAES256GCM, EncryptionResult, generateRandom, generateSalt, pbkdf2 } from './index';
-import { defaultAES256GCMConfig, EncryptionAlgorithm } from 'pbw-constants';
+import { defaultAES256GCMConfig, EncryptionAlgorithm } from '@nodewallet/constants';
 import crypto from 'crypto';
 
 const isHex = (str: string) => /^[0-9a-fA-F]+$/.test(str);

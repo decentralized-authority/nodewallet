@@ -1,5 +1,5 @@
 import * as bip39 from 'bip39';
-import { defaultSeedBits } from 'pbw-constants';
+import { defaultSeedBits } from '@nodewallet/constants';
 import { HDNode } from '@ethersproject/hdnode';
 
 /**

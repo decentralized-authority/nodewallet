@@ -1,4 +1,4 @@
-import { startContent } from 'content';
+import { startContent } from '@nodewallet/content';
 
 startContent();
 

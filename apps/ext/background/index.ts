@@ -1,4 +1,4 @@
-import { startBackground } from 'background';
+import { startBackground } from '@nodewallet/background';
 
 startBackground();
 

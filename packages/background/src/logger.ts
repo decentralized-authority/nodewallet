@@ -1,5 +1,5 @@
 import { StorageManager } from './storage-manager';
-import { storageKeys } from 'pbw-constants';
+import { storageKeys } from '@nodewallet/constants';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import EventEmitter from 'events';

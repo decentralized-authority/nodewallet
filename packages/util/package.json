@@ -1,5 +1,5 @@
 {
-  "name": "pbw-utils",
+  "name": "@nodewallet/util",
   "version": "0.1.0",
   "private": true,
   "main": "./dist/index.js",
@@ -18,7 +18,7 @@
     "@types/mocha": "^8.2.3",
     "argon2-browser": "^1.18.0",
     "mocha": "^8.0.0",
-    "pbw-constants": "*",
+    "@nodewallet/constants": "*",
     "should": "^13.2.3"
   }
 }
