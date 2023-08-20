@@ -5,7 +5,7 @@ const fs = require('fs-extra');
   const rootDir = path.resolve(__dirname, '../');
   const distDir = path.join(rootDir, 'dist');
   await fs.copy(
-    path.resolve(rootDir, '../ext-ui/build'),
+    path.resolve(rootDir, '../extension-ui/build'),
     distDir,
     {
       overwrite: true,
