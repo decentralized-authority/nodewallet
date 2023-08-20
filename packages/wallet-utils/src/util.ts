@@ -1,6 +1,6 @@
 import * as bip39 from 'bip39';
 import { defaultSeedBits } from '@nodewallet/constants';
-import { HDNode } from '@ethersproject/hdnode';
+import { Mnemonic } from 'ethers';
 
 /**
  * Generate a mnemonic seed phrase
@@ -17,6 +17,17 @@ export const generateMnemonic = (strength: number = defaultSeedBits): string[] =
 };
 
 export const mnemonicToSeed = (mnemonic: string): String => {
-  const hdnode = HDNode.fromMnemonic(mnemonic);
-  return hdnode.address;
+  return Mnemonic.fromPhrase(mnemonic).computeSeed();
+};
+
+export const mnemonicToEntropy = (mnemonic: string): String => {
+  return Mnemonic.fromPhrase(mnemonic).entropy;
+};
+
+export const entropyToMnemonic = (entropy: string): String => {
+  return Mnemonic.fromEntropy(entropy).phrase;
+}
+
+export const isValidMnemonic = (mnemonic: string): boolean => {
+  return Mnemonic.isValidMnemonic(mnemonic);
 };

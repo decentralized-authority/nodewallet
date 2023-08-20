@@ -62,7 +62,6 @@ describe('PoktUtils', function() {
     it('should get the balance at a POKT address', async function() {
       const balance = await PoktUtils.getBalance(endpoint, address);
       should(math.typeOf(balance)).equal('BigNumber');
-      console.log('balance', balance.toString());
     });
   });
 

@@ -14,7 +14,7 @@
   "scripts": {
     "dev": "turbo run dev --concurrency 20",
     "test": "turbo run test",
-    "test:account-utils": "turbo run test --filter=@nodewallet/wallet-utils",
+    "test:wallet-utils": "turbo run test --filter=@nodewallet/wallet-utils",
     "test:background": "turbo run test --filter=@nodewallet/background",
     "test:util": "turbo run test --filter=@nodewallet/util",
     "build": "turbo run build",
