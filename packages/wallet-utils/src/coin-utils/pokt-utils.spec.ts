@@ -1,6 +1,5 @@
 import should from 'should';
 import { PoktUtils } from './pokt-utils';
-import { BigNumber } from 'mathjs';
 import * as math from 'mathjs';
 
 describe('PoktUtils', function() {

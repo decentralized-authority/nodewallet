@@ -1,13 +1,7 @@
 import { HDNodeWallet } from 'ethers';
 import * as bip39 from 'bip39';
 import { hdNodeToAccount } from '../util';
-
-export interface Account {
-  address: string;
-  privateKey: string;
-  publicKey: string;
-  index: number;
-}
+import { Account } from './ed25519';
 
 export class SECP256K1Utils {
 

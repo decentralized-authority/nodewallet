@@ -1,6 +1,6 @@
 import should from 'should';
-import { Account, SECP256K1Utils } from './secp256k1';
-import { HDNodeWallet } from 'ethers';
+import { SECP256K1Utils } from './secp256k1';
+import { Account } from './ed25519';
 
 describe('SECP256K1Utils', function() {
 
