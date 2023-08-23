@@ -96,16 +96,4 @@ export class PoktUtils {
     return txHash;
   }
 
-  /**
-   * Key Utilities
-   */
-
-  static derivePath(): string {
-    return PoktUtils.bip32Path;
-  }
-
-  static fromSeed(): string {
-    return '';
-  }
-
 }
