@@ -1,32 +1,47 @@
-import { BigNumber, bignumber, multiply } from 'mathjs';
+import { BigNumber, bignumber } from 'mathjs';
 import isString from 'lodash/isString';
 import { JsonRpcProvider } from '@pokt-foundation/pocketjs-provider';
 import { KeyManager } from '@pokt-foundation/pocketjs-signer';
 import { TransactionBuilder } from '@pokt-foundation/pocketjs-transaction-builder';
+import bip44Constants from 'bip44-constants';
+import { ChainType, KeyType } from '../constants';
+import { ChainMeta } from '../interfaces';
 
-enum PoktDenom {
+// https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+const bip44Type = bip44Constants.findIndex((c) => c[1] === 'POKT');
+
+export enum PoktDenom {
   POKT = 'Pokt',
   UPOKT = 'Upokt',
 }
-enum PoktChain {
-  MAINNET = 'mainnet',
-  TESTNET = 'testnet',
-}
 export class PoktUtils {
+
+  static ticker = 'POKT';
 
   static denom = PoktDenom.POKT;
   static baseDenom = PoktDenom.UPOKT;
-
-  static bip32Path = `m/44'/635'/0'/0`; // https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+  static baseFee = bignumber('10000');
+  static baseMultiplier = bignumber('1000000');
 
   static chain = {
-    MAINNET: PoktChain.MAINNET,
-    TESTNET: PoktChain.TESTNET,
+    MAINNET: ChainType.MAINNET,
+    TESTNET: ChainType.TESTNET,
   }
 
-  static baseFee = bignumber('10000');
-
-  static baseMultiplier = bignumber('1000000');
+  static chainMeta: {[chainType: string]: ChainMeta} = {
+    [ChainType.MAINNET]: {
+      chain: ChainType.MAINNET,
+      bip44Type: bip44Type,
+      derivationPath: `m/44'/${bip44Type}'/0'/0`,
+      keyType: KeyType.ED25519,
+    },
+    [ChainType.TESTNET]: {
+      chain: ChainType.TESTNET,
+      bip44Type: bip44Type,
+      derivationPath: `m/44'/${bip44Type}'/0'/0`,
+      keyType: KeyType.ED25519,
+    },
+  }
 
   /**
    * Converts a value to the base denomination
@@ -71,7 +86,7 @@ export class PoktUtils {
    * @param memo Optional memo
    * @param fee Fee in uPokt
    */
-  static async send(endpoint: string, key: string, recipientAddress: string, network: PoktChain, amount: string|BigNumber, memo: string|undefined, fee: string|BigNumber = PoktUtils.baseFee): Promise<string> {
+  static async send(endpoint: string, key: string, recipientAddress: string, network: ChainType, amount: string|BigNumber, memo: string|undefined, fee: string|BigNumber = PoktUtils.baseFee): Promise<string> {
     const amountStr = isString(amount) ? amount : amount.toString();
     const feeStr = isString(fee) ? fee : fee.toString();
     const provider = new JsonRpcProvider({
@@ -81,7 +96,8 @@ export class PoktUtils {
     const transactionBuilder = new TransactionBuilder({
       provider,
       signer,
-      chainID: network,
+      // @ts-ignore
+      chainID: network.toLowerCase(),
     });
     const txMsg = transactionBuilder.send({
       fromAddress: signer.getAddress(),
@@ -94,6 +110,12 @@ export class PoktUtils {
       txMsg,
     });
     return txHash;
+  }
+
+  _chain: ChainType;
+
+  constructor(chain: ChainType) {
+    this._chain = chain;
   }
 
 }

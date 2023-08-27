@@ -5,6 +5,7 @@ import { pbkdf2, toUtf8Bytes } from 'ethers';
 import { derivePath, getMasterKeyFromSeed, getPublicKey } from 'ed25519-hd-key';
 import { getAddressFromPublicKey } from '@pokt-foundation/pocketjs-utils';
 import { KeyManager } from '@pokt-foundation/pocketjs-signer';
+import { KeyType } from '../constants';
 
 export function mnemonicToSeed(mnemonic: string, password?: string): string {
   if (!password) { password = ""; }
@@ -22,6 +23,8 @@ export interface Account {
 }
 
 export class ED25519Utils {
+
+  type = KeyType.ED25519;
 
   _path: string;
 

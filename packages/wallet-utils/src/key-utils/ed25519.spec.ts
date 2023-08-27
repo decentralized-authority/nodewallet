@@ -3,7 +3,7 @@ import { Account } from './ed25519';
 import should from 'should';
 import { PoktUtils } from '../coin-utils/pokt-utils';
 
-const path = PoktUtils.bip32Path;
+const path = PoktUtils.chainMeta[PoktUtils.chain.MAINNET].derivationPath;
 
 describe('ED25519Utils', function() {
 
