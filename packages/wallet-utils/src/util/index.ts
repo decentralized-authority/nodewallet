@@ -1,6 +1,7 @@
 import { HDNodeWallet } from 'ethers';
 import { Account } from '../key-utils/ed25519';
 import { HDNode } from '@sendnodes/hd-node';
+import { Buffer } from 'buffer';
 
 export const hdNodeToAccount = (node: HDNodeWallet|HDNode): Account => {
   return {

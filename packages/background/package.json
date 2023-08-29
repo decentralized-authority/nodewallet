@@ -18,6 +18,9 @@
     "preset": "jest-presets/jest/node"
   },
   "devDependencies": {
+    "@nodewallet/constants": "*",
+    "@nodewallet/util": "*",
+    "@nodewallet/wallet-utils": "*",
     "@types/chrome": "^0.0.243",
     "@types/jest": "^27.5.2",
     "@types/mocha": "^8.2.3",
@@ -27,13 +30,13 @@
     "fs-extra": "^11.1.1",
     "jest": "^27.5.1",
     "mocha": "^8.0.0",
-    "@nodewallet/util": "*",
     "should": "^13.2.3",
     "ts-mocha": "^8.0.0",
     "tsconfig": "*",
     "typescript": "^4.8.3"
   },
   "dependencies": {
+    "buffer": "^6.0.3",
     "dayjs": "^1.11.9",
     "events": "^3.3.0"
   }

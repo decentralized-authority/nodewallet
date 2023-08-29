@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   entry: "./background/index.ts",
@@ -28,6 +29,11 @@ module.exports = {
   experiments: {
     asyncWebAssembly: true,
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
+    }),
+  ],
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
     fallback: {
@@ -35,6 +41,7 @@ module.exports = {
       path: false,
       stream: require.resolve('stream-browserify'),
       crypto: require.resolve('crypto-browserify'),
+      buffer: require.resolve('buffer')
     },
   },
   output: {

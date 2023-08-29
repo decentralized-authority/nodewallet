@@ -4,6 +4,7 @@ import { timeout } from '@nodewallet/util';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import escapeRegExp from 'lodash/escapeRegExp';
+import { storageKeys } from '@nodewallet/constants';
 
 dayjs.extend(utc);
 
@@ -40,7 +41,8 @@ describe('Logger', function() {
       let logsSavedToStorage: string[] = [];
       // @ts-ignore
       logger._storage = {
-        set: async (key, val)  => {
+        set: async (obj)  => {
+          const { [storageKeys.LOGS]: val } = obj;
           setCalled = true;
           logsSavedToStorage = val;
         },

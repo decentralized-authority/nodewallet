@@ -1,5 +1,9 @@
 import _argon2 from 'argon2-browser';
 
+export enum BackgroundListener {
+  GET_LOGS = 'GET_LOGS',
+}
+
 export const defaultSeedBits = 256;
 
 export enum HashFunction {

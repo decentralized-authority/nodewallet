@@ -12,21 +12,21 @@ export const getWordlist = (lang: string): string[] => {
 /**
  * Generate a mnemonic seed phrase
  * @param strength The strength of the seed phrase in bits
+ * @param lang The wordlist language
  */
 export const generateMnemonic = async (strength: number = defaultSeedBits, lang = 'EN'): Promise<string> => {
   const wordlist = getWordlist(lang);
   return bip39.generateMnemonic(strength, undefined, wordlist);
 };
 
-export const mnemonicToSeed = async (mnemonic: string, lang = 'EN'): Promise<string> => {
-  const wordlist = getWordlist(lang);
+export const mnemonicToSeed = async (mnemonic: string): Promise<string> => {
   const seed = await bip39.mnemonicToSeed(mnemonic);
   return seed.toString('hex');
 };
 
 export const mnemonicToEntropy = async (mnemonic: string, lang = 'EN'): Promise<string> => {
   const wordlist = getWordlist(lang);
-  return bip39.mnemonicToEntropy(mnemonic);
+  return bip39.mnemonicToEntropy(mnemonic, wordlist);
 };
 
 export const entropyToMnemonic = async (entropy: string, lang = 'EN'): Promise<string> => {

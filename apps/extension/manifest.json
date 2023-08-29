@@ -2,6 +2,9 @@
   "name": "POKT Browser Wallet",
   "version": "0.1.0",
   "manifest_version": 3,
+  "permissions": [
+    "storage"
+  ],
   "background": {
     "service_worker": "background.js"
   },

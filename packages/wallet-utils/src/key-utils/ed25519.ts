@@ -1,19 +1,8 @@
 import { HDNode } from '@sendnodes/hd-node';
 import * as bip39 from 'bip39';
 import { hdNodeToAccount } from '../util';
-import { pbkdf2, toUtf8Bytes } from 'ethers';
-import { derivePath, getMasterKeyFromSeed, getPublicKey } from 'ed25519-hd-key';
-import { getAddressFromPublicKey } from '@pokt-foundation/pocketjs-utils';
-import { KeyManager } from '@pokt-foundation/pocketjs-signer';
 import { KeyType } from '../constants';
-
-export function mnemonicToSeed(mnemonic: string, password?: string): string {
-  if (!password) { password = ""; }
-
-  const salt = toUtf8Bytes("mnemonic" + password, 'NFKD');
-
-  return pbkdf2(toUtf8Bytes(mnemonic, 'NFKD'), salt, 2048, 64, "sha512");
-}
+import { Buffer } from 'buffer';
 
 export interface Account {
   address: string;
