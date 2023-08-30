@@ -4,7 +4,7 @@ export enum AppView {
   NEW_HD_WALLET = 'NEW_HD_WALLET',
   SELECT_IMPORT_TYPE = 'SELECT_IMPORT_TYPE',
   TOS = 'TOS',
-  REGISTER = 'REGISTER',
+  REGISTER_ACCOUNT = 'REGISTER_ACCOUNT',
 }
 
 export const MAX_BODY_WIDTH = 1000;
@@ -12,3 +12,5 @@ export const POPUP_WIDTH = 400;
 export const POPUP_HEIGHT = 600;
 
 export const TOS_URL = process.env.REACT_APP_TOS_URL || '';
+
+export const PASSWORD_MIN_LENGTH = 12;

@@ -13,6 +13,7 @@ import { isTab } from './util';
 import { setActiveView, setUserAccount, setWindowHeight, setWindowWidth } from './reducers/app-reducer';
 import { TOS } from './components/tos';
 import { UserAccount } from '@nodewallet/constants';
+import { RegisterAccount } from './components/register-account';
 
 export const App = () => {
 
@@ -83,28 +84,34 @@ export const App = () => {
         style={styles.innerFlexContainer as React.CSSProperties}
       >
         <Container>
-          {[AppView.TOS].includes(activeView) ? null : <Navbar />}
+          {[
+            AppView.TOS,
+            AppView.REGISTER_ACCOUNT,
+          ].includes(activeView) ? null : <Navbar />}
           <div className={'flex-grow-1 position-relative'}>
             {
               !userAccount ?
                 <div />
                 :
-                activeView === AppView.ACCOUNT_DETAIL ?
-                  <AccountDetail />
+                activeView === AppView.REGISTER_ACCOUNT ?
+                  <RegisterAccount />
                   :
-                  activeView === AppView.MANAGE_WALLETS ?
-                    <ManageWallets />
+                  activeView === AppView.ACCOUNT_DETAIL ?
+                    <AccountDetail />
                     :
-                    activeView === AppView.NEW_HD_WALLET ?
-                      <NewHdWallet />
+                    activeView === AppView.MANAGE_WALLETS ?
+                      <ManageWallets />
                       :
-                      activeView === AppView.SELECT_IMPORT_TYPE ?
-                        <SelectImportType />
+                      activeView === AppView.NEW_HD_WALLET ?
+                        <NewHdWallet />
                         :
-                        activeView === AppView.TOS ?
-                          <TOS />
+                        activeView === AppView.SELECT_IMPORT_TYPE ?
+                          <SelectImportType />
                           :
-                          <div />
+                          activeView === AppView.TOS ?
+                            <TOS />
+                            :
+                            <div />
               }
           </div>
         </Container>

@@ -1,4 +1,5 @@
 import * as uuid from 'uuid';
+import { PASSWORD_MIN_LENGTH } from './constants';
 
 export const getRandomInt = (min: number, max: number) => {
   min = Math.ceil(min);
@@ -20,4 +21,8 @@ export const isDev = (): boolean => {
 
 export const isTab = (): boolean => {
   return window.location.hash === '#tab';
+};
+
+export const isValidPassword = (password: string): boolean => {
+  return !!password.trim() && password.length >= PASSWORD_MIN_LENGTH;
 };
