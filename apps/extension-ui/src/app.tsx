@@ -14,6 +14,7 @@ import { setActiveView, setUserAccount, setWindowHeight, setWindowWidth } from '
 import { TOS } from './components/tos';
 import { UserAccount } from '@nodewallet/constants';
 import { RegisterAccount } from './components/register-account';
+import { SelectNewWalletType } from './components/select-new-wallet-type';
 
 export const App = () => {
 
@@ -87,6 +88,7 @@ export const App = () => {
           {[
             AppView.TOS,
             AppView.REGISTER_ACCOUNT,
+            AppView.SELECT_NEW_WALLET_TYPE,
           ].includes(activeView) ? null : <Navbar />}
           <div className={'flex-grow-1 position-relative'}>
             {
@@ -96,22 +98,25 @@ export const App = () => {
                 activeView === AppView.REGISTER_ACCOUNT ?
                   <RegisterAccount />
                   :
-                  activeView === AppView.ACCOUNT_DETAIL ?
-                    <AccountDetail />
+                  activeView === AppView.SELECT_NEW_WALLET_TYPE ?
+                    <SelectNewWalletType />
                     :
-                    activeView === AppView.MANAGE_WALLETS ?
-                      <ManageWallets />
+                    activeView === AppView.ACCOUNT_DETAIL ?
+                      <AccountDetail />
                       :
-                      activeView === AppView.NEW_HD_WALLET ?
-                        <NewHdWallet />
+                      activeView === AppView.MANAGE_WALLETS ?
+                        <ManageWallets />
                         :
-                        activeView === AppView.SELECT_IMPORT_TYPE ?
-                          <SelectImportType />
+                        activeView === AppView.NEW_HD_WALLET ?
+                          <NewHdWallet />
                           :
-                          activeView === AppView.TOS ?
-                            <TOS />
+                          activeView === AppView.SELECT_IMPORT_TYPE ?
+                            <SelectImportType />
                             :
-                            <div />
+                            activeView === AppView.TOS ?
+                              <TOS />
+                              :
+                              <div />
               }
           </div>
         </Container>

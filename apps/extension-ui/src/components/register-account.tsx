@@ -26,7 +26,7 @@ export const RegisterAccount = () => {
     }
     // ToDo encrypt and save user account
     dispatch(setAccountRegistered({accountRegistered: true}));
-    dispatch(setActiveView({activeView: AppView.SELECT_IMPORT_TYPE}));
+    dispatch(setActiveView({activeView: AppView.SELECT_NEW_WALLET_TYPE}));
   };
   return (
     <Container className={'flex-column justify-content-start align-items-center p-2'}>
