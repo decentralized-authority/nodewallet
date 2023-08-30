@@ -4,13 +4,15 @@ import { AccountDetail } from './components/account-detail';
 import { Navbar } from './components/shared/navbar';
 import { Container } from './components/shared/container';
 import { RootState } from './store';
-import { appView, MAX_BODY_WIDTH, POPUP_HEIGHT, POPUP_WIDTH } from './constants';
+import { AppView, MAX_BODY_WIDTH, POPUP_HEIGHT, POPUP_WIDTH } from './constants';
 import { ManageWallets } from './components/manage-wallets';
 import { NewHdWallet } from './components/new-hd-wallet';
 import { SelectImportType } from './components/select-import-type';
 import $ from 'jquery';
 import { isTab } from './util';
-import { setWindowHeight, setWindowWidth } from './reducers/app-reducer';
+import { setActiveView, setUserAccount, setWindowHeight, setWindowWidth } from './reducers/app-reducer';
+import { TOS } from './components/tos';
+import { UserAccount } from '@nodewallet/constants';
 
 export const App = () => {
 
@@ -18,6 +20,7 @@ export const App = () => {
 
   const {
     activeView,
+    userAccount,
     windowWidth,
   } = useSelector(({ appState }: RootState) => appState);
 
@@ -44,6 +47,17 @@ export const App = () => {
       dispatch(setWindowWidth({windowWidth: window.innerWidth}));
     });
 
+    // ToDo get user account from background worker
+    const userAccount: UserAccount = {
+      tosAccepted: '',
+    };
+    dispatch(setUserAccount({
+      userAccount,
+    }));
+    if (!userAccount.tosAccepted) {
+      dispatch(setActiveView({activeView: AppView.TOS}));
+    }
+
   }, [dispatch]);
 
   const styles = {
@@ -69,23 +83,29 @@ export const App = () => {
         style={styles.innerFlexContainer as React.CSSProperties}
       >
         <Container>
-          <Navbar />
+          {[AppView.TOS].includes(activeView) ? null : <Navbar />}
           <div className={'flex-grow-1 position-relative'}>
             {
-              activeView === appView.ACCOUNT_DETAIL ?
-                <AccountDetail />
+              !userAccount ?
+                <div />
                 :
-                activeView === appView.MANAGE_WALLETS ?
-                  <ManageWallets />
+                activeView === AppView.ACCOUNT_DETAIL ?
+                  <AccountDetail />
                   :
-                  activeView === appView.NEW_HD_WALLET ?
-                    <NewHdWallet />
+                  activeView === AppView.MANAGE_WALLETS ?
+                    <ManageWallets />
                     :
-                    activeView === appView.SELECT_IMPORT_TYPE ?
-                      <SelectImportType />
+                    activeView === AppView.NEW_HD_WALLET ?
+                      <NewHdWallet />
                       :
-                      <div />
-            }
+                      activeView === AppView.SELECT_IMPORT_TYPE ?
+                        <SelectImportType />
+                        :
+                        activeView === AppView.TOS ?
+                          <TOS />
+                          :
+                          <div />
+              }
           </div>
         </Container>
       </div>

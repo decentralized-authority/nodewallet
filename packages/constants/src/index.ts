@@ -54,3 +54,7 @@ export const defaultAES256GCMConfig: AES256GCMConfig = {
 export const storageKeys = {
   LOGS: 'LOGS',
 };
+
+export interface UserAccount {
+  tosAccepted: string // ISO date string
+}

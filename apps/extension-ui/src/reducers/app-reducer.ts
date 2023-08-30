@@ -1,15 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { appView } from '../constants';
+import { AppView } from '../constants';
+import { UserAccount } from '@nodewallet/constants';
 
 export interface AppState {
+  accountRegistered: boolean|null,
+  userAccount: UserAccount|null,
   locale: string,
-  activeView: string
+  activeView: AppView
   windowWidth: number
   windowHeight: number
 }
 const getInitialState = (): AppState => ({
+  accountRegistered: null,
+  userAccount: null,
   locale: 'en-US',
-  activeView: appView.ACCOUNT_DETAIL,
+  activeView: AppView.ACCOUNT_DETAIL,
   windowWidth: window.innerWidth,
   windowHeight: window.innerHeight,
 });
@@ -17,7 +22,13 @@ export const appSlice = createSlice({
   name: 'appState',
   initialState: getInitialState(),
   reducers: {
-    setActiveView: (state, action: PayloadAction<{activeView: string}>) => {
+    setAccountRegistered: (state, action: PayloadAction<{accountRegistered: boolean}>) => {
+      state.accountRegistered = action.payload.accountRegistered;
+    },
+    setUserAccount: (state, action: PayloadAction<{userAccount: UserAccount}>) => {
+      state.userAccount = action.payload.userAccount;
+    },
+    setActiveView: (state, action: PayloadAction<{activeView: AppView}>) => {
       state.activeView = action.payload.activeView;
     },
     setWindowHeight: (state, action: PayloadAction<{windowHeight: number}>) => {
@@ -29,6 +40,12 @@ export const appSlice = createSlice({
   }
 });
 
-export const { setActiveView, setWindowHeight, setWindowWidth } = appSlice.actions;
+export const {
+  setAccountRegistered,
+  setUserAccount,
+  setActiveView,
+  setWindowHeight,
+  setWindowWidth
+} = appSlice.actions;
 
 export default appSlice.reducer;

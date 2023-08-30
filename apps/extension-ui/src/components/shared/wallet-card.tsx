@@ -2,7 +2,7 @@ import React from 'react';
 import { generateFakeAddress, getRandomInt, truncateAddress } from '../../util';
 import { useDispatch } from 'react-redux';
 import { setActiveView } from '../../reducers/app-reducer';
-import { appView } from '../../constants';
+import { AppView } from '../../constants';
 
 interface WalletCardProps {
   title: string
@@ -15,7 +15,7 @@ export const WalletCard = ({title, addresses, hideAddButton = false}: WalletCard
 
   const onAddressClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: appView.ACCOUNT_DETAIL}))
+    dispatch(setActiveView({activeView: AppView.ACCOUNT_DETAIL}))
   };
 
   return (

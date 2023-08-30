@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setActiveView } from '../../reducers/app-reducer';
-import { appView } from '../../constants';
+import { AppView } from '../../constants';
 
 export const BalanceCard = () => {
 
@@ -15,7 +15,7 @@ export const BalanceCard = () => {
 
   const onViewWalletsClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: appView.MANAGE_WALLETS}))
+    dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}))
   };
 
   return (

@@ -2,7 +2,7 @@ import React from 'react';
 import { Container } from './shared/container';
 import { useDispatch } from 'react-redux';
 import { setActiveView } from '../reducers/app-reducer';
-import { appView } from '../constants';
+import { AppView } from '../constants';
 
 export const NewHdWallet = () => {
 
@@ -25,12 +25,12 @@ export const NewHdWallet = () => {
 
   const onBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: appView.MANAGE_WALLETS}));
+    dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}));
   };
 
   const onSavedClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: appView.MANAGE_WALLETS}));
+    dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}));
   };
 
   return (

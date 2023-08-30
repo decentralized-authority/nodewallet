@@ -4,7 +4,7 @@ import { WalletCard } from './shared/wallet-card';
 import { generateFakeAddress } from '../util';
 import { useDispatch } from 'react-redux';
 import { setActiveView } from '../reducers/app-reducer';
-import { appView } from '../constants';
+import { AppView } from '../constants';
 
 export const ManageWallets = () => {
 
@@ -12,11 +12,11 @@ export const ManageWallets = () => {
 
   const onImportWalletClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: appView.SELECT_IMPORT_TYPE}));
+    dispatch(setActiveView({activeView: AppView.SELECT_IMPORT_TYPE}));
   };
   const onNewWalletClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: appView.NEW_HD_WALLET}));
+    dispatch(setActiveView({activeView: AppView.NEW_HD_WALLET}));
   };
 
   return (

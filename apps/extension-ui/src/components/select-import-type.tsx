@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container } from './shared/container';
 import { setActiveView } from '../reducers/app-reducer';
-import { appView } from '../constants';
+import { AppView } from '../constants';
 import { useDispatch } from 'react-redux';
 
 export const SelectImportType = () => {
@@ -10,7 +10,7 @@ export const SelectImportType = () => {
 
   const onBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: appView.MANAGE_WALLETS}));
+    dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}));
   };
 
   return (
