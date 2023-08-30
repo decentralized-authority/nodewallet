@@ -1,5 +1,5 @@
 {
-  "name": "POKT Browser Wallet",
+  "name": "NodeWallet",
   "version": "0.1.0",
   "manifest_version": 3,
   "permissions": [
@@ -17,7 +17,7 @@
     }
   ],
   "action": {
-    "default_title": "POKT Browser Wallet",
+    "default_title": "NodeWallet",
     "default_popup": "index.html"
   },
   "icons": {

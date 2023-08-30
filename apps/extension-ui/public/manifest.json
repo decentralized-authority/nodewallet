@@ -1,6 +1,6 @@
 {
-  "short_name": "POKT Browser Wallet",
-  "name": "POKT Browser Wallet",
+  "short_name": "NodeWallet",
+  "name": "NodeWallet",
   "icons": [
     {
       "src": "favicon.ico",
