@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@nodewallet/ui": "*",
     "@reduxjs/toolkit": "^1.9.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -12,13 +13,13 @@
     "@types/react": "^18.2.18",
     "@types/react-dom": "^18.2.7",
     "eslint-config-react-app": "^7.0.1",
+    "jquery": "^3.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-redux": "^8.0.5",
     "react-scripts": "5.0.1",
     "sass": "^1.64.2",
     "typescript": "^4.9.5",
-    "@nodewallet/ui": "*",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -48,6 +49,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/jquery": "^3.5.17",
     "@types/uuid": "^9.0.2",
     "bootstrap": "^5.3.1",
     "buffer": "^6.0.3",

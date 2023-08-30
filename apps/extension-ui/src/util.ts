@@ -13,3 +13,11 @@ export const generateFakeAddress = () => {
 export const truncateAddress = (address: string) => {
   return `${address.slice(0, 6)}...${address.slice(-6)}`;
 };
+
+export const isDev = (): boolean => {
+  return process.env.NODE_ENV === 'development';
+};
+
+export const isTab = (): boolean => {
+  return window.location.hash === '#tab';
+};
