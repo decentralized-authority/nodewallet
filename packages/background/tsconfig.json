@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["ES2015"],
+    "downlevelIteration": true,
     "module": "CommonJS",
     "outDir": "./dist",
     "rootDir": "./src"

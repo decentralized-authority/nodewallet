@@ -23,5 +23,8 @@
   "icons": {
     "192": "logo192.png",
     "512": "logo512.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';"
   }
 }

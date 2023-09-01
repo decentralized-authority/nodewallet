@@ -2,6 +2,7 @@ import _argon2 from 'argon2-browser';
 
 export enum BackgroundListener {
   GET_LOGS = 'GET_LOGS',
+  GENERATE_MNEMONIC = 'GENERATE_MNEMONIC',
 }
 
 export const defaultSeedBits = 256;
