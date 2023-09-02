@@ -40,5 +40,10 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "overrides": {
+    "@tendermint/belt": "github:decentralized-authority/belt#service_worker_runtime_fixes",
+    "@pokt-foundation/pocketjs-provider": "github:decentralized-authority/pocketjs-provider",
+    "@pokt-foundation/pocketjs-utils": "github:decentralized-authority/pocketjs-utils"
+  }
 }

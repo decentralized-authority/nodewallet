@@ -92,27 +92,24 @@ export class PoktUtils {
     const provider = new JsonRpcProvider({
       rpcUrl: endpoint,
     });
-    // console.log(KeyManager);
-    // console.log(TransactionBuilder);
-    // const signer = await KeyManager.fromPrivateKey(key);
-    // const transactionBuilder = new TransactionBuilder({
-    //   provider,
-    //   signer,
-    //   // @ts-ignore
-    //   chainID: network.toLowerCase(),
-    // });
-    // const txMsg = transactionBuilder.send({
-    //   fromAddress: signer.getAddress(),
-    //   toAddress: recipientAddress,
-    //   amount: amountStr,
-    // });
-    // const { txHash } = await transactionBuilder.submit({
-    //   fee: feeStr,
-    //   memo,
-    //   txMsg,
-    // });
-    // return txHash;
-    return '12345';
+    const signer = await KeyManager.fromPrivateKey(key);
+    const transactionBuilder = new TransactionBuilder({
+      provider,
+      signer,
+      // @ts-ignore
+      chainID: network.toLowerCase(),
+    });
+    const txMsg = transactionBuilder.send({
+      fromAddress: signer.getAddress(),
+      toAddress: recipientAddress,
+      amount: amountStr,
+    });
+    const { txHash } = await transactionBuilder.submit({
+      fee: feeStr,
+      memo,
+      txMsg,
+    });
+    return txHash;
   }
 
   _chain: ChainType;
