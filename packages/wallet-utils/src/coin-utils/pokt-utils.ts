@@ -4,8 +4,8 @@ import { JsonRpcProvider } from '@pokt-foundation/pocketjs-provider';
 import { KeyManager } from '@pokt-foundation/pocketjs-signer';
 import { TransactionBuilder } from '@pokt-foundation/pocketjs-transaction-builder';
 import bip44Constants from 'bip44-constants';
-import { ChainType, KeyType } from '../constants';
 import { ChainMeta } from '../interfaces';
+import { ChainType, CoinType, KeyType } from '@nodewallet/constants';
 
 // https://github.com/satoshilabs/slips/blob/master/slip-0044.md
 const bip44Type = bip44Constants.findIndex((c) => c[1] === 'POKT');
@@ -16,7 +16,7 @@ export enum PoktDenom {
 }
 export class PoktUtils {
 
-  static ticker = 'POKT';
+  static network: CoinType = CoinType.POKT;
 
   static denom = PoktDenom.POKT;
   static baseDenom = PoktDenom.UPOKT;

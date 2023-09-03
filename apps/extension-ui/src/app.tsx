@@ -12,9 +12,9 @@ import $ from 'jquery';
 import { isTab } from './util';
 import { setActiveView, setUserAccount, setWindowHeight, setWindowWidth } from './reducers/app-reducer';
 import { TOS } from './components/tos';
-import { UserAccount } from '@nodewallet/constants';
 import { RegisterAccount } from './components/register-account';
 import { SelectNewWalletType } from './components/select-new-wallet-type';
+import { UserAccount } from '@nodewallet/types';
 
 export const App = () => {
 
@@ -50,15 +50,15 @@ export const App = () => {
     });
 
     // ToDo get user account from background worker
-    const userAccount: UserAccount = {
-      tosAccepted: '',
-    };
-    dispatch(setUserAccount({
-      userAccount,
-    }));
-    if (!userAccount.tosAccepted) {
-      dispatch(setActiveView({activeView: AppView.TOS}));
-    }
+    // const userAccount: UserAccount = {
+    //   tosAccepted: '',
+    // };
+    // dispatch(setUserAccount({
+    //   userAccount,
+    // }));
+    // if (!userAccount.tosAccepted) {
+    //   dispatch(setActiveView({activeView: AppView.TOS}));
+    // }
 
   }, [dispatch]);
 

@@ -56,6 +56,15 @@ export const storageKeys = {
   LOGS: 'LOGS',
 };
 
-export interface UserAccount {
-  tosAccepted: string // ISO date string
+export enum CoinType {
+  POKT = 'POKT',
+  ETH = 'ETH',
+}
+export enum ChainType {
+  MAINNET = 'MAINNET',
+  TESTNET = 'TESTNET',
+}
+export enum KeyType {
+  ED25519 = 'ED25519',
+  SECP256K1 = 'SECP256K1',
 }

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppView } from '../constants';
-import { UserAccount } from '@nodewallet/constants';
+import { UserAccount } from '@nodewallet/types';
 
 export interface AppState {
   accountRegistered: boolean|null,

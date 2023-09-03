@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@nodewallet/constants": "*",
+    "@nodewallet/types": "*",
     "@nodewallet/util": "*",
     "@nodewallet/wallet-utils": "*",
     "@types/chrome": "^0.0.243",

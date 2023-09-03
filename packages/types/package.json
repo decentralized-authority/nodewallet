@@ -1,0 +1,17 @@
+{
+  "name": "@nodewallet/types",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "node scripts/clean.js dist .turbo node_modules",
+    "dev": "tsc -w",
+    "test": "ts-mocha -p ./tsconfig.json './src/**/*.spec.ts'"
+  },
+  "dependencies": {
+    "@nodewallet/constants": "*"
+  }
+}

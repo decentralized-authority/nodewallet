@@ -18,8 +18,11 @@ export const TOS = () => {
     dispatch(setActiveView({activeView: AppView.REGISTER_ACCOUNT}));
     dispatch(setUserAccount({
       userAccount: {
-        ...userAccount,
         tosAccepted: new Date().toISOString(),
+        settings: {
+          showTestnets: false,
+        },
+        wallets: [],
       },
     }));
   };

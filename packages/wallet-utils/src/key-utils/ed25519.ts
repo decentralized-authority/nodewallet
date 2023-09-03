@@ -1,8 +1,8 @@
 import { HDNode } from '@sendnodes/hd-node';
 import * as bip39 from 'bip39';
 import { hdNodeToAccount } from '../util';
-import { KeyType } from '../constants';
 import { Buffer } from 'buffer';
+import { KeyType } from '@nodewallet/constants';
 
 export interface Account {
   address: string;

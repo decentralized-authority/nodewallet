@@ -2,7 +2,7 @@ import { HDNodeWallet } from 'ethers';
 import * as bip39 from 'bip39';
 import { hdNodeToAccount } from '../util';
 import { Account } from './ed25519';
-import { KeyType } from '../constants';
+import { KeyType } from '@nodewallet/constants';
 
 export class SECP256K1Utils {
 
