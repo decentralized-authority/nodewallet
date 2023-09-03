@@ -17,6 +17,7 @@
     "eslint-config-custom": "*",
     "fs-extra": "^11.1.1",
     "https-browserify": "^1.0.0",
+    "process": "github:decentralized-authority/node-process#add_hrtime",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "ts-loader": "^9.4.4",
