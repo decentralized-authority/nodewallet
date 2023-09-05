@@ -10,6 +10,11 @@ export enum LocalStorageKey {
   KEY_SALT = 'KEY_SALT',
   ENCRYPTION_SETTINGS = 'ENCRYPTION_SETTINGS',
 }
+export enum SessionStorageKey {
+  USER_ACCOUNT = 'USER_ACCOUNT',
+  USER_KEY = 'USER_KEY',
+  ENCRYPTION_SETTINGS = 'ENCRYPTION_SETTINGS',
+}
 
 export enum CoinType {
   POKT = 'POKT',

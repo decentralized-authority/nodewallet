@@ -1,4 +1,4 @@
-import { AppLang, ChainType, CoinType, LocalStorageKey, UserStatus } from '@nodewallet/constants';
+import { AppLang, ChainType, CoinType, LocalStorageKey, SessionStorageKey, UserStatus } from '@nodewallet/constants';
 import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
@@ -116,15 +116,33 @@ export const startBackground = () => {
 
   const logger = getLogger();
 
-  let userAccount: UserAccount|null = null;
+  const getUserAccount = async (): Promise<UserAccount|null> => {
+    return await sessionManager.get(SessionStorageKey.USER_ACCOUNT) || null;
+  };
+  const getUserKey = async (): Promise<string|null> => {
+    return await sessionManager.get(SessionStorageKey.USER_KEY) || null;
+  };
+  const getEncryptionSettings = async (): Promise<AES256GCMConfig|null> => {
+    return await sessionManager.get(SessionStorageKey.ENCRYPTION_SETTINGS) || null;
+  };
 
-  let encrypt: EncryptFunc|null = null;
-  let decrypt: DecryptFunc|null = null;
+  const encrypt = async (data: any): Promise<EncryptionResult> => {
+    const key = await getUserKey();
+    const encryptionSettings = await getEncryptionSettings();
+    if(!key || !encryptionSettings) {
+      throw new Error('User account locked.');
+    }
+    return await encryptAES256GCM(data, key, encryptionSettings);
+  };
+  const decrypt = async (encrypted: EncryptionResult): Promise<any> => {
+    const key = await getUserKey();
+    if(!key) {
+      throw new Error('User account locked.');
+    }
+    return await generalDecrypt(encrypted, key);
+  };
 
   const encryptSaveUserAccount = async (account: UserAccount) => {
-    if(!encrypt) {
-      throw new Error('Encryption functions not initialized.');
-    }
     const encrypted = await encrypt(account);
     await storageManager.set(LocalStorageKey.USER_ACCOUNT, encrypted);
   }
@@ -152,6 +170,7 @@ export const startBackground = () => {
   });
 
   messager.register(APIEvent.GET_USER_STATUS, async (): Promise<GetUserStatusResult> => {
+    const userAccount = await getUserAccount();
     if(userAccount) {
       return { result: UserStatus.UNLOCKED };
     }
@@ -184,22 +203,19 @@ export const startBackground = () => {
     };
     logger.info('Saving encryption settings.');
     await storageManager.set(LocalStorageKey.ENCRYPTION_SETTINGS, encryptionSettings);
+    await sessionManager.set(SessionStorageKey.ENCRYPTION_SETTINGS, encryptionSettings);
 
     const salt = await generateSalt(encryptionSettings.keyLength);
     logger.info('Saving salt.');
     await storageManager.set(LocalStorageKey.KEY_SALT, salt);
 
     const key = await argon2(password, salt, encryptionSettings.keyLength, hashSettings);
-
-    const encryptionFuncs = await generateEncryptionFuncs(password, salt, hashSettings, encryptionSettings);
-    encrypt = encryptionFuncs[0];
-    decrypt = encryptionFuncs[1];
-    const encrypted = await encrypt(account);
+    await sessionManager.set(SessionStorageKey.USER_KEY, key);
 
     logger.info('Saving encrypted user account.');
     await encryptSaveUserAccount(account);
 
-    userAccount = account;
+    await sessionManager.set(SessionStorageKey.USER_ACCOUNT, account);
     return { result: sanitizeUserAccount(account) };
   });
 
@@ -208,15 +224,14 @@ export const startBackground = () => {
     const encrypted: EncryptionResult = await storageManager.get(LocalStorageKey.USER_ACCOUNT);
     const hashSettings = await storageManager.get(LocalStorageKey.HASH_SETTINGS);
     const encryptionSettings = await storageManager.get(LocalStorageKey.ENCRYPTION_SETTINGS);
+    await sessionManager.set(SessionStorageKey.ENCRYPTION_SETTINGS, encryptionSettings);
     const salt = await storageManager.get(LocalStorageKey.KEY_SALT);
-
-    const encryptionFuncs = await generateEncryptionFuncs(password, salt, hashSettings, encryptionSettings);
-    encrypt = encryptionFuncs[0];
-    decrypt = encryptionFuncs[1];
+    const key = await argon2(password, salt, encryptionSettings.keyLength, hashSettings);
+    await sessionManager.set(SessionStorageKey.USER_KEY, key);
 
     try {
       const decrypted: UserAccount = await decrypt(encrypted);
-      userAccount = decrypted;
+      await sessionManager.set(SessionStorageKey.USER_ACCOUNT, decrypted);
       return { result: sanitizeUserAccount(decrypted) };
     } catch(err) {
       return {result: null};
@@ -224,6 +239,7 @@ export const startBackground = () => {
   });
 
   messager.register(APIEvent.GET_USER_ACCOUNT, async (): Promise<GetUserAccountResult> => {
+    const userAccount = await getUserAccount();
     if(!userAccount) {
       return {result: null};
     }
@@ -236,6 +252,7 @@ export const startBackground = () => {
   });
 
   messager.register(APIEvent.INSERT_HD_WALLET, async ({ mnemonic }: InsertHdWalletParams): Promise<InsertHdWalletResult> => {
+    const userAccount = await getUserAccount();
     const prepped = prepMnemonic(mnemonic);
     const isValid = isValidMnemonic(prepped);
     if(!isValid) {
@@ -279,11 +296,13 @@ export const startBackground = () => {
       ],
     };
     userAccount.wallets.push(newWallet);
+    await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
     await encryptSaveUserAccount(userAccount);
     return {result: sanitizeUserWallet(newWallet)};
   });
 
   messager.register(APIEvent.INSERT_CRYPTO_ACCOUNT, async ({ walletId, network, chain }: InsertCryptoAccountParams): Promise<InsertCryptoAccountResult> => {
+    const userAccount = await getUserAccount();
     if(!userAccount) {
       throw new Error('User account locked.');
     }
@@ -322,6 +341,7 @@ export const startBackground = () => {
       publicKey: accountNode.publicKey,
     };
     userAccount.wallets[walletIdx].accounts[walletAccountIdx].accounts.push(newCryptAccount);
+    await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
     await encryptSaveUserAccount(userAccount);
     return {result: sanitizeCryptoAccount(newCryptAccount)};
   });

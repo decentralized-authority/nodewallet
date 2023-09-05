@@ -35,9 +35,6 @@ export const ManageWallets = () => {
               );
             })
           }
-          {/*<WalletCard title={'HD Wallet 2'} addresses={[generateFakeAddress(), generateFakeAddress(), generateFakeAddress()]} />*/}
-          {/*<WalletCard title={'Legacy Wallet 1'} addresses={[generateFakeAddress()]} hideAddButton={true} />*/}
-          {/*<WalletCard title={'HD Wallet 1'} addresses={[generateFakeAddress(), generateFakeAddress()]} />*/}
         </div>
       </div>
       <div className={'d-flex flex-row justify-content-start p-2'}>

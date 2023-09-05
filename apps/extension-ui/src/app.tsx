@@ -10,7 +10,7 @@ import { NewHdWallet } from './components/new-hd-wallet';
 import { SelectImportType } from './components/select-import-type';
 import $ from 'jquery';
 import { isTab } from './util';
-import { setActiveView, setUserStatus } from './reducers/app-reducer';
+import { setActiveView, setUserAccount, setUserStatus } from './reducers/app-reducer';
 import { TOS } from './components/tos';
 import { RegisterAccount } from './components/register-account';
 import { SelectNewWalletType } from './components/select-new-wallet-type';
@@ -76,7 +76,7 @@ export const App = () => {
               dispatch(setActiveView({activeView: AppView.UNLOCK_ACCOUNT}));
             } else {
               const { result: account } = getRes;
-              console.log('userAccount', account);
+              dispatch(setUserAccount({userAccount: account}));
               if(account.wallets.length === 0) {
                 if(isTab()) {
                   dispatch(setActiveView({activeView: AppView.SELECT_NEW_WALLET_TYPE}));
