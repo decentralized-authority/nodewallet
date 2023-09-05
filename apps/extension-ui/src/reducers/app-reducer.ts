@@ -10,6 +10,7 @@ export interface AppState {
   activeView: AppView
   windowWidth: number
   windowHeight: number
+  activeAccount: string
 }
 const getInitialState = (): AppState => ({
   userStatus: '',
@@ -18,6 +19,7 @@ const getInitialState = (): AppState => ({
   activeView: AppView.BLANK,
   windowWidth: window.innerWidth,
   windowHeight: window.innerHeight,
+  activeAccount: '',
 });
 export const appSlice = createSlice({
   name: 'appState',
@@ -38,6 +40,9 @@ export const appSlice = createSlice({
     setWindowWidth: (state, action: PayloadAction<{windowWidth: number}>) => {
       state.windowWidth = action.payload.windowWidth;
     },
+    setActiveAccount: (state, action: PayloadAction<{activeAccount: string}>) => {
+      state.activeAccount = action.payload.activeAccount;
+    },
   }
 });
 
@@ -46,7 +51,8 @@ export const {
   setUserAccount,
   setActiveView,
   setWindowHeight,
-  setWindowWidth
+  setWindowWidth,
+  setActiveAccount,
 } = appSlice.actions;
 
 export default appSlice.reducer;

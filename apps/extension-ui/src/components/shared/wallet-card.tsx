@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { generateFakeAddress, getRandomInt, truncateAddress } from '../../util';
 import { useDispatch, useSelector } from 'react-redux';
-import { setActiveView, setUserAccount } from '../../reducers/app-reducer';
+import { setActiveAccount, setActiveView, setUserAccount } from '../../reducers/app-reducer';
 import { AppView } from '../../constants';
 import { UserWallet } from '@nodewallet/types';
 import { RootState } from '../../store';
@@ -16,12 +16,10 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
   const errorHandler = useContext(ErrorHandlerContext);
   const api = useContext(ApiContext);
   const dispatch = useDispatch();
-  // const {
-  //   userAccount,
-  // } = useSelector(({ appState }: RootState) => appState);
 
-  const onAddressClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+  const onAddressClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, id: string) => {
     e.preventDefault();
+    dispatch(setActiveAccount({activeAccount: id}));
     dispatch(setActiveView({activeView: AppView.ACCOUNT_DETAIL}))
   };
   const onNewAddressClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
@@ -73,7 +71,7 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
                   .map((ca) => {
                     return (
                       <tr key={ca.id}>
-                        <td className={'font-monospace'}><a href={'#'} title={'View account details'} onClick={onAddressClick}>{truncateAddress(ca.address)}</a></td>
+                        <td className={'font-monospace'}><a href={'#'} title={'View account details'} onClick={e => onAddressClick(e, ca.id)}>{truncateAddress(ca.address)}</a></td>
                         <td><span className={'font-monospace'}>{getRandomInt(1, 300)}</span> <span className={'opacity-75'}>POKT</span></td>
                       </tr>
                     );

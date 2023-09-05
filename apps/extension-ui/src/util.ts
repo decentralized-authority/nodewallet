@@ -26,3 +26,7 @@ export const isTab = (): boolean => {
 export const isValidPassword = (password: string): boolean => {
   return !!password.trim() && password.length >= PASSWORD_MIN_LENGTH;
 };
+
+export const generatePoktscanAccountUrl = (address: string) => {
+  return `https://poktscan.com/account/${address}`;
+}
