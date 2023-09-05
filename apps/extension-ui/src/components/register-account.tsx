@@ -18,6 +18,7 @@ export const RegisterAccount = () => {
   //   userAccount,
   // } = useSelector(({ appState }: RootState) => appState);
 
+  const [ disableSubmit, setDisableSubmit ] = useState(false);
   const [ passwordError, setPasswordError ] = useState('');
   const [ password, setPassword ] = useState('');
   const [ passwordRepeat, setPasswordRepeat ] = useState('');
@@ -26,13 +27,18 @@ export const RegisterAccount = () => {
   const onRegisterClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
       e.preventDefault();
+      if(disableSubmit) {
+        return;
+      }
       if(!isValidPassword(password)) {
         setPasswordError(`Password must be at least ${PASSWORD_MIN_LENGTH} characters in length.`);
         return;
       }
+      setDisableSubmit(true);
       const res = await api.registerUser({password});
       if('error' in res) {
         errorHandler.handle(res.error);
+        setDisableSubmit(false);
       } else {
         console.log('userAccount', res.result);
         dispatch(setUserAccount({
@@ -42,6 +48,7 @@ export const RegisterAccount = () => {
       }
     } catch(err: any) {
       errorHandler.handle(err);
+      setDisableSubmit(false);
     }
   };
 
@@ -101,7 +108,7 @@ export const RegisterAccount = () => {
       </form>
       <button
         className={'btn btn-primary btn-lg mt-4 mb-4'}
-        disabled={!passwordRecoveryNoticeChecked || !password || password !== passwordRepeat}
+        disabled={disableSubmit || !passwordRecoveryNoticeChecked || !password || password !== passwordRepeat}
         onClick={onRegisterClick}
       >Register account</button>
     </Container>

@@ -11,20 +11,20 @@ export const TransactionList = () => {
             <table className={'table mb-0'}>
               <tbody>
                 {[
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
-                  [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
+                  // [getRandomInt(1, 1000).toString(), generateFakeAddress()],
                 ]
                   .map(([amount, address], i) => {
                     const isSent = !!getRandomInt(0, 1);

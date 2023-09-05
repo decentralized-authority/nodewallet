@@ -15,17 +15,24 @@ export const UnlockAccount = () => {
   const api = useContext(ApiContext);
   const errorHandler = useContext(ErrorHandlerContext);
 
+  const [ disableSubmit, setDisableSubmit ] = useState(false);
   const [ passwordError, setPasswordError ] = useState('');
   const [ password, setPassword ] = useState('');
 
   const onSubmit = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
+      if(disableSubmit) {
+        return;
+      }
+      setDisableSubmit(true);
       const res = await api.unlockUserAccount({password});
       if('error' in res) {
         setPasswordError(res.error.message);
+        setDisableSubmit(false);
       } else if(isNull(res.result)) {
         setPasswordError('Invalid password.');
+        setDisableSubmit(false);
       } else {
         const userAccount = res.result;
         console.log('userAccount', userAccount);
@@ -45,6 +52,7 @@ export const UnlockAccount = () => {
       }
     } catch(err: any) {
       errorHandler.handle(err);
+      setDisableSubmit(false);
     }
   };
 
@@ -80,7 +88,7 @@ export const UnlockAccount = () => {
           <button
             type={'submit'}
             className={'btn btn-primary btn-lg mt-4 mb-4'}
-            disabled={!password}
+            disabled={disableSubmit || !password}
           >Unlock</button>
         </div>
       </form>
