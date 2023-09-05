@@ -28,6 +28,7 @@ export const UnlockAccount = () => {
         setPasswordError('Invalid password.');
       } else {
         const userAccount = res.result;
+        console.log('userAccount', userAccount);
         dispatch(setUserAccount({
           userAccount,
         }));

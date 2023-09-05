@@ -34,6 +34,7 @@ export const RegisterAccount = () => {
       if('error' in res) {
         errorHandler.handle(res.error);
       } else {
+        console.log('userAccount', res.result);
         dispatch(setUserAccount({
           userAccount: res.result,
         }));

@@ -2,13 +2,17 @@ import React from 'react';
 import { Container } from './shared/container';
 import { WalletCard } from './shared/wallet-card';
 import { generateFakeAddress } from '../util';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setActiveView } from '../reducers/app-reducer';
 import { AppView } from '../constants';
+import { RootState } from '../store';
 
 export const ManageWallets = () => {
 
   const dispatch = useDispatch();
+  const {
+    userAccount,
+  } = useSelector(({ appState }: RootState) => appState);
 
   const onImportWalletClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -24,9 +28,16 @@ export const ManageWallets = () => {
       <h3 className={'ps-2 pe-2'}>Manage wallets</h3>
       <div className={'flex-grow-1 position-relative'}>
         <div className={'position-absolute top-0 start-0 end-0 bottom-0 overflow-x-hidden overflow-y-auto'}>
-          <WalletCard title={'HD Wallet 2'} addresses={[generateFakeAddress(), generateFakeAddress(), generateFakeAddress()]} />
-          <WalletCard title={'Legacy Wallet 1'} addresses={[generateFakeAddress()]} hideAddButton={true} />
-          <WalletCard title={'HD Wallet 1'} addresses={[generateFakeAddress(), generateFakeAddress()]} />
+          {userAccount?.wallets
+            .map((wallet) => {
+              return (
+                <WalletCard wallet={wallet} />
+              );
+            })
+          }
+          {/*<WalletCard title={'HD Wallet 2'} addresses={[generateFakeAddress(), generateFakeAddress(), generateFakeAddress()]} />*/}
+          {/*<WalletCard title={'Legacy Wallet 1'} addresses={[generateFakeAddress()]} hideAddButton={true} />*/}
+          {/*<WalletCard title={'HD Wallet 1'} addresses={[generateFakeAddress(), generateFakeAddress()]} />*/}
         </div>
       </div>
       <div className={'d-flex flex-row justify-content-start p-2'}>

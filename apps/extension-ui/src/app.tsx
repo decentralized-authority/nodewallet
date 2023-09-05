@@ -76,9 +76,10 @@ export const App = () => {
               dispatch(setActiveView({activeView: AppView.UNLOCK_ACCOUNT}));
             } else {
               const { result: account } = getRes;
+              console.log('userAccount', account);
               if(account.wallets.length === 0) {
                 if(isTab()) {
-                  dispatch(setActiveView({activeView: AppView.SELECT_IMPORT_TYPE}));
+                  dispatch(setActiveView({activeView: AppView.SELECT_NEW_WALLET_TYPE}));
                 } else {
                   await api.startNewWallet();
                   window.close();

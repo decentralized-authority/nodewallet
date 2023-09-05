@@ -1,10 +1,17 @@
 import {
   APIEvent,
   ClientAPI,
-  GenerateMnemonicResult, GetUserAccountResult,
-  GetUserStatusResult,
+  GenerateMnemonicResult,
+  GetUserAccountResult,
+  GetUserStatusResult, InsertHdWalletParams, InsertHdWalletResult,
   RegisterUserParams,
-  RegisterUserResult, StartNewWalletResult, StartOnboardingResult, UnlockUserAccountParams, UnlockUserAccountResult
+  RegisterUserResult,
+  StartNewWalletResult,
+  StartOnboardingResult,
+  UnlockUserAccountParams,
+  UnlockUserAccountResult,
+  ValidateMnemonicParams,
+  ValidateMnemonicResult,
 } from '@nodewallet/types';
 import { Messager } from '@nodewallet/util-browser';
 
@@ -42,6 +49,14 @@ export class API implements ClientAPI {
 
   async generateMnemonic(): Promise<GenerateMnemonicResult> {
     return await this._messager.send(APIEvent.GENERATE_MNEMONIC);
+  }
+
+  async validateMnemonic(params: ValidateMnemonicParams): Promise<ValidateMnemonicResult> {
+    return await this._messager.send(APIEvent.VALIDATE_MNEMONIC, params);
+  }
+
+  async insertHdWallet(params: InsertHdWalletParams): Promise<InsertHdWalletResult> {
+    return await this._messager.send(APIEvent.INSERT_HD_WALLET, params);
   }
 
 }

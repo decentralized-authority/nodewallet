@@ -1,11 +1,12 @@
 import { AppLang, ChainType, CoinType } from '@nodewallet/constants';
 
 export interface CryptoAccount {
+  id: string
   name: string
   network: CoinType
   chain: ChainType
   derivationPath: string
-  idx: number
+  index: number
   address: string
   privateKey?: string
   publicKey: string

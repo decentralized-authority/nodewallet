@@ -1,5 +1,6 @@
 import { UserStatus } from '@nodewallet/constants';
 import { UserAccount } from './user';
+import { UserWallet } from './wallet';
 
 export enum APIEvent {
   START_ONBOARDING = 'START_ONBOARDING',
@@ -9,6 +10,8 @@ export enum APIEvent {
   UNLOCK_USER_ACCOUNT = 'UNLOCK_USER_ACCOUNT',
   GET_USER_ACCOUNT = 'GET_USER_ACCOUNT',
   GENERATE_MNEMONIC = 'GENERATE_MNEMONIC',
+  VALIDATE_MNEMONIC = 'VALIDATE_MNEMONIC',
+  INSERT_HD_WALLET = 'INSERT_HD_WALLET',
 }
 
 export interface ErrorResult {
@@ -42,6 +45,18 @@ export type GetUserAccountResult = ErrorResult | {
 export type GenerateMnemonicResult = ErrorResult | {
   result: string
 }
+export interface ValidateMnemonicParams {
+  mnemonic: string
+}
+export type ValidateMnemonicResult = ErrorResult | {
+  result: boolean
+}
+export interface InsertHdWalletParams {
+  mnemonic: string
+}
+export type InsertHdWalletResult = ErrorResult | {
+  result: UserWallet
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -57,5 +72,9 @@ export interface ClientAPI {
   getUserAccount(): Promise<GetUserAccountResult>
 
   generateMnemonic(): Promise<GenerateMnemonicResult>
+
+  validateMnemonic(params: ValidateMnemonicParams): Promise<ValidateMnemonicResult>
+
+  insertHdWallet(params: InsertHdWalletParams): Promise<InsertHdWalletResult>
 
 }
