@@ -2,14 +2,53 @@ import _argon2 from 'argon2-browser';
 import { pbkdf2 as _pbkdf2 } from '@ethersproject/pbkdf2';
 import { toUtf8Bytes } from '@ethersproject/strings';
 import crypto from 'crypto';
-import {
-  AES256GCMConfig,
-  Argon2Config, defaultAES256GCMConfig,
-  defaultArgon2Config,
-  defaultPBKDF2Config,
-  EncryptionAlgorithm,
-  PBKDF2Config
-} from '@nodewallet/constants';
+
+export const defaultSeedBits = 256;
+
+export enum HashFunction {
+  ARGON2 = 'argon2',
+  PBKDF2 = 'pbkdf2',
+}
+
+export interface PBKDF2Config {
+  algorithm: HashFunction;
+  iterations: number;
+  hashAlgorithm: string;
+}
+export const defaultPBKDF2Config: PBKDF2Config = {
+  algorithm: HashFunction.PBKDF2,
+  iterations: 1000000,
+  hashAlgorithm: 'sha512',
+};
+
+export enum EncryptionAlgorithm {
+  AES_256_GCM = 'aes-256-gcm',
+}
+export interface AES256GCMConfig {
+  algorithm: EncryptionAlgorithm.AES_256_GCM;
+  keyLength: number; // bytes
+  ivLength: number;  // bytes
+}
+export const defaultAES256GCMConfig: AES256GCMConfig = {
+  algorithm: EncryptionAlgorithm.AES_256_GCM,
+  keyLength: 32, // bytes
+  ivLength: 12,  // bytes
+}
+
+export interface Argon2Config {
+  algorithm: HashFunction.ARGON2;
+  time: number;
+  mem: number;
+  parallelism: number;
+  type: _argon2.ArgonType;
+}
+export const defaultArgon2Config: Argon2Config = {
+  algorithm: HashFunction.ARGON2,
+  time: 3,             // iterations
+  mem: 64 * 1024,      // memory in KiB
+  parallelism: 4,
+  type: _argon2.ArgonType.Argon2id, // Argon2d, Argon2i, Argon2id
+};
 
 export const argon2 = async (password: string, salt: string, hashLength: number, config: Argon2Config = defaultArgon2Config): Promise<string> => {
   const { hashHex } = await _argon2.hash({
@@ -77,7 +116,7 @@ export const encryptAES256GCM = async (data: any, key: string, config: AES256GCM
   };
 };
 
-export const decrypt = async (data: EncryptionResult, key: string): Promise<string> => {
+export const decrypt = async (data: EncryptionResult, key: string): Promise<any> => {
   const { ciphertext, iv , tag} = data;
   const decipher = crypto.createDecipheriv(
     data.algorithm,

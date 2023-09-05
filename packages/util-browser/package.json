@@ -1,0 +1,21 @@
+{
+  "name": "@nodewallet/util-browser",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "source": "./src/index.ts",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "clean": "node scripts/clean.js dist .turbo node_modules",
+    "dev": "tsc -w",
+    "test": "ts-mocha -p ./tsconfig.json './src/**/*.spec.ts'"
+  },
+  "devDependencies": {
+    "@types/mocha": "^8.2.3",
+    "argon2-browser": "^1.18.0",
+    "mocha": "^8.0.0",
+    "@nodewallet/constants": "*",
+    "should": "^13.2.3"
+  }
+}

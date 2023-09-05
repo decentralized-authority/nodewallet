@@ -5,26 +5,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { setActiveView, setUserAccount } from '../reducers/app-reducer';
 import { AppView } from '../constants';
+import { AppLang } from '@nodewallet/constants';
 
 export const TOS = () => {
 
   const dispatch = useDispatch();
-  const {
-    userAccount,
-  } = useSelector(({ appState }: RootState) => appState);
 
   const onAcceptClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     dispatch(setActiveView({activeView: AppView.REGISTER_ACCOUNT}));
-    dispatch(setUserAccount({
-      userAccount: {
-        tosAccepted: new Date().toISOString(),
-        settings: {
-          showTestnets: false,
-        },
-        wallets: [],
-      },
-    }));
   };
   return (
     <Container className={'flex-column justify-content-start align-items-center p-2'}>

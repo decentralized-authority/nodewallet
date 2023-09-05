@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Container } from './shared/container';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { setAccountRegistered, setActiveView } from '../reducers/app-reducer';
+import { setUserAccount, setActiveView } from '../reducers/app-reducer';
 import { AppView, PASSWORD_MIN_LENGTH } from '../constants';
 import { isValidPassword } from '../util';
+import { ApiContext } from '../hooks/api-context';
+import { ErrorHandlerContext } from '../hooks/error-handler-context';
 
 export const RegisterAccount = () => {
 
   const dispatch = useDispatch();
+  const api = useContext(ApiContext);
+  const errorHandler = useContext(ErrorHandlerContext);
+
   // const {
   //   userAccount,
   // } = useSelector(({ appState }: RootState) => appState);
@@ -18,19 +23,30 @@ export const RegisterAccount = () => {
   const [ passwordRepeat, setPasswordRepeat ] = useState('');
   const [ passwordRecoveryNoticeChecked, setPasswordRecoveryNoticeChecked ] = useState(false);
 
-  const onRegisterClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-    if(!isValidPassword(password)) {
-      setPasswordError(`Password must be at least ${PASSWORD_MIN_LENGTH} characters in length.`);
-      return;
+  const onRegisterClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    try {
+      e.preventDefault();
+      if(!isValidPassword(password)) {
+        setPasswordError(`Password must be at least ${PASSWORD_MIN_LENGTH} characters in length.`);
+        return;
+      }
+      const res = await api.registerUser({password});
+      if('error' in res) {
+        errorHandler.handle(res.error);
+      } else {
+        dispatch(setUserAccount({
+          userAccount: res.result,
+        }));
+        dispatch(setActiveView({activeView: AppView.SELECT_NEW_WALLET_TYPE}));
+      }
+    } catch(err: any) {
+      errorHandler.handle(err);
     }
-    // ToDo encrypt and save user account
-    dispatch(setAccountRegistered({accountRegistered: true}));
-    dispatch(setActiveView({activeView: AppView.SELECT_NEW_WALLET_TYPE}));
   };
+
   return (
     <Container className={'flex-column justify-content-start align-items-center p-2'}>
-      <h1 className={'mt-3'}>Register User Password</h1>
+      <h1 className={'mt-3'}>Register User Account</h1>
       <p className={'text-center'}>All user data stored in NodeWallet is encrypted. Please enter and confirm a password which will be used to decrypt and unlock your user data. The password must be at least {PASSWORD_MIN_LENGTH} characters in length. NodeWallet cannot recover lost or forgotten passwords.</p>
       <form className={'w-100 overflow-y-auto overflow-x-hidden'}>
         <div className={'row justify-content-center'}>
@@ -86,7 +102,7 @@ export const RegisterAccount = () => {
         className={'btn btn-primary btn-lg mt-4 mb-4'}
         disabled={!passwordRecoveryNoticeChecked || !password || password !== passwordRepeat}
         onClick={onRegisterClick}
-      >Save account password</button>
+      >Register account</button>
     </Container>
   );
 };

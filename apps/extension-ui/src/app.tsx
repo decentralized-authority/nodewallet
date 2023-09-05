@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AccountDetail } from './components/account-detail';
 import { Navbar } from './components/shared/navbar';
@@ -10,18 +10,26 @@ import { NewHdWallet } from './components/new-hd-wallet';
 import { SelectImportType } from './components/select-import-type';
 import $ from 'jquery';
 import { isTab } from './util';
-import { setActiveView, setUserAccount, setWindowHeight, setWindowWidth } from './reducers/app-reducer';
+import { setActiveView, setUserStatus } from './reducers/app-reducer';
 import { TOS } from './components/tos';
 import { RegisterAccount } from './components/register-account';
 import { SelectNewWalletType } from './components/select-new-wallet-type';
-import { UserAccount } from '@nodewallet/types';
+import { GetUserStatusResult } from '@nodewallet/types';
+import { ApiContext } from './hooks/api-context';
+import { ErrorHandlerContext } from './hooks/error-handler-context';
+import { UserStatus } from '@nodewallet/constants';
+import { UnlockAccount } from './components/unlock-account';
+import isNull from 'lodash/isNull';
 
 export const App = () => {
 
   const dispatch = useDispatch();
+  const api = useContext(ApiContext);
+  const errorHandler = useContext(ErrorHandlerContext);
 
   const {
     activeView,
+    userStatus,
     userAccount,
     windowWidth,
   } = useSelector(({ appState }: RootState) => appState);
@@ -44,23 +52,50 @@ export const App = () => {
       });
     }
 
-    window.addEventListener('resize', () => {
-      dispatch(setWindowHeight({windowHeight: window.innerHeight}));
-      dispatch(setWindowWidth({windowWidth: window.innerWidth}));
-    });
+    api.getUserStatus()
+      .then(async (res: GetUserStatusResult) => {
+        if('error' in res) {
+          errorHandler.handle(res.error);
+        } else {
+          const { result } = res;
+          if(result === UserStatus.NOT_REGISTERED) {
+            if(isTab()) {
+              dispatch(setActiveView({activeView: AppView.TOS}));
+            } else {
+              await api.startOnboarding();
+              window.close();
+            }
+          } else if(result === UserStatus.LOCKED) {
+            dispatch(setActiveView({activeView: AppView.UNLOCK_ACCOUNT}));
+          } else if(result === UserStatus.UNLOCKED) {
+            const getRes = await api.getUserAccount();
+            if('error' in getRes) {
+              errorHandler.handle(getRes.error);
+            } else if(isNull(getRes.result)) {
+              dispatch(setUserStatus({userStatus: UserStatus.LOCKED}));
+              dispatch(setActiveView({activeView: AppView.UNLOCK_ACCOUNT}));
+            } else {
+              const { result: account } = getRes;
+              if(account.wallets.length === 0) {
+                if(isTab()) {
+                  dispatch(setActiveView({activeView: AppView.SELECT_IMPORT_TYPE}));
+                } else {
+                  await api.startNewWallet();
+                  window.close();
+                }
+              } else {
+                dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}));
+              }
+            }
+          }
+          dispatch(setUserStatus({
+            userStatus: result,
+          }));
+        }
+      })
+      .catch(err => errorHandler.handle(err));
 
-    // ToDo get user account from background worker
-    // const userAccount: UserAccount = {
-    //   tosAccepted: '',
-    // };
-    // dispatch(setUserAccount({
-    //   userAccount,
-    // }));
-    // if (!userAccount.tosAccepted) {
-    //   dispatch(setActiveView({activeView: AppView.TOS}));
-    // }
-
-  }, [dispatch]);
+  }, [dispatch, api, errorHandler]);
 
   const styles = {
     outerFlexContainer: {
@@ -86,13 +121,16 @@ export const App = () => {
       >
         <Container>
           {[
+            AppView.BLANK,
             AppView.TOS,
             AppView.REGISTER_ACCOUNT,
             AppView.SELECT_NEW_WALLET_TYPE,
-          ].includes(activeView) ? null : <Navbar />}
+            AppView.UNLOCK_ACCOUNT,
+            AppView.SELECT_IMPORT_TYPE,
+          ].includes(activeView) || !userStatus ? null : <Navbar />}
           <div className={'flex-grow-1 position-relative'}>
             {
-              !userAccount ?
+              (!isTab() && !userStatus) || (activeView === AppView.BLANK) ?
                 <div />
                 :
                 activeView === AppView.REGISTER_ACCOUNT ?
@@ -101,22 +139,25 @@ export const App = () => {
                   activeView === AppView.SELECT_NEW_WALLET_TYPE ?
                     <SelectNewWalletType />
                     :
-                    activeView === AppView.ACCOUNT_DETAIL ?
-                      <AccountDetail />
+                    activeView === AppView.UNLOCK_ACCOUNT ?
+                      <UnlockAccount />
                       :
-                      activeView === AppView.MANAGE_WALLETS ?
-                        <ManageWallets />
+                      activeView === AppView.ACCOUNT_DETAIL ?
+                        <AccountDetail />
                         :
-                        activeView === AppView.NEW_HD_WALLET ?
-                          <NewHdWallet />
+                        activeView === AppView.MANAGE_WALLETS ?
+                          <ManageWallets />
                           :
-                          activeView === AppView.SELECT_IMPORT_TYPE ?
-                            <SelectImportType />
+                          activeView === AppView.NEW_HD_WALLET ?
+                            <NewHdWallet />
                             :
-                            activeView === AppView.TOS ?
-                              <TOS />
+                            activeView === AppView.SELECT_IMPORT_TYPE ?
+                              <SelectImportType />
                               :
-                              <div />
+                              activeView === AppView.TOS ?
+                                <TOS />
+                                :
+                                <div />
               }
           </div>
         </Container>

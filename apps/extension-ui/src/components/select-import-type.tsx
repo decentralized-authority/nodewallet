@@ -15,7 +15,7 @@ export const SelectImportType = () => {
 
   return (
     <Container>
-      <h3 className={'ps-2 pe-2'}><a href={'#'} onClick={onBackClick} title={'Go back to wallets'}><i className={'mdi mdi-arrow-left-top-bold'} /></a> Select Import Type</h3>
+      {/*<h3 className={'ps-2 pe-2'}><a href={'#'} onClick={onBackClick} title={'Go back to wallets'}><i className={'mdi mdi-arrow-left-top-bold'} /></a> Select Import Type</h3>*/}
       <div className={'ps-4 pe-4 flex-grow-1 d-flex flex-column justify-content-center'}>
 
         <div>

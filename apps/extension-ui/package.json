@@ -3,8 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@nodewallet/ui": "*",
+    "@nodewallet/constants": "*",
     "@nodewallet/types": "*",
+    "@nodewallet/ui": "*",
+    "@nodewallet/util-browser": "*",
     "@reduxjs/toolkit": "^1.9.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",

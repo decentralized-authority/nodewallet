@@ -1,10 +1,10 @@
 import should from 'should';
 import { Logger } from './logger';
-import { timeout } from '@nodewallet/util';
+import { timeout } from '@nodewallet/util-browser';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import escapeRegExp from 'lodash/escapeRegExp';
-import { storageKeys } from '@nodewallet/constants';
+import { LocalStorageKey } from '@nodewallet/constants';
 
 dayjs.extend(utc);
 
@@ -42,7 +42,7 @@ describe('Logger', function() {
       // @ts-ignore
       logger._storage = {
         set: async (obj)  => {
-          const { [storageKeys.LOGS]: val } = obj;
+          const { [LocalStorageKey.LOGS]: val } = obj;
           setCalled = true;
           logsSavedToStorage = val;
         },

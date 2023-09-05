@@ -1,5 +1,5 @@
 import { StorageManager } from './storage-manager';
-import { storageKeys } from '@nodewallet/constants';
+import { LocalStorageKey } from '@nodewallet/constants';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import EventEmitter from 'events';
@@ -34,7 +34,7 @@ export class Logger extends EventEmitter {
 
   _save(): void {
     if(this._storage) {
-      this._storage.set({[storageKeys.LOGS]: this._logs})
+      this._storage.set({[LocalStorageKey.LOGS]: this._logs})
         .catch(console.error);
     }
   }

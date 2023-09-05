@@ -1,4 +1,4 @@
-import { ChainType, CoinType } from '@nodewallet/constants';
+import { AppLang, ChainType, CoinType } from '@nodewallet/constants';
 
 export interface CryptoAccount {
   name: string
@@ -20,5 +20,7 @@ export interface UserWallet {
   name: string
   createdAt: string // ISO data string
   legacy: boolean // true if it is not an HD wallet
+  passphrase?: string
+  language: AppLang
   accounts: WalletAccount[]
 }
