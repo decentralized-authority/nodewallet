@@ -2,11 +2,25 @@ import { AppLang, ChainType, CoinType, LocalStorageKey, UserStatus } from '@node
 import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
-  APIEvent, CryptoAccount, GetUserAccountResult,
-  GetUserStatusResult, InsertHdWalletParams, InsertHdWalletResult, RegisterUserParams,
-  RegisterUserResult, StartNewWalletResult,
-  StartOnboardingResult, UnlockUserAccountParams, UnlockUserAccountResult,
-  UserAccount, UserWallet, ValidateMnemonicParams, ValidateMnemonicResult, WalletAccount
+  APIEvent,
+  CryptoAccount,
+  GetUserAccountResult,
+  GetUserStatusResult,
+  InsertCryptoAccountParams,
+  InsertCryptoAccountResult,
+  InsertHdWalletParams,
+  InsertHdWalletResult,
+  RegisterUserParams,
+  RegisterUserResult,
+  StartNewWalletResult,
+  StartOnboardingResult,
+  UnlockUserAccountParams,
+  UnlockUserAccountResult,
+  UserAccount,
+  UserWallet,
+  ValidateMnemonicParams,
+  ValidateMnemonicResult,
+  WalletAccount
 } from '@nodewallet/types';
 import { Messager, prepMnemonic } from '@nodewallet/util-browser';
 import dayjs from 'dayjs';
@@ -267,6 +281,49 @@ export const startBackground = () => {
     userAccount.wallets.push(newWallet);
     await encryptSaveUserAccount(userAccount);
     return {result: sanitizeUserWallet(newWallet)};
+  });
+
+  messager.register(APIEvent.INSERT_CRYPTO_ACCOUNT, async ({ walletId, network, chain }: InsertCryptoAccountParams): Promise<InsertCryptoAccountResult> => {
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const walletIdx = userAccount.wallets.findIndex(w => w.id === walletId);
+    if(walletIdx < 0) {
+      throw new Error('Wallet not found.');
+    }
+    let walletAccountIdx = userAccount.wallets[walletIdx].accounts.findIndex(a => a.network === network && a.chain === chain);
+    if(walletAccountIdx < 0) {
+      const newLength = userAccount.wallets[walletIdx].accounts.push({
+        network,
+        chain,
+        accounts: [],
+      });
+      walletAccountIdx = newLength - 1;
+    }
+    const lastDerivationIdx = userAccount.wallets[walletIdx].accounts[walletAccountIdx].accounts
+      .reduce((num, a) => {
+        return a.index > num ? a.index : num;
+      }, 0);
+    const ed25519Utils = new ED25519Utils(PoktUtils.chainMeta[chain].derivationPath);
+    const phrase = userAccount.wallets[walletIdx].passphrase;
+    if(!phrase) {
+      throw new Error('Wallet passphrase not found.');
+    }
+    const accountNode = await ed25519Utils.fromPhrase(phrase, lastDerivationIdx + 1);
+    const newCryptAccount: CryptoAccount = {
+      id: generateCryptoAccountId(network, chain, accountNode.address),
+      name: `${network} Account ${accountNode.index + 1}`,
+      network,
+      chain,
+      derivationPath: ed25519Utils.pathAtIdx(accountNode.index),
+      index: accountNode.index,
+      address: accountNode.address,
+      privateKey: accountNode.privateKey,
+      publicKey: accountNode.publicKey,
+    };
+    userAccount.wallets[walletIdx].accounts[walletAccountIdx].accounts.push(newCryptAccount);
+    await encryptSaveUserAccount(userAccount);
+    return {result: sanitizeCryptoAccount(newCryptAccount)};
   });
 
   chrome.runtime.onInstalled.addListener(async ({ reason }) => {

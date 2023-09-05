@@ -1,6 +1,6 @@
-import { UserStatus } from '@nodewallet/constants';
+import { ChainType, CoinType, UserStatus } from '@nodewallet/constants';
 import { UserAccount } from './user';
-import { UserWallet } from './wallet';
+import { CryptoAccount, UserWallet } from './wallet';
 
 export enum APIEvent {
   START_ONBOARDING = 'START_ONBOARDING',
@@ -12,6 +12,7 @@ export enum APIEvent {
   GENERATE_MNEMONIC = 'GENERATE_MNEMONIC',
   VALIDATE_MNEMONIC = 'VALIDATE_MNEMONIC',
   INSERT_HD_WALLET = 'INSERT_HD_WALLET',
+  INSERT_CRYPTO_ACCOUNT = 'INSERT_CRYPTO_ACCOUNT',
 }
 
 export interface ErrorResult {
@@ -57,6 +58,14 @@ export interface InsertHdWalletParams {
 export type InsertHdWalletResult = ErrorResult | {
   result: UserWallet
 }
+export interface InsertCryptoAccountParams {
+  walletId: string
+  network: CoinType,
+  chain: ChainType,
+}
+export type InsertCryptoAccountResult = ErrorResult | {
+  result: CryptoAccount
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -76,5 +85,7 @@ export interface ClientAPI {
   validateMnemonic(params: ValidateMnemonicParams): Promise<ValidateMnemonicResult>
 
   insertHdWallet(params: InsertHdWalletParams): Promise<InsertHdWalletResult>
+
+  insertCryptoAccount(params: InsertCryptoAccountParams): Promise<InsertCryptoAccountResult>
 
 }

@@ -3,7 +3,7 @@ import {
   ClientAPI,
   GenerateMnemonicResult,
   GetUserAccountResult,
-  GetUserStatusResult, InsertHdWalletParams, InsertHdWalletResult,
+  GetUserStatusResult, InsertCryptoAccountParams, InsertCryptoAccountResult, InsertHdWalletParams, InsertHdWalletResult,
   RegisterUserParams,
   RegisterUserResult,
   StartNewWalletResult,
@@ -57,6 +57,10 @@ export class API implements ClientAPI {
 
   async insertHdWallet(params: InsertHdWalletParams): Promise<InsertHdWalletResult> {
     return await this._messager.send(APIEvent.INSERT_HD_WALLET, params);
+  }
+
+  async insertCryptoAccount(params: InsertCryptoAccountParams): Promise<InsertCryptoAccountResult> {
+    return await this._messager.send(APIEvent.INSERT_CRYPTO_ACCOUNT, params);
   }
 
 }

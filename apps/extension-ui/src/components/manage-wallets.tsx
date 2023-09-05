@@ -16,11 +16,11 @@ export const ManageWallets = () => {
 
   const onImportWalletClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: AppView.SELECT_IMPORT_TYPE}));
+    // dispatch(setActiveView({activeView: AppView.SELECT_IMPORT_TYPE}));
   };
   const onNewWalletClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: AppView.NEW_HD_WALLET}));
+    // dispatch(setActiveView({activeView: AppView.NEW_HD_WALLET}));
   };
 
   return (
