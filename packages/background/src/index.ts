@@ -3,7 +3,7 @@ import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
   APIEvent,
-  CryptoAccount,
+  CryptoAccount, GetAccountBalancesResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
@@ -36,6 +36,13 @@ import {
 } from '@nodewallet/util';
 import { ED25519Utils, isValidMnemonic, mnemonicToSeed, PoktUtils, seedToMasterId } from '@nodewallet/wallet-utils';
 import omit from 'lodash/omit';
+
+const rpcEndpoints: {[network: string]: {[chain: string]: string}} = {
+  [CoinType.POKT]: {
+    [ChainType.MAINNET]: process.env.POKT_MAINNET_ENDPOINT ||'',
+    [ChainType.TESTNET]: process.env.POKT_TESTNET_ENDPOINT ||'',
+  }
+};
 
 const openTosTab = async () => {
   await chrome.tabs.create({
@@ -351,6 +358,53 @@ export const startBackground = () => {
     await sessionManager.remove(SessionStorageKey.USER_KEY);
     await sessionManager.remove(SessionStorageKey.ENCRYPTION_SETTINGS);
     return {result: true};
+  });
+
+  const updateBalances = async (): Promise<void> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      return;
+    }
+    const balances: {[id: string]: string} = {};
+    const promises: Promise<void>[] = [];
+    for(const wallet of userAccount.wallets) {
+      for(const walletAccount of wallet.accounts) {
+        for(const account of walletAccount.accounts) {
+          promises.push((async () => {
+            switch(account.network) {
+              case CoinType.POKT: {
+                const endpoint = rpcEndpoints[account.network][account.chain];
+                if(!endpoint) {
+                  balances[account.id] = '0';
+                } else {
+                  try {
+                    const res = await PoktUtils.getBalance(endpoint, account.address);
+                    balances[account.id] = res.toString();
+                  } catch(err) {
+                    balances[account.id] = '0';
+                  }
+                }
+                break;
+              } default: {
+                balances[account.id] = '0';
+              }
+            }
+          })());
+        }
+      }
+    }
+    await Promise.all(promises);
+    await sessionManager.set(SessionStorageKey.BALANCES, balances);
+  };
+  setInterval(updateBalances, 30000);
+
+  messager.register(APIEvent.GET_ACCOUNT_BALANCES, async (): Promise<GetAccountBalancesResult> => {
+    let balances = await sessionManager.get(SessionStorageKey.BALANCES);
+    if(!balances) {
+      await updateBalances();
+      balances = await sessionManager.get(SessionStorageKey.BALANCES) || {};
+    }
+    return {result: balances};
   });
 
   chrome.runtime.onInstalled.addListener(async ({ reason }) => {

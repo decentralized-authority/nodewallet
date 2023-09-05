@@ -14,6 +14,7 @@ export enum SessionStorageKey {
   USER_ACCOUNT = 'USER_ACCOUNT',
   USER_KEY = 'USER_KEY',
   ENCRYPTION_SETTINGS = 'ENCRYPTION_SETTINGS',
+  BALANCES = 'BALANCES',
 }
 
 export enum CoinType {

@@ -16,6 +16,9 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
   const errorHandler = useContext(ErrorHandlerContext);
   const api = useContext(ApiContext);
   const dispatch = useDispatch();
+  const {
+    accountBalances,
+  } = useSelector(({ appState }: RootState) => appState);
 
   const onAddressClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, id: string) => {
     e.preventDefault();
@@ -72,7 +75,7 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
                     return (
                       <tr key={ca.id}>
                         <td className={'font-monospace'}><a href={'#'} title={'View account details'} onClick={e => onAddressClick(e, ca.id)}>{truncateAddress(ca.address)}</a></td>
-                        <td><span className={'font-monospace'}>{getRandomInt(1, 300)}</span> <span className={'opacity-75'}>POKT</span></td>
+                        <td><span className={'font-monospace'}>{accountBalances[ca.id] || '0'}</span> <span className={'opacity-75'}>POKT</span></td>
                       </tr>
                     );
                   });

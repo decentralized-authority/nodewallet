@@ -1,13 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { Container } from './shared/container';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { setUserAccount, setActiveView } from '../reducers/app-reducer';
-import { AppView, PASSWORD_MIN_LENGTH } from '../constants';
+import { useDispatch } from 'react-redux';
+import { setActiveView, setUserAccount, setUserStatus } from '../reducers/app-reducer';
+import { AppView } from '../constants';
 import { isTab, isValidPassword } from '../util';
 import { ApiContext } from '../hooks/api-context';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import isNull from 'lodash/isNull';
+import { UserStatus } from '@nodewallet/constants';
 
 export const UnlockAccount = () => {
 
@@ -39,6 +39,7 @@ export const UnlockAccount = () => {
         dispatch(setUserAccount({
           userAccount,
         }));
+        dispatch(setUserStatus({userStatus: UserStatus.UNLOCKED}));
         if(userAccount.wallets.length === 0) {
           if(isTab()) {
             dispatch(setActiveView({activeView: AppView.SELECT_NEW_WALLET_TYPE}));

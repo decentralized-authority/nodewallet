@@ -14,6 +14,7 @@ export enum APIEvent {
   INSERT_HD_WALLET = 'INSERT_HD_WALLET',
   INSERT_CRYPTO_ACCOUNT = 'INSERT_CRYPTO_ACCOUNT',
   LOCK_USER_ACCOUNT = 'LOCK_USER_ACCOUNT',
+  GET_ACCOUNT_BALANCES = 'GET_ACCOUNT_BALANCES',
 }
 
 export interface ErrorResult {
@@ -70,6 +71,9 @@ export type InsertCryptoAccountResult = ErrorResult | {
 export type LockUserAccountResult = ErrorResult | {
   result: true
 }
+export type GetAccountBalancesResult = ErrorResult | {
+  result: {[id: string]: string}
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -93,5 +97,7 @@ export interface ClientAPI {
   insertCryptoAccount(params: InsertCryptoAccountParams): Promise<InsertCryptoAccountResult>
 
   lockUserAccount(): Promise<LockUserAccountResult>
+
+  getAccountBalances(): Promise<GetAccountBalancesResult>
 
 }

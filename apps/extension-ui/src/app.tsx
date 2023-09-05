@@ -10,7 +10,7 @@ import { NewHdWallet } from './components/new-hd-wallet';
 import { SelectImportType } from './components/select-import-type';
 import $ from 'jquery';
 import { isTab } from './util';
-import { setActiveView, setUserAccount, setUserStatus } from './reducers/app-reducer';
+import { setAccountBalances, setActiveView, setUserAccount, setUserStatus } from './reducers/app-reducer';
 import { TOS } from './components/tos';
 import { RegisterAccount } from './components/register-account';
 import { SelectNewWalletType } from './components/select-new-wallet-type';
@@ -97,6 +97,32 @@ export const App = () => {
       .catch(err => errorHandler.handle(err));
 
   }, [dispatch, api, errorHandler]);
+
+  useEffect(() => {
+
+    const getAccountBalances = async () => {
+      try {
+        const res = await api.getAccountBalances();
+        if('error' in res) {
+          errorHandler.handle(res.error);
+        } else {
+          dispatch(setAccountBalances({accountBalances: res.result}));
+        }
+      } catch(err: any) {
+        errorHandler.handle(err);
+      }
+    };
+
+    let interval: NodeJS.Timer;
+    if(userStatus === UserStatus.UNLOCKED) {
+      interval = setInterval(getAccountBalances, 10000);
+      getAccountBalances()
+        .catch(err => errorHandler.handle(err));
+    }
+    return () => {
+      clearInterval(interval);
+    };
+  }, [dispatch, api, errorHandler, userStatus]);
 
   const styles = {
     outerFlexContainer: {

@@ -3,6 +3,8 @@ import { AppView } from '../constants';
 import { UserAccount } from '@nodewallet/types';
 import { UserStatus } from '@nodewallet/constants';
 
+type AccountBalances = {[id: string]: string}
+
 export interface AppState {
   userStatus: UserStatus|''
   userAccount: UserAccount|null
@@ -11,6 +13,7 @@ export interface AppState {
   windowWidth: number
   windowHeight: number
   activeAccount: string
+  accountBalances: AccountBalances
 }
 const getInitialState = (): AppState => ({
   userStatus: '',
@@ -20,6 +23,7 @@ const getInitialState = (): AppState => ({
   windowWidth: window.innerWidth,
   windowHeight: window.innerHeight,
   activeAccount: '',
+  accountBalances: {},
 });
 export const appSlice = createSlice({
   name: 'appState',
@@ -43,6 +47,9 @@ export const appSlice = createSlice({
     setActiveAccount: (state, action: PayloadAction<{activeAccount: string}>) => {
       state.activeAccount = action.payload.activeAccount;
     },
+    setAccountBalances: (state, action: PayloadAction<{accountBalances: AccountBalances}>) => {
+      state.accountBalances = action.payload.accountBalances;
+    },
   }
 });
 
@@ -53,6 +60,7 @@ export const {
   setWindowHeight,
   setWindowWidth,
   setActiveAccount,
+  setAccountBalances,
 } = appSlice.actions;
 
 export default appSlice.reducer;

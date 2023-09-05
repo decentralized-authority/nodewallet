@@ -1,7 +1,7 @@
 import {
   APIEvent,
   ClientAPI,
-  GenerateMnemonicResult,
+  GenerateMnemonicResult, GetAccountBalancesResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
@@ -70,6 +70,10 @@ export class API implements ClientAPI {
 
   async lockUserAccount(): Promise<LockUserAccountResult> {
     return await this._messager.send(APIEvent.LOCK_USER_ACCOUNT);
+  }
+
+  async getAccountBalances(): Promise<GetAccountBalancesResult> {
+    return await this._messager.send(APIEvent.GET_ACCOUNT_BALANCES);
   }
 
 }
