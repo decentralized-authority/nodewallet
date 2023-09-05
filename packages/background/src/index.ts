@@ -9,7 +9,7 @@ import {
   InsertCryptoAccountParams,
   InsertCryptoAccountResult,
   InsertHdWalletParams,
-  InsertHdWalletResult,
+  InsertHdWalletResult, LockUserAccountResult,
   RegisterUserParams,
   RegisterUserResult,
   StartNewWalletResult,
@@ -344,6 +344,13 @@ export const startBackground = () => {
     await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
     await encryptSaveUserAccount(userAccount);
     return {result: sanitizeCryptoAccount(newCryptAccount)};
+  });
+
+  messager.register(APIEvent.LOCK_USER_ACCOUNT, async (): Promise<LockUserAccountResult> => {
+    await sessionManager.remove(SessionStorageKey.USER_ACCOUNT);
+    await sessionManager.remove(SessionStorageKey.USER_KEY);
+    await sessionManager.remove(SessionStorageKey.ENCRYPTION_SETTINGS);
+    return {result: true};
   });
 
   chrome.runtime.onInstalled.addListener(async ({ reason }) => {
