@@ -54,6 +54,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/bootstrap": "^5.2.6",
     "@types/jquery": "^3.5.17",
     "@types/markdown-it": "^13.0.1",
     "@types/uuid": "^9.0.2",

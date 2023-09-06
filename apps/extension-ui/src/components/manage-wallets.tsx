@@ -11,6 +11,7 @@ export const ManageWallets = () => {
 
   const dispatch = useDispatch();
   const {
+    activeChain,
     userAccount,
   } = useSelector(({ appState }: RootState) => appState);
 

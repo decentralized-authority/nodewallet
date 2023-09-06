@@ -10,14 +10,20 @@ import { NewHdWallet } from './components/new-hd-wallet';
 import { SelectImportType } from './components/select-import-type';
 import $ from 'jquery';
 import { isTab } from './util';
-import { setAccountBalances, setActiveView, setUserAccount, setUserStatus } from './reducers/app-reducer';
+import {
+  setAccountBalances,
+  setActiveChain,
+  setActiveView,
+  setUserAccount,
+  setUserStatus
+} from './reducers/app-reducer';
 import { TOS } from './components/tos';
 import { RegisterAccount } from './components/register-account';
 import { SelectNewWalletType } from './components/select-new-wallet-type';
 import { GetUserStatusResult } from '@nodewallet/types';
 import { ApiContext } from './hooks/api-context';
 import { ErrorHandlerContext } from './hooks/error-handler-context';
-import { UserStatus } from '@nodewallet/constants';
+import { ChainType, LocalStorageKey, UserStatus } from '@nodewallet/constants';
 import { UnlockAccount } from './components/unlock-account';
 import isNull from 'lodash/isNull';
 
@@ -51,6 +57,15 @@ export const App = () => {
         position: 'relative',
       });
     }
+
+    chrome.storage.local.get([LocalStorageKey.SELECTED_CHAIN])
+      .then((res) => {
+        console.log('selectedChain', res);
+        dispatch(setActiveChain({
+          activeChain: res[LocalStorageKey.SELECTED_CHAIN] || ChainType.MAINNET,
+        }));
+      })
+      .catch((err) => errorHandler.handle(err));
 
     api.getUserStatus()
       .then(async (res: GetUserStatusResult) => {

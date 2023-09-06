@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { generateFakeAddress, getRandomInt, truncateAddress } from '../../util';
+import { truncateAddress } from '../../util';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveAccount, setActiveView, setUserAccount } from '../../reducers/app-reducer';
 import { AppView } from '../../constants';
@@ -7,6 +7,7 @@ import { UserWallet } from '@nodewallet/types';
 import { RootState } from '../../store';
 import { ApiContext } from '../../hooks/api-context';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
+import { CoinType } from '@nodewallet/constants';
 
 interface WalletCardProps {
   wallet: UserWallet,
@@ -18,6 +19,7 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
   const dispatch = useDispatch();
   const {
     accountBalances,
+    activeChain,
   } = useSelector(({ appState }: RootState) => appState);
 
   const onAddressClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, id: string) => {
@@ -28,11 +30,10 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
   const onNewAddressClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     try {
       e.preventDefault();
-      const walletAccount = wallet.accounts[0];
       const res = await api.insertCryptoAccount({
         walletId: wallet.id,
-        network: walletAccount.network,
-        chain: walletAccount.chain,
+        network: CoinType.POKT,
+        chain: activeChain,
       });
       if('error' in res) {
         errorHandler.handle(res.error);
@@ -68,6 +69,7 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
           <tbody>
           {
             wallet.accounts
+              .filter((a) => a.chain === activeChain)
               .reduce((arr, a) => {
                 const cryptoAccounts = [...a.accounts]
                   .sort((a, b) => a.index - b.index)

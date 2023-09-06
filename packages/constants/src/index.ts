@@ -9,6 +9,7 @@ export enum LocalStorageKey {
   HASH_SETTINGS = 'HASH_SETTINGS',
   KEY_SALT = 'KEY_SALT',
   ENCRYPTION_SETTINGS = 'ENCRYPTION_SETTINGS',
+  SELECTED_CHAIN = 'SELECTED_CHAIN',
 }
 export enum SessionStorageKey {
   USER_ACCOUNT = 'USER_ACCOUNT',
