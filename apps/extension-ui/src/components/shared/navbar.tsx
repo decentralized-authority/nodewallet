@@ -56,7 +56,7 @@ export const Navbar = () => {
         <img src={'/images/coins/pokt.png'} alt="Pocket" height={30} />
       </a>
       <div className={'flex-grow-1'} />
-      {[AppView.ACCOUNT_DETAIL, AppView.MANAGE_WALLETS].includes(activeView) ?
+      {[AppView.ACCOUNT_DETAIL, AppView.MANAGE_WALLETS, AppView.SEND].includes(activeView) ?
         <h4 className={'ms-1 mt-0 mb-0 dropdown-center'}>
           <a
             href={'#'}

@@ -36,6 +36,7 @@ import {
 } from '@nodewallet/util';
 import { ED25519Utils, isValidMnemonic, mnemonicToSeed, PoktUtils, seedToMasterId } from '@nodewallet/wallet-utils';
 import omit from 'lodash/omit';
+import * as math from 'mathjs';
 
 const rpcEndpoints: {[network: string]: {[chain: string]: string}} = {
   [CoinType.POKT]: {
@@ -379,7 +380,7 @@ export const startBackground = () => {
                 } else {
                   try {
                     const res = await PoktUtils.getBalance(endpoint, account.address);
-                    balances[account.id] = res.toString();
+                    balances[account.id] = PoktUtils.fromBaseDenom(res).toString();
                   } catch(err) {
                     balances[account.id] = '0';
                   }

@@ -26,6 +26,7 @@ import { ErrorHandlerContext } from './hooks/error-handler-context';
 import { ChainType, LocalStorageKey, UserStatus } from '@nodewallet/constants';
 import { UnlockAccount } from './components/unlock-account';
 import isNull from 'lodash/isNull';
+import { Send } from './components/send';
 
 export const App = () => {
 
@@ -199,7 +200,10 @@ export const App = () => {
                               activeView === AppView.TOS ?
                                 <TOS />
                                 :
-                                <div />
+                                activeView === AppView.SEND ?
+                                  <Send />
+                                  :
+                                  <div />
               }
           </div>
         </Container>
