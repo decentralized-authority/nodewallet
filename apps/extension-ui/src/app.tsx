@@ -170,6 +170,7 @@ export const App = () => {
             AppView.SELECT_NEW_WALLET_TYPE,
             AppView.UNLOCK_ACCOUNT,
             AppView.SELECT_IMPORT_TYPE,
+            AppView.NEW_HD_WALLET,
           ].includes(activeView) || !userStatus ? null : <Navbar />}
           <div className={'flex-grow-1 position-relative'}>
             {

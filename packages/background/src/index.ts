@@ -3,7 +3,7 @@ import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
   APIEvent,
-  CryptoAccount, GetAccountBalancesResult,
+  CryptoAccount, GenerateMnemonicResult, GetAccountBalancesResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
@@ -30,11 +30,18 @@ import {
   argon2, Argon2Config,
   decrypt as generalDecrypt,
   defaultAES256GCMConfig,
-  defaultArgon2Config,
+  defaultArgon2Config, defaultSeedBits,
   encryptAES256GCM, EncryptionResult,
   generateSalt
 } from '@nodewallet/util';
-import { ED25519Utils, isValidMnemonic, mnemonicToSeed, PoktUtils, seedToMasterId } from '@nodewallet/wallet-utils';
+import {
+  ED25519Utils,
+  generateMnemonic,
+  isValidMnemonic,
+  mnemonicToSeed,
+  PoktUtils,
+  seedToMasterId
+} from '@nodewallet/wallet-utils';
 import omit from 'lodash/omit';
 import * as math from 'mathjs';
 
@@ -252,6 +259,11 @@ export const startBackground = () => {
       return {result: null};
     }
     return {result: sanitizeUserAccount(userAccount)};
+  });
+
+  messager.register(APIEvent.GENERATE_MNEMONIC, async (): Promise<GenerateMnemonicResult> => {
+    const mnemonic = await generateMnemonic(defaultSeedBits);
+    return {result: mnemonic};
   });
 
   messager.register(APIEvent.VALIDATE_MNEMONIC, async ({ mnemonic }: ValidateMnemonicParams): Promise<ValidateMnemonicResult> => {

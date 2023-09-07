@@ -22,6 +22,7 @@ export const SelectNewWalletType = () => {
   const onNewClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     console.log('onNewClick!');
+    dispatch(setActiveView({activeView: AppView.NEW_HD_WALLET}));
   };
   const onImportPassphraseClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
@@ -48,6 +49,11 @@ export const SelectNewWalletType = () => {
           },
         },
       });
+      if(!val) {
+        // @ts-ignore
+        swal.close();
+        return;
+      }
       const validateRes = await api.validateMnemonic({mnemonic: val});
       if('error' in validateRes || !validateRes.result) {
         await swal({
@@ -66,8 +72,7 @@ export const SelectNewWalletType = () => {
         });
         return;
       }
-      const newWallet = insertRes.result;
-      console.log('newWallet', newWallet);
+      // const newWallet = insertRes.result;
       const updatedUserAccount = await api.getUserAccount();
       if('error' in updatedUserAccount) {
         errorHandler.handle(updatedUserAccount.error);
@@ -75,7 +80,7 @@ export const SelectNewWalletType = () => {
       } else if(updatedUserAccount.result) {
         await swal({
           icon: 'success',
-          title: 'New HD Wallet created successfully!',
+          title: 'New HD Wallet imported successfully!',
         });
         dispatch(setUserAccount({userAccount: updatedUserAccount.result}));
         dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}));
