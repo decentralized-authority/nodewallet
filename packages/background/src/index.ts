@@ -247,6 +247,9 @@ export const startBackground = () => {
     try {
       const decrypted: UserAccount = await decrypt(encrypted);
       await sessionManager.set(SessionStorageKey.USER_ACCOUNT, decrypted);
+
+      await updateBalances();
+
       return { result: sanitizeUserAccount(decrypted) };
     } catch(err) {
       return {result: null};
