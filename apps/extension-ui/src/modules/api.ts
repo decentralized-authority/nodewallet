@@ -10,7 +10,7 @@ import {
   InsertHdWalletResult,
   LockUserAccountResult,
   RegisterUserParams,
-  RegisterUserResult,
+  RegisterUserResult, SendTransactionParams, SendTransactionResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
@@ -74,6 +74,10 @@ export class API implements ClientAPI {
 
   async getAccountBalances(): Promise<GetAccountBalancesResult> {
     return await this._messager.send(APIEvent.GET_ACCOUNT_BALANCES);
+  }
+
+  async sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult> {
+    return await this._messager.send(APIEvent.SEND_TRANSACTION, params);
   }
 
 }

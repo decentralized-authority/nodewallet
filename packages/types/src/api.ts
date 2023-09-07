@@ -15,6 +15,7 @@ export enum APIEvent {
   INSERT_CRYPTO_ACCOUNT = 'INSERT_CRYPTO_ACCOUNT',
   LOCK_USER_ACCOUNT = 'LOCK_USER_ACCOUNT',
   GET_ACCOUNT_BALANCES = 'GET_ACCOUNT_BALANCES',
+  SEND_TRANSACTION = 'SEND_TRANSACTION',
 }
 
 export interface ErrorResult {
@@ -74,6 +75,17 @@ export type LockUserAccountResult = ErrorResult | {
 export type GetAccountBalancesResult = ErrorResult | {
   result: {[id: string]: string}
 }
+export interface SendTransactionParams {
+  accountId: string
+  amount: string
+  recipient: string
+  memo?: string
+}
+export type SendTransactionResult = ErrorResult | {
+  result: {
+    txid: string
+  }
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -99,5 +111,7 @@ export interface ClientAPI {
   lockUserAccount(): Promise<LockUserAccountResult>
 
   getAccountBalances(): Promise<GetAccountBalancesResult>
+
+  sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult>
 
 }

@@ -11,7 +11,7 @@ import {
   InsertHdWalletParams,
   InsertHdWalletResult, LockUserAccountResult,
   RegisterUserParams,
-  RegisterUserResult,
+  RegisterUserResult, SendTransactionParams, SendTransactionResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
@@ -22,7 +22,7 @@ import {
   ValidateMnemonicResult,
   WalletAccount
 } from '@nodewallet/types';
-import { Messager, prepMnemonic } from '@nodewallet/util-browser';
+import { findCryptoAccountInUserAccount, Messager, prepMnemonic } from '@nodewallet/util-browser';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import {
@@ -406,6 +406,44 @@ export const startBackground = () => {
       balances = await sessionManager.get(SessionStorageKey.BALANCES) || {};
     }
     return {result: balances};
+  });
+
+  messager.register(APIEvent.SEND_TRANSACTION, async (params: SendTransactionParams): Promise<SendTransactionResult> => {
+    const { accountId, amount, recipient, memo } = params;
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const cryptoAccount = findCryptoAccountInUserAccount(userAccount, accountId);
+    if(!cryptoAccount) {
+      throw new Error('Account not found.');
+    }
+    switch(cryptoAccount.network) {
+      case CoinType.POKT: {
+        const endpoint = rpcEndpoints[cryptoAccount.network][cryptoAccount.chain];
+        if(!endpoint) {
+          throw new Error(`${cryptoAccount.network} ${cryptoAccount.chain} endpoint not found.`);
+        } else if(!cryptoAccount.privateKey) {
+          throw new Error('Private key not found.');
+        }
+
+        const res = await PoktUtils.send(
+          endpoint,
+          cryptoAccount.privateKey,
+          recipient,
+          cryptoAccount.chain,
+          PoktUtils.toBaseDenom(amount),
+          memo
+        );
+        return {
+          result: {
+            txid: res,
+          },
+        };
+      } default: {
+        throw new Error('Unsupported network.');
+      }
+    }
   });
 
   chrome.runtime.onInstalled.addListener(async ({ reason }) => {

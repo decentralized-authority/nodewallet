@@ -56,7 +56,7 @@ export const Send = () => {
 
       const preppedMemo = memo.trim();
 
-      const modalText = `You are about to send ${preppedAmount} POKT to the following address:\n\n${preppedAddress}.\n\nPlease confirm that you want to continue.`;
+      const modalText = `You are about to send ${preppedAmount} POKT to the following address:\n\n${preppedAddress}\n\nPlease confirm that you want to continue.`;
 
       const confirmed = await swal({
         title: 'Confirm Transaction',
@@ -74,7 +74,24 @@ export const Send = () => {
           }
         }
       });
-
+      if(!confirmed) {
+        return;
+      }
+      const res = await api.sendTransaction({
+        accountId: activeAccount,
+        amount: preppedAmount,
+        recipient: toAddress,
+        memo: preppedMemo,
+      });
+      if('error' in res) {
+        errorHandler.handle(res.error);
+      } else if(res.result.txid) {
+        await swal({
+          title: 'Success!',
+          icon: 'success',
+          text: `Your transaction has been successfully submitted to the network. The transaction ID is:\n\n${res.result.txid}`,
+        });
+      }
     } catch(err: any) {
       errorHandler.handle(err);
     }
