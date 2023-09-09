@@ -4,10 +4,8 @@ import { BalanceCard } from './shared/balance-card';
 import { TransactionList } from './shared/transaction-list';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { routes } from '../constants';
 import { useParams } from 'react-router-dom';
-import { ChainType, CoinType } from '@nodewallet/constants';
-import { findCryptoAccountInUserAccountByAddress } from '@nodewallet/util-browser';
+import { AccountDetailParams, findCryptoAccountInUserAccountByAddress, RouteBuilder } from '@nodewallet/util-browser';
 
 export const AccountDetail = () => {
 
@@ -16,7 +14,7 @@ export const AccountDetail = () => {
     networkId,
     chainId,
     address,
-  } = useParams<{walletId: string, networkId: CoinType, chainId: ChainType, address: string}>();
+  } = useParams<Partial<AccountDetailParams>>();
 
   const {
     userAccount,
@@ -43,7 +41,7 @@ export const AccountDetail = () => {
       <BalanceCard
         walletId={walletId}
         account={cryptoAccount}
-        backRoute={'/' + routes.WALLETS}
+        backRoute={RouteBuilder.wallets.fullPath()}
       />
       <TransactionList />
     </Container>

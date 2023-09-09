@@ -1,11 +1,3 @@
-export enum routes {
-  ROOT = '/',
-  TOS = 'tos',
-  WALLETS = 'wallets',
-  ACCOUNT_DETAIL = 'wallets/:walletId/network/:networkId/chain/:chainId/account/:address',
-  SEND = 'wallets/:walletId/network/:networkId/chain/:chainId/account/:address/send',
-}
-
 export enum AppView {
   BLANK = 'BLANK',
   ACCOUNT_DETAIL = 'ACCOUNT_DETAIL',

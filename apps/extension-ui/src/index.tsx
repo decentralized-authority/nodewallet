@@ -9,15 +9,17 @@ import { ErrorHandlerContext } from './hooks/error-handler-context';
 import { ErrorHandler } from './modules/error-handler';
 import { ApiContext } from './hooks/api-context';
 import { API } from './modules/api';
-import { Messager } from '@nodewallet/util-browser';
+import { Messager, RouteBuilder } from '@nodewallet/util-browser';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { TOS } from './components/tos';
 import { ErrorView } from './components/error-view';
-import { routes } from './constants';
 import { UnlockAccount } from './components/unlock-account';
 import { ManageWallets } from './components/manage-wallets';
 import { AccountDetail } from './components/account-detail';
 import { Send } from './components/send';
+import { SelectNewWalletType } from './components/select-new-wallet-type';
+import { RegisterAccount } from './components/register-account';
+import { NewHdWallet } from './components/new-hd-wallet';
 
 window.Buffer = Buffer;
 
@@ -28,7 +30,7 @@ const start = () => {
 
   const router = createHashRouter([
     {
-      path: routes.ROOT,
+      path: RouteBuilder.unlock.path(),
       element: <App />,
       errorElement: <ErrorView />,
       children: [
@@ -37,19 +39,31 @@ const start = () => {
           element: <UnlockAccount />,
         },
         {
-          path: routes.TOS,
+          path: RouteBuilder.registerAccount.path(),
+          element: <RegisterAccount />,
+        },
+        {
+          path: RouteBuilder.tos.path(),
           element: <TOS />,
         },
         {
-          path: routes.SEND,
+          path: RouteBuilder.selectNewWalletType.path(),
+          element: <SelectNewWalletType />,
+        },
+        {
+          path: RouteBuilder.newHdWallet.path(),
+          element: <NewHdWallet />,
+        },
+        {
+          path: RouteBuilder.send.path(),
           element: <Send />,
         },
         {
-          path: routes.ACCOUNT_DETAIL,
+          path: RouteBuilder.accountDetail.path(),
           element: <AccountDetail />,
         },
         {
-          path: routes.WALLETS,
+          path: RouteBuilder.wallets.path(),
           element: <ManageWallets />,
         },
       ],

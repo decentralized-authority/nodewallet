@@ -6,11 +6,9 @@ import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { Container } from './shared/container';
 import { BalanceCard } from './shared/balance-card';
 import * as math from 'mathjs';
-import { findCryptoAccountInUserAccountByAddress, isHex } from '@nodewallet/util-browser';
+import { findCryptoAccountInUserAccountByAddress, isHex, RouteBuilder, SendParams } from '@nodewallet/util-browser';
 import swal from 'sweetalert';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChainType, CoinType } from '@nodewallet/constants';
-import { routes } from '../constants';
 
 export const Send = () => {
 
@@ -19,7 +17,7 @@ export const Send = () => {
     networkId,
     chainId,
     address,
-  } = useParams<{walletId: string, networkId: CoinType, chainId: ChainType, address: string}>();
+  } = useParams<Partial<SendParams>>();
 
   const navigate = useNavigate();
   const api = useContext(ApiContext);
@@ -53,7 +51,12 @@ export const Send = () => {
     return null;
   }
 
-  const accountDetailRoute = '/' + routes.ACCOUNT_DETAIL.replace(':walletId', walletId).replace(':networkId', networkId).replace(':chainId', chainId).replace(':address', address);
+  const accountDetailRoute = RouteBuilder.accountDetail.generateFullPath({
+    walletId,
+    networkId,
+    chainId,
+    address,
+  })
 
   const onSubmit = async (e: React.FormEvent) => {
     try {

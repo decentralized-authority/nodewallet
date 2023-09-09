@@ -55,7 +55,7 @@ const rpcEndpoints: {[network: string]: {[chain: string]: string}} = {
 const openTosTab = async () => {
   await chrome.tabs.create({
     active: true,
-    url: chrome.runtime.getURL('index.html#tab'),
+    url: chrome.runtime.getURL('index.html#/tos'),
   });
 };
 const openNewWalletTab = async () => {

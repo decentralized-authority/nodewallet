@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { routes } from '../../constants';
 import { CryptoAccount } from '@nodewallet/types';
 import { truncateAddress } from '../../util';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
 import { RootState } from '../../store';
 import { Link } from 'react-router-dom';
+import { RouteBuilder } from '@nodewallet/util-browser';
 
 export interface BalanceCardProps {
   walletId: string
@@ -35,6 +35,13 @@ export const BalanceCard = ({ walletId, account, hideButtons, backRoute }: Balan
     }
   };
 
+  const sendPath = RouteBuilder.send.generateFullPath({
+    walletId,
+    networkId: account.network,
+    chainId: account.chain,
+    address: account.address,
+  });
+
   return (
     <div className={'card mb-0'}>
       <div className={`card-body pt-2 ${hideButtons ? 'pb-0' : 'pb-2'} ps-2 pe-2`}>
@@ -51,7 +58,7 @@ export const BalanceCard = ({ walletId, account, hideButtons, backRoute }: Balan
         {!hideButtons ?
           <div className={'d-flex flex-row justify-content-evenly'}>
             <button style={styles.button} className={'btn btn-primary text-uppercase fw-bold'}>Stake</button>
-            <Link to={'/' + routes.SEND.replace(':walletId', walletId).replace(':networkId', account.network).replace(':chainId', account.chain).replace(':address', account.address)} style={styles.button} className={'btn btn-primary text-uppercase fw-bold'}>Send</Link>
+            <Link to={sendPath} style={styles.button} className={'btn btn-primary text-uppercase fw-bold'}>Send</Link>
           </div>
           :
           null

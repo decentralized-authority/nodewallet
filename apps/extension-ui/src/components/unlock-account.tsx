@@ -2,13 +2,14 @@ import React, { useContext, useState } from 'react';
 import { Container } from './shared/container';
 import { useDispatch } from 'react-redux';
 import { setActiveView, setUserAccount, setUserStatus } from '../reducers/app-reducer';
-import { AppView, routes } from '../constants';
+import { AppView } from '../constants';
 import { isTab, isValidPassword } from '../util';
 import { ApiContext } from '../hooks/api-context';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import isNull from 'lodash/isNull';
 import { UserStatus } from '@nodewallet/constants';
 import { useNavigate } from 'react-router-dom';
+import { RouteBuilder } from '@nodewallet/util-browser';
 
 export const UnlockAccount = () => {
 
@@ -50,8 +51,7 @@ export const UnlockAccount = () => {
             window.close();
           }
         } else {
-          console.log(`navigate to /${routes.WALLETS}`);
-          navigate(`/${routes.WALLETS}`);
+          navigate(RouteBuilder.wallets.fullPath());
         }
       }
     } catch(err: any) {

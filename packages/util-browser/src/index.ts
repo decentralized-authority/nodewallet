@@ -2,6 +2,7 @@ import { CryptoAccount, UserAccount } from '@nodewallet/types';
 import { ChainType, CoinType } from '@nodewallet/constants';
 
 export * from './messager';
+export * from './routes';
 
 export const splitMnemonic = (mnemonic: string): string[] => {
   return mnemonic

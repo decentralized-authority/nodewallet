@@ -2,13 +2,13 @@ import React, { useContext } from 'react';
 import { truncateAddress } from '../../util';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserAccount } from '../../reducers/app-reducer';
-import { routes } from '../../constants';
 import { UserWallet } from '@nodewallet/types';
 import { RootState } from '../../store';
 import { ApiContext } from '../../hooks/api-context';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
 import { CoinType } from '@nodewallet/constants';
 import { Link } from 'react-router-dom';
+import { RouteBuilder } from '@nodewallet/util-browser';
 
 interface WalletCardProps {
   wallet: UserWallet,
@@ -76,9 +76,17 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
                 const cryptoAccounts = [...a.accounts]
                   .sort((a, b) => a.index - b.index)
                   .map((ca) => {
+
+                    const accountDetailPath = RouteBuilder.accountDetail.generateFullPath({
+                      walletId: wallet.id,
+                      networkId: a.network,
+                      chainId: a.chain,
+                      address: ca.address,
+                    });
+
                     return (
                       <tr key={ca.id}>
-                        <td className={'font-monospace'}><Link to={'/' + routes.ACCOUNT_DETAIL.replace(':walletId', wallet.id).replace(':networkId', a.network).replace(':chainId', a.chain).replace(':address', ca.address)} title={'View account details'}>{truncateAddress(ca.address)}</Link></td>
+                        <td className={'font-monospace'}><Link to={accountDetailPath} title={'View account details'}>{truncateAddress(ca.address)}</Link></td>
                         <td><span className={'font-monospace'}>{accountBalances[ca.id] || '0'}</span> <span className={'opacity-75'}>POKT</span></td>
                       </tr>
                     );
