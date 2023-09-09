@@ -1,13 +1,9 @@
 import React, { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AccountDetail } from './components/account-detail';
 import { Navbar } from './components/shared/navbar';
 import { Container } from './components/shared/container';
 import { RootState } from './store';
 import { AppView, MAX_BODY_WIDTH, POPUP_HEIGHT, POPUP_WIDTH } from './constants';
-import { ManageWallets } from './components/manage-wallets';
-import { NewHdWallet } from './components/new-hd-wallet';
-import { SelectImportType } from './components/select-import-type';
 import $ from 'jquery';
 import { isTab } from './util';
 import {
@@ -17,16 +13,12 @@ import {
   setUserAccount,
   setUserStatus
 } from './reducers/app-reducer';
-import { TOS } from './components/tos';
-import { RegisterAccount } from './components/register-account';
-import { SelectNewWalletType } from './components/select-new-wallet-type';
 import { GetUserStatusResult } from '@nodewallet/types';
 import { ApiContext } from './hooks/api-context';
 import { ErrorHandlerContext } from './hooks/error-handler-context';
 import { ChainType, LocalStorageKey, UserStatus } from '@nodewallet/constants';
-import { UnlockAccount } from './components/unlock-account';
 import isNull from 'lodash/isNull';
-import { Send } from './components/send';
+import { Outlet } from 'react-router-dom';
 
 export const App = () => {
 
@@ -37,7 +29,6 @@ export const App = () => {
   const {
     activeView,
     userStatus,
-    userAccount,
     windowWidth,
   } = useSelector(({ appState }: RootState) => appState);
 
@@ -173,43 +164,10 @@ export const App = () => {
             AppView.NEW_HD_WALLET,
           ].includes(activeView) || !userStatus ? null : <Navbar />}
           <div className={'flex-grow-1 position-relative'}>
-            {
-              (!isTab() && !userStatus) || (activeView === AppView.BLANK) ?
-                <div />
-                :
-                activeView === AppView.REGISTER_ACCOUNT ?
-                  <RegisterAccount />
-                  :
-                  activeView === AppView.SELECT_NEW_WALLET_TYPE ?
-                    <SelectNewWalletType />
-                    :
-                    activeView === AppView.UNLOCK_ACCOUNT ?
-                      <UnlockAccount />
-                      :
-                      activeView === AppView.ACCOUNT_DETAIL ?
-                        <AccountDetail />
-                        :
-                        activeView === AppView.MANAGE_WALLETS ?
-                          <ManageWallets />
-                          :
-                          activeView === AppView.NEW_HD_WALLET ?
-                            <NewHdWallet />
-                            :
-                            activeView === AppView.SELECT_IMPORT_TYPE ?
-                              <SelectImportType />
-                              :
-                              activeView === AppView.TOS ?
-                                <TOS />
-                                :
-                                activeView === AppView.SEND ?
-                                  <Send />
-                                  :
-                                  <div />
-              }
+            <Outlet />
           </div>
         </Container>
       </div>
     </div>
   );
 };
-

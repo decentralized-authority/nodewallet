@@ -1,25 +1,30 @@
 import React, { useContext, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { ApiContext } from '../hooks/api-context';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { Container } from './shared/container';
 import { BalanceCard } from './shared/balance-card';
-import { CryptoAccount } from '@nodewallet/types';
-import { setActiveView } from '../reducers/app-reducer';
-import { AppView } from '../constants';
 import * as math from 'mathjs';
-import { isValidPassword } from '../util';
-import { isHex } from '@nodewallet/util-browser';
+import { findCryptoAccountInUserAccountByAddress, isHex } from '@nodewallet/util-browser';
 import swal from 'sweetalert';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ChainType, CoinType } from '@nodewallet/constants';
+import { routes } from '../constants';
 
 export const Send = () => {
 
+  const {
+    walletId,
+    networkId,
+    chainId,
+    address,
+  } = useParams<{walletId: string, networkId: CoinType, chainId: ChainType, address: string}>();
+
+  const navigate = useNavigate();
   const api = useContext(ApiContext);
   const errorHandler = useContext(ErrorHandlerContext);
-  const dispatch = useDispatch();
   const {
-    activeAccount,
     activeChain,
     accountBalances,
     userAccount,
@@ -28,14 +33,36 @@ export const Send = () => {
   const [ toAddress, setToAddress ] = useState('');
   const [ toAddressError, setToAddressError ] = useState('');
   const [ amount, setAmount ] = useState('');
-  const [ amountError, setAmountError ] = useState('');
+  // const [ amountError, setAmountError ] = useState('');
   const [ memo, setMemo ] = useState('');
   const [ disableSubmit, setDisableSubmit ] = useState(false);
+
+  if(!userAccount || !walletId || !networkId || !chainId || !address) {
+    return null;
+  }
+
+  const cryptoAccount = findCryptoAccountInUserAccountByAddress(
+    userAccount,
+    walletId,
+    networkId,
+    chainId,
+    address,
+  );
+
+  if(!cryptoAccount) {
+    return null;
+  }
+
+  const accountDetailRoute = '/' + routes.ACCOUNT_DETAIL.replace(':walletId', walletId).replace(':networkId', networkId).replace(':chainId', chainId).replace(':address', address);
 
   const onSubmit = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
-
+      if(disableSubmit) {
+        return;
+      } else {
+        setDisableSubmit(true);
+      }
       let preppedAmount = amount.trim();
       try {
         if(!math.largerEq(
@@ -45,12 +72,14 @@ export const Send = () => {
           throw new Error('Amount must be less than your balance.');
         }
       } catch(err) {
+        setDisableSubmit(false);
         throw new Error('Invalid amount.');
       }
 
       const preppedAddress = toAddress.trim();
       if(!isHex(preppedAddress)) {
         setToAddressError('Invalid address.');
+        setDisableSubmit(false);
         return;
       }
 
@@ -75,48 +104,33 @@ export const Send = () => {
         }
       });
       if(!confirmed) {
+        setDisableSubmit(false);
         return;
       }
       const res = await api.sendTransaction({
-        accountId: activeAccount,
+        accountId: cryptoAccount.id,
         amount: preppedAmount,
         recipient: toAddress,
         memo: preppedMemo,
       });
       if('error' in res) {
         errorHandler.handle(res.error);
+        setDisableSubmit(false);
+        return;
       } else if(res.result.txid) {
         await swal({
           title: 'Success!',
           icon: 'success',
           text: `Your transaction has been successfully submitted to the network. The transaction ID is:\n\n${res.result.txid}`,
         });
-        dispatch(setActiveView({activeView: AppView.ACCOUNT_DETAIL}));
+        navigate(accountDetailRoute);
       }
+      setDisableSubmit(false);
     } catch(err: any) {
       errorHandler.handle(err);
+      setDisableSubmit(false);
     }
   };
-
-  if(!userAccount || !activeAccount) {
-    return null;
-  }
-
-  let cryptoAccount: CryptoAccount|null = null;
-  for(const wallet of userAccount.wallets) {
-    for(const walletAccount of wallet.accounts) {
-      for(const ca of walletAccount.accounts) {
-        if(ca.id === activeAccount) {
-          cryptoAccount = ca;
-          break;
-        }
-      }
-    }
-  }
-
-  if(!cryptoAccount) {
-    return null;
-  }
 
   const balance = accountBalances[cryptoAccount.id] || '0';
   let amountGood: boolean;
@@ -138,9 +152,10 @@ export const Send = () => {
   return (
     <Container>
       <BalanceCard
+        walletId={walletId}
         account={cryptoAccount}
         hideButtons={true}
-        onBack={() => dispatch(setActiveView({activeView: AppView.ACCOUNT_DETAIL}))}
+        backRoute={accountDetailRoute}
       />
       <h4 className={'text-uppercase pt-2 pb-2 ps-2 pe-2'}>Send {cryptoAccount.network}</h4>
       <div className={'flex-grow-1 position-relative'}>
@@ -172,6 +187,7 @@ export const Send = () => {
               <label htmlFor={'address'} className={'form-label'}>Recipient Address</label>
               <input
                 type={'text'}
+                spellCheck={false}
                 className={'form-control font-monospace'}
                 id={'address'}
                 value={toAddress}

@@ -20,7 +20,8 @@ export const isDev = (): boolean => {
 };
 
 export const isTab = (): boolean => {
-  return window.location.hash === '#tab';
+  // return window.location.hash === '#tab';
+  return window.innerWidth > 400;
 };
 
 export const isValidPassword = (password: string): boolean => {

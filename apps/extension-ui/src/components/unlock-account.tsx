@@ -2,18 +2,20 @@ import React, { useContext, useState } from 'react';
 import { Container } from './shared/container';
 import { useDispatch } from 'react-redux';
 import { setActiveView, setUserAccount, setUserStatus } from '../reducers/app-reducer';
-import { AppView } from '../constants';
+import { AppView, routes } from '../constants';
 import { isTab, isValidPassword } from '../util';
 import { ApiContext } from '../hooks/api-context';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import isNull from 'lodash/isNull';
 import { UserStatus } from '@nodewallet/constants';
+import { useNavigate } from 'react-router-dom';
 
 export const UnlockAccount = () => {
 
   const dispatch = useDispatch();
   const api = useContext(ApiContext);
   const errorHandler = useContext(ErrorHandlerContext);
+  const navigate = useNavigate();
 
   const [ disableSubmit, setDisableSubmit ] = useState(false);
   const [ passwordError, setPasswordError ] = useState('');
@@ -48,7 +50,8 @@ export const UnlockAccount = () => {
             window.close();
           }
         } else {
-          dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}));
+          console.log(`navigate to /${routes.WALLETS}`);
+          navigate(`/${routes.WALLETS}`);
         }
       }
     } catch(err: any) {

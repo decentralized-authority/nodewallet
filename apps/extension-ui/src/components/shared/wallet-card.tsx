@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
 import { truncateAddress } from '../../util';
 import { useDispatch, useSelector } from 'react-redux';
-import { setActiveAccount, setActiveView, setUserAccount } from '../../reducers/app-reducer';
-import { AppView } from '../../constants';
+import { setUserAccount } from '../../reducers/app-reducer';
+import { routes } from '../../constants';
 import { UserWallet } from '@nodewallet/types';
 import { RootState } from '../../store';
 import { ApiContext } from '../../hooks/api-context';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
 import { CoinType } from '@nodewallet/constants';
+import { Link } from 'react-router-dom';
 
 interface WalletCardProps {
   wallet: UserWallet,
@@ -22,11 +23,12 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
     activeChain,
   } = useSelector(({ appState }: RootState) => appState);
 
-  const onAddressClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, id: string) => {
-    e.preventDefault();
-    dispatch(setActiveAccount({activeAccount: id}));
-    dispatch(setActiveView({activeView: AppView.ACCOUNT_DETAIL}))
-  };
+  // const onAddressClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, id: string) => {
+  //   e.preventDefault();
+  //   dispatch(setActiveAccount({activeAccount: id}));
+  //
+  //   // dispatch(setActiveView({activeView: AppView.ACCOUNT_DETAIL}))
+  // };
   const onNewAddressClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     try {
       e.preventDefault();
@@ -76,7 +78,7 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
                   .map((ca) => {
                     return (
                       <tr key={ca.id}>
-                        <td className={'font-monospace'}><a href={'#'} title={'View account details'} onClick={e => onAddressClick(e, ca.id)}>{truncateAddress(ca.address)}</a></td>
+                        <td className={'font-monospace'}><Link to={'/' + routes.ACCOUNT_DETAIL.replace(':walletId', wallet.id).replace(':networkId', a.network).replace(':chainId', a.chain).replace(':address', ca.address)} title={'View account details'}>{truncateAddress(ca.address)}</Link></td>
                         <td><span className={'font-monospace'}>{accountBalances[ca.id] || '0'}</span> <span className={'opacity-75'}>POKT</span></td>
                       </tr>
                     );

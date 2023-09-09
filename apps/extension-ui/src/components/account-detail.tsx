@@ -2,35 +2,37 @@ import React from 'react';
 import { Container } from './shared/container';
 import { BalanceCard } from './shared/balance-card';
 import { TransactionList } from './shared/transaction-list';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { CryptoAccount } from '@nodewallet/types';
-import { setActiveView } from '../reducers/app-reducer';
-import { AppView } from '../constants';
+import { routes } from '../constants';
+import { useParams } from 'react-router-dom';
+import { ChainType, CoinType } from '@nodewallet/constants';
+import { findCryptoAccountInUserAccountByAddress } from '@nodewallet/util-browser';
 
 export const AccountDetail = () => {
 
-  const dispatch = useDispatch();
+  const {
+    walletId,
+    networkId,
+    chainId,
+    address,
+  } = useParams<{walletId: string, networkId: CoinType, chainId: ChainType, address: string}>();
+
   const {
     userAccount,
-    activeAccount,
   } = useSelector(({ appState }: RootState) => appState);
 
-  if(!userAccount || !activeAccount) {
+  if(!userAccount || !walletId || !networkId || !chainId || !address) {
     return null;
   }
 
-  let cryptoAccount: CryptoAccount|null = null;
-  for(const wallet of userAccount.wallets) {
-    for(const walletAccount of wallet.accounts) {
-      for(const ca of walletAccount.accounts) {
-        if(ca.id === activeAccount) {
-          cryptoAccount = ca;
-          break;
-        }
-      }
-    }
-  }
+  const cryptoAccount = findCryptoAccountInUserAccountByAddress(
+    userAccount,
+    walletId,
+    networkId,
+    chainId,
+    address,
+  );
 
   if(!cryptoAccount) {
     return null;
@@ -39,8 +41,9 @@ export const AccountDetail = () => {
   return (
     <Container>
       <BalanceCard
+        walletId={walletId}
         account={cryptoAccount}
-        onBack={() => dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}))}
+        backRoute={'/' + routes.WALLETS}
       />
       <TransactionList />
     </Container>

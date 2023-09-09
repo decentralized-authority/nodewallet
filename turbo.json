@@ -6,7 +6,6 @@
       "dependsOn": []
     },
     "build": {
-      "cache": false,
       "dependsOn": ["^build"]
     },
     "clean": {

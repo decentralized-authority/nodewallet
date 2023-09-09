@@ -1,4 +1,5 @@
 import { CryptoAccount, UserAccount } from '@nodewallet/types';
+import { ChainType, CoinType } from '@nodewallet/constants';
 
 export * from './messager';
 
@@ -34,4 +35,11 @@ export const findCryptoAccountInUserAccount = (userAccount: UserAccount, account
     }
   }
   return cryptoAccount;
+};
+
+export const findCryptoAccountInUserAccountByAddress = (userAccount: UserAccount, walletId: string, networkId: CoinType, chain: ChainType, address: string): CryptoAccount|null => {
+  const wallet = userAccount.wallets.find(w => w.id === walletId);
+  const walletAccount = wallet?.accounts.find(a => a.network === networkId && a.chain === chain);
+  const cryptoAccount = walletAccount?.accounts.find(a => a.address === address);
+  return cryptoAccount || null;
 };
