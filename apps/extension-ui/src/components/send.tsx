@@ -91,6 +91,7 @@ export const Send = () => {
           icon: 'success',
           text: `Your transaction has been successfully submitted to the network. The transaction ID is:\n\n${res.result.txid}`,
         });
+        dispatch(setActiveView({activeView: AppView.ACCOUNT_DETAIL}));
       }
     } catch(err: any) {
       errorHandler.handle(err);
