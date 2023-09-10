@@ -3,13 +3,19 @@ import { ChainType, CoinType } from '@nodewallet/constants';
 export class RouteMeta {
   readonly _path: string = '';
   path(): string {
-    return '';
+    return this._path;
   }
   fullPath(): string {
     return `/${this.path()}`;
   }
   generateFullPath(params: any): string {
     return this.fullPath();
+  }
+  generatePathPattern(): RegExp {
+    const pattStr = this.fullPath()
+      .replace(/:[^/]+/g, '[^/]+')
+      .replace(/\//g, '\\/');
+    return new RegExp(`^${pattStr}\\/?$`);
   }
 }
 

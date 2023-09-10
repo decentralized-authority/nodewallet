@@ -1,20 +1,18 @@
 import React from 'react';
 import { Container } from './shared/container';
 import { TosContainer } from './shared/tos-container';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { setActiveView, setUserAccount } from '../reducers/app-reducer';
-import { AppView } from '../constants';
-import { AppLang } from '@nodewallet/constants';
+import { useNavigate } from 'react-router-dom';
+import { RouteBuilder } from '@nodewallet/util-browser';
 
 export const TOS = () => {
 
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const onAcceptClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onAcceptClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: AppView.REGISTER_ACCOUNT}));
+    navigate(RouteBuilder.registerAccount.fullPath());
   };
+
   return (
     <Container className={'flex-column justify-content-start align-items-center p-2'}>
       <h1 className={'mt-3'}>Welcome to NodeWallet!</h1>

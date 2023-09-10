@@ -1,8 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Container } from './shared/container';
 import { useDispatch } from 'react-redux';
-import { setActiveView, setUserAccount, setUserStatus } from '../reducers/app-reducer';
-import { AppView } from '../constants';
+import { setUserAccount, setUserStatus } from '../reducers/app-reducer';
 import { isTab, isValidPassword } from '../util';
 import { ApiContext } from '../hooks/api-context';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
@@ -45,7 +44,7 @@ export const UnlockAccount = () => {
         dispatch(setUserStatus({userStatus: UserStatus.UNLOCKED}));
         if(userAccount.wallets.length === 0) {
           if(isTab()) {
-            dispatch(setActiveView({activeView: AppView.SELECT_NEW_WALLET_TYPE}));
+            navigate(RouteBuilder.selectNewWalletType.fullPath());
           } else {
             await api.startNewWallet();
             window.close();

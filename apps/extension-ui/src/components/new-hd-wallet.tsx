@@ -1,15 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Container } from './shared/container';
 import { useDispatch } from 'react-redux';
-import { setActiveView, setUserAccount } from '../reducers/app-reducer';
-import { AppView } from '../constants';
+import { setUserAccount } from '../reducers/app-reducer';
 import { ApiContext } from '../hooks/api-context';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
-import { joinMnemonic, splitMnemonic } from '@nodewallet/util-browser';
+import { joinMnemonic, RouteBuilder, splitMnemonic } from '@nodewallet/util-browser';
 import swal from 'sweetalert';
+import { useNavigate } from 'react-router-dom';
 
 export const NewHdWallet = () => {
 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const api = useContext(ApiContext);
   const errorHandler = useContext(ErrorHandlerContext);
@@ -30,7 +31,7 @@ export const NewHdWallet = () => {
 
   const onBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: AppView.SELECT_NEW_WALLET_TYPE}));
+    navigate(RouteBuilder.wallets.fullPath());
   };
 
   const onCopyClick = async (e: React.MouseEvent) => {
@@ -63,7 +64,7 @@ export const NewHdWallet = () => {
         title: 'New HD Wallet created successfully!',
       });
       dispatch(setUserAccount({userAccount: updatedUserAccount.result}));
-      dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}));
+      navigate(RouteBuilder.wallets.fullPath());
     }
   };
 

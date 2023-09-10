@@ -1,16 +1,18 @@
 import React, { useContext, useState } from 'react';
 import { Container } from './shared/container';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store';
-import { setUserAccount, setActiveView, setUserStatus } from '../reducers/app-reducer';
-import { AppView, PASSWORD_MIN_LENGTH } from '../constants';
+import { useDispatch } from 'react-redux';
+import { setUserAccount, setUserStatus } from '../reducers/app-reducer';
+import { PASSWORD_MIN_LENGTH } from '../constants';
 import { isValidPassword } from '../util';
 import { ApiContext } from '../hooks/api-context';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { UserStatus } from '@nodewallet/constants';
+import { useNavigate } from 'react-router-dom';
+import { RouteBuilder } from '@nodewallet/util-browser';
 
 export const RegisterAccount = () => {
 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const api = useContext(ApiContext);
   const errorHandler = useContext(ErrorHandlerContext);
@@ -42,7 +44,7 @@ export const RegisterAccount = () => {
           userAccount: res.result,
         }));
         dispatch(setUserStatus({userStatus: UserStatus.UNLOCKED}));
-        dispatch(setActiveView({activeView: AppView.SELECT_NEW_WALLET_TYPE}));
+        navigate(RouteBuilder.selectNewWalletType.fullPath());
       }
     } catch(err: any) {
       errorHandler.handle(err);

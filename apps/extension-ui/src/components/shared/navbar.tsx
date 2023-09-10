@@ -1,22 +1,28 @@
 import React, { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { AppView } from '../../constants';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
 import { ApiContext } from '../../hooks/api-context';
 import * as bootstrap from 'bootstrap';
 import { ChainType, LocalStorageKey } from '@nodewallet/constants';
-import { setActiveChain, setActiveView } from '../../reducers/app-reducer';
+import { setActiveChain } from '../../reducers/app-reducer';
+import { useLocation, useMatches, useNavigate } from 'react-router-dom';
+import { RouteBuilder } from '@nodewallet/util-browser';
 
 export const Navbar = () => {
 
+  const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const errorHandler = useContext(ErrorHandlerContext);
   const api = useContext(ApiContext);
   const {
     activeChain,
-    activeView,
   } = useSelector(({ appState }: RootState) => appState);
+
+  const sendPattern = RouteBuilder.send.generatePathPattern();
+  const accountDetailPatt = RouteBuilder.accountDetail.generatePathPattern();
+  const walletsPatt = RouteBuilder.wallets.generatePathPattern();
 
   // const onMenuClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   //   try {
@@ -44,11 +50,15 @@ export const Navbar = () => {
       e.preventDefault();
       await chrome.storage.local.set({[LocalStorageKey.SELECTED_CHAIN]: chainType});
       dispatch(setActiveChain({activeChain: chainType}));
-      dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}));
+      navigate(RouteBuilder.wallets.fullPath());
     } catch(err: any) {
       errorHandler.handle(err);
     }
   };
+
+  const showChainDropdown = sendPattern.test(location.pathname)
+    || accountDetailPatt.test(location.pathname)
+    || walletsPatt.test(location.pathname);
 
   return (
     <nav className="navbar bg-body-tertiary pt-0 pb-0 ps-2 pe-2 d-flex flex-row justify-content-start align-items-center">
@@ -56,7 +66,7 @@ export const Navbar = () => {
         <img src={'/images/coins/pokt.png'} alt="Pocket" height={30} />
       </a>
       <div className={'flex-grow-1'} />
-      {[AppView.ACCOUNT_DETAIL, AppView.MANAGE_WALLETS, AppView.SEND].includes(activeView) ?
+      {showChainDropdown ?
         <h4 className={'ms-1 mt-0 mb-0 dropdown-center'}>
           <a
             href={'#'}

@@ -22,7 +22,7 @@ import {
   ValidateMnemonicResult,
   WalletAccount
 } from '@nodewallet/types';
-import { findCryptoAccountInUserAccount, Messager, prepMnemonic } from '@nodewallet/util-browser';
+import { findCryptoAccountInUserAccount, Messager, prepMnemonic, RouteBuilder } from '@nodewallet/util-browser';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import {
@@ -55,13 +55,13 @@ const rpcEndpoints: {[network: string]: {[chain: string]: string}} = {
 const openTosTab = async () => {
   await chrome.tabs.create({
     active: true,
-    url: chrome.runtime.getURL('index.html#/tos'),
+    url: chrome.runtime.getURL(`index.html#${RouteBuilder.tos.fullPath()}`),
   });
 };
 const openNewWalletTab = async () => {
   await chrome.tabs.create({
     active: true,
-    url: chrome.runtime.getURL('index.html#tab'),
+    url: chrome.runtime.getURL(`index.html#${RouteBuilder.selectNewWalletType.fullPath()}`),
   });
 };
 const generateCryptoAccountId = (network: CoinType, chain: ChainType, address: string): string => {

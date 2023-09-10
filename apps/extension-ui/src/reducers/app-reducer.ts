@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppView } from '../constants';
 import { UserAccount } from '@nodewallet/types';
 import { ChainType, UserStatus } from '@nodewallet/constants';
 
@@ -9,7 +8,6 @@ export interface AppState {
   userStatus: UserStatus|''
   userAccount: UserAccount|null
   locale: string
-  activeView: AppView
   windowWidth: number
   windowHeight: number
   activeAccount: string
@@ -20,7 +18,6 @@ const getInitialState = (): AppState => ({
   userStatus: '',
   userAccount: null,
   locale: 'en-US',
-  activeView: AppView.BLANK,
   windowWidth: window.innerWidth,
   windowHeight: window.innerHeight,
   activeAccount: '',
@@ -36,9 +33,6 @@ export const appSlice = createSlice({
     },
     setUserAccount: (state, action: PayloadAction<{userAccount: UserAccount}>) => {
       state.userAccount = action.payload.userAccount;
-    },
-    setActiveView: (state, action: PayloadAction<{activeView: AppView}>) => {
-      state.activeView = action.payload.activeView;
     },
     setWindowHeight: (state, action: PayloadAction<{windowHeight: number}>) => {
       state.windowHeight = action.payload.windowHeight;
@@ -61,7 +55,6 @@ export const appSlice = createSlice({
 export const {
   setUserStatus,
   setUserAccount,
-  setActiveView,
   setWindowHeight,
   setWindowWidth,
   setActiveAccount,

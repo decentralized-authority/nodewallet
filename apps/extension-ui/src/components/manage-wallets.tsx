@@ -1,10 +1,7 @@
 import React from 'react';
 import { Container } from './shared/container';
 import { WalletCard } from './shared/wallet-card';
-import { generateFakeAddress } from '../util';
 import { useDispatch, useSelector } from 'react-redux';
-import { setActiveView } from '../reducers/app-reducer';
-import { AppView } from '../constants';
 import { RootState } from '../store';
 
 export const ManageWallets = () => {

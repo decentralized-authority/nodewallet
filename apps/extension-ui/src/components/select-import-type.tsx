@@ -1,16 +1,15 @@
 import React from 'react';
 import { Container } from './shared/container';
-import { setActiveView } from '../reducers/app-reducer';
-import { AppView } from '../constants';
-import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { RouteBuilder } from '@nodewallet/util-browser';
 
 export const SelectImportType = () => {
 
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}));
+    navigate(RouteBuilder.wallets.fullPath());
   };
 
   return (

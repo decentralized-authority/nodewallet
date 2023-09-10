@@ -2,16 +2,18 @@ import React, { useContext, useRef } from 'react';
 import { Container } from './shared/container';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { setActiveView, setUserAccount } from '../reducers/app-reducer';
-import { AppView } from '../constants';
+import { setUserAccount } from '../reducers/app-reducer';
 import swal from 'sweetalert';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { ApiContext } from '../hooks/api-context';
+import { useNavigate } from 'react-router-dom';
+import { RouteBuilder } from '@nodewallet/util-browser';
 
 export const SelectNewWalletType = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const navigate = useNavigate();
   const errorHandler = useContext(ErrorHandlerContext);
   const api = useContext(ApiContext);
   const dispatch = useDispatch();
@@ -22,7 +24,7 @@ export const SelectNewWalletType = () => {
   const onNewClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     console.log('onNewClick!');
-    dispatch(setActiveView({activeView: AppView.NEW_HD_WALLET}));
+    navigate(RouteBuilder.newHdWallet.fullPath());
   };
   const onImportPassphraseClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
@@ -83,7 +85,7 @@ export const SelectNewWalletType = () => {
           title: 'New HD Wallet imported successfully!',
         });
         dispatch(setUserAccount({userAccount: updatedUserAccount.result}));
-        dispatch(setActiveView({activeView: AppView.MANAGE_WALLETS}));
+        navigate(RouteBuilder.wallets.fullPath());
       }
     } catch(err: any) {
       errorHandler.handle(err);

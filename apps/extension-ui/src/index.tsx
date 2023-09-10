@@ -66,6 +66,10 @@ const start = () => {
           path: RouteBuilder.wallets.path(),
           element: <ManageWallets />,
         },
+        {
+          path: RouteBuilder.tos.path(),
+          element: <TOS />,
+        },
       ],
     },
   ]);
