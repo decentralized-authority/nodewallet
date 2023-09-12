@@ -115,22 +115,6 @@ const resetLockTimer = () => {
     });
 };
 
-type EncryptFunc = (data: any)=>Promise<EncryptionResult>;
-type DecryptFunc = (encrypted: EncryptionResult)=>Promise<any>
-const generateEncryptionFuncs = async (password: string, salt: string, hashSettings: Argon2Config, encryptionSettings: AES256GCMConfig): Promise<[EncryptFunc, DecryptFunc]> => {
-
-  const key = await argon2(password, salt, encryptionSettings.keyLength, hashSettings);
-
-  return [
-    async (data: any) => {
-      return await encryptAES256GCM(data, key, encryptionSettings);
-    },
-    async (encrypted: EncryptionResult) => {
-      return await generalDecrypt(encrypted, key);
-    }
-  ]
-};
-
 const sanitizeCryptoAccount = (account: CryptoAccount): CryptoAccount => {
   return {
     ...omit(account, ['privateKey']),
