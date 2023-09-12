@@ -74,6 +74,9 @@ export type InsertCryptoAccountResult = ErrorResult | {
 export type LockUserAccountResult = ErrorResult | {
   result: true
 }
+export interface GetAccountBalancesParams {
+  forceUpdate?: boolean
+}
 export type GetAccountBalancesResult = ErrorResult | {
   result: {[id: string]: string}
 }
@@ -121,7 +124,7 @@ export interface ClientAPI {
 
   lockUserAccount(): Promise<LockUserAccountResult>
 
-  getAccountBalances(): Promise<GetAccountBalancesResult>
+  getAccountBalances(params?: GetAccountBalancesParams): Promise<GetAccountBalancesResult>
 
   sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult>
 

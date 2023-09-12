@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { truncateAddress } from '../../util';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUserAccount } from '../../reducers/app-reducer';
+import { setAccountBalances, setUserAccount } from '../../reducers/app-reducer';
 import { UserWallet } from '@nodewallet/types';
 import { RootState } from '../../store';
 import { ApiContext } from '../../hooks/api-context';
@@ -45,6 +45,12 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
           errorHandler.handle(updatedUserAccount.error);
         } else if(updatedUserAccount.result) {
           dispatch(setUserAccount({userAccount: updatedUserAccount.result}));
+          const balancesRes = await api.getAccountBalances({forceUpdate: true});
+          if('error' in balancesRes) {
+            errorHandler.handle(balancesRes.error);
+          } else {
+            dispatch(setAccountBalances({accountBalances: balancesRes.result}));
+          }
         }
       }
     } catch(err: any) {

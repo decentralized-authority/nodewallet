@@ -1,7 +1,7 @@
 import {
   APIEvent,
   ClientAPI,
-  GenerateMnemonicResult, GetAccountBalancesResult, GetActiveAccountResult,
+  GenerateMnemonicResult, GetAccountBalancesParams, GetAccountBalancesResult, GetActiveAccountResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
@@ -72,8 +72,8 @@ export class API implements ClientAPI {
     return await this._messager.send(APIEvent.LOCK_USER_ACCOUNT);
   }
 
-  async getAccountBalances(): Promise<GetAccountBalancesResult> {
-    return await this._messager.send(APIEvent.GET_ACCOUNT_BALANCES);
+  async getAccountBalances(params?: GetAccountBalancesParams): Promise<GetAccountBalancesResult> {
+    return await this._messager.send(APIEvent.GET_ACCOUNT_BALANCES, params || {});
   }
 
   async sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult> {

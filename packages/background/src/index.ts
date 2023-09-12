@@ -3,7 +3,7 @@ import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
   APIEvent,
-  CryptoAccount, GenerateMnemonicResult, GetAccountBalancesResult, GetActiveAccountResult,
+  CryptoAccount, GenerateMnemonicResult, GetAccountBalancesParams, GetAccountBalancesResult, GetActiveAccountResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
@@ -321,6 +321,10 @@ export const startBackground = () => {
     userAccount.wallets.push(newWallet);
     await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
     await encryptSaveUserAccount(userAccount);
+    updateBalances()
+      .catch(err => {
+        console.error(err);
+      });
     return {result: sanitizeUserWallet(newWallet)};
   });
 
@@ -414,9 +418,9 @@ export const startBackground = () => {
   };
   setInterval(updateBalances, 30000);
 
-  messager.register(APIEvent.GET_ACCOUNT_BALANCES, async (): Promise<GetAccountBalancesResult> => {
+  messager.register(APIEvent.GET_ACCOUNT_BALANCES, async (params?: GetAccountBalancesParams): Promise<GetAccountBalancesResult> => {
     let balances = await sessionManager.get(SessionStorageKey.BALANCES);
-    if(!balances) {
+    if(!balances || params?.forceUpdate) {
       await updateBalances();
       balances = await sessionManager.get(SessionStorageKey.BALANCES) || {};
     }
