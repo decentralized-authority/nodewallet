@@ -345,7 +345,7 @@ export const startBackground = () => {
     const lastDerivationIdx = userAccount.wallets[walletIdx].accounts[walletAccountIdx].accounts
       .reduce((num, a) => {
         return a.index > num ? a.index : num;
-      }, 0);
+      }, -1);
     const ed25519Utils = new ED25519Utils(PoktUtils.chainMeta[chain].derivationPath);
     const phrase = userAccount.wallets[walletIdx].passphrase;
     if(!phrase) {
