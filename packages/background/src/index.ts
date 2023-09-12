@@ -511,6 +511,14 @@ export const startBackground = () => {
     }
   });
 
+  chrome.runtime.onInstalled.addListener(async ({ reason }) => {
+    const logger = getLogger();
+    if(reason === 'install') {
+      logger.info('Extension installed!');
+      await openTosTab();
+    }
+  });
+
   chrome.runtime.onMessage.addListener(() => {
     resetLockTimer();
   });
