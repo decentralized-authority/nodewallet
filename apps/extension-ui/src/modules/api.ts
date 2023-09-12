@@ -1,7 +1,7 @@
 import {
   APIEvent,
   ClientAPI,
-  GenerateMnemonicResult, GetAccountBalancesResult,
+  GenerateMnemonicResult, GetAccountBalancesResult, GetActiveAccountResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
@@ -10,7 +10,7 @@ import {
   InsertHdWalletResult,
   LockUserAccountResult,
   RegisterUserParams,
-  RegisterUserResult, SendTransactionParams, SendTransactionResult,
+  RegisterUserResult, SaveActiveAccountParams, SaveActiveAccountResult, SendTransactionParams, SendTransactionResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
@@ -78,6 +78,14 @@ export class API implements ClientAPI {
 
   async sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult> {
     return await this._messager.send(APIEvent.SEND_TRANSACTION, params);
+  }
+
+  async saveActiveAccount(params: SaveActiveAccountParams): Promise<SaveActiveAccountResult> {
+    return await this._messager.send(APIEvent.SAVE_ACTIVE_ACCOUNT, params);
+  }
+
+  async getActiveAccount(): Promise<GetActiveAccountResult> {
+    return await this._messager.send(APIEvent.GET_ACTIVE_ACCOUNT);
   }
 
 }

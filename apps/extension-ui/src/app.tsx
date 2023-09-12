@@ -18,7 +18,11 @@ import { ErrorHandlerContext } from './hooks/error-handler-context';
 import { ChainType, LocalStorageKey, UserStatus } from '@nodewallet/constants';
 import isNull from 'lodash/isNull';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { RouteBuilder } from '@nodewallet/util-browser';
+import {
+  findCryptoAccountInUserAccount,
+  getAccountDetailParamsFromUserAccount,
+  RouteBuilder
+} from '@nodewallet/util-browser';
 
 export const App = () => {
 
@@ -93,7 +97,26 @@ export const App = () => {
                   window.close();
                 }
               } else {
-                navigate(RouteBuilder.wallets.fullPath());
+                const activeAccountRes = await api.getActiveAccount();
+                if('error' in activeAccountRes) {
+                  errorHandler.handle(activeAccountRes.error);
+                } else {
+                  if(activeAccountRes.result) {
+                    const cryptoAccount = findCryptoAccountInUserAccount(account, activeAccountRes.result);
+                    if(cryptoAccount) {
+                      const accountDetailParams = getAccountDetailParamsFromUserAccount(account, cryptoAccount.id);
+                      if(accountDetailParams) {
+                        navigate(RouteBuilder.accountDetail.generateFullPath(accountDetailParams));
+                      } else {
+                        navigate(RouteBuilder.wallets.fullPath());
+                      }
+                    } else {
+                      navigate(RouteBuilder.wallets.fullPath());
+                    }
+                  } else {
+                    navigate(RouteBuilder.wallets.fullPath());
+                  }
+                }
               }
             }
           }

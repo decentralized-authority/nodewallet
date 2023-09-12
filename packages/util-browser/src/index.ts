@@ -1,5 +1,6 @@
 import { CryptoAccount, UserAccount } from '@nodewallet/types';
 import { ChainType, CoinType } from '@nodewallet/constants';
+import { AccountDetailParams } from './routes';
 
 export * from './messager';
 export * from './routes';
@@ -44,3 +45,21 @@ export const findCryptoAccountInUserAccountByAddress = (userAccount: UserAccount
   const cryptoAccount = walletAccount?.accounts.find(a => a.address === address);
   return cryptoAccount || null;
 };
+
+export const getAccountDetailParamsFromUserAccount = (userAccount: UserAccount, accountId: string): AccountDetailParams|null => {
+  for(const w of userAccount.wallets) {
+    for(const wa of w.accounts) {
+      for(const ca of wa.accounts) {
+        if(ca.id === accountId) {
+          return {
+            walletId: w.id,
+            networkId: wa.network,
+            chainId: wa.chain,
+            address: ca.address,
+          };
+        }
+      }
+    }
+  }
+  return null;
+}

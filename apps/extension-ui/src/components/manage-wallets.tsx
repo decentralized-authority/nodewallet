@@ -1,16 +1,28 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Container } from './shared/container';
 import { WalletCard } from './shared/wallet-card';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
+import { ApiContext } from '../hooks/api-context';
+import { ErrorHandlerContext } from '../hooks/error-handler-context';
 
 export const ManageWallets = () => {
 
+  const errorHandler = useContext(ErrorHandlerContext);
+  const api = useContext(ApiContext);
   const dispatch = useDispatch();
   const {
     activeChain,
     userAccount,
   } = useSelector(({ appState }: RootState) => appState);
+
+  useEffect(() => {
+    api.saveActiveAccount({
+      accountId: '',
+    }).catch((err) => {
+      errorHandler.handle(err);
+    })
+  }, [api, errorHandler]);
 
   const onImportWalletClick = (e: React.MouseEvent) => {
     e.preventDefault();

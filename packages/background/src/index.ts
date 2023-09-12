@@ -3,7 +3,7 @@ import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
   APIEvent,
-  CryptoAccount, GenerateMnemonicResult, GetAccountBalancesResult,
+  CryptoAccount, GenerateMnemonicResult, GetAccountBalancesResult, GetActiveAccountResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
@@ -11,7 +11,7 @@ import {
   InsertHdWalletParams,
   InsertHdWalletResult, LockUserAccountResult,
   RegisterUserParams,
-  RegisterUserResult, SendTransactionParams, SendTransactionResult,
+  RegisterUserResult, SaveActiveAccountParams, SaveActiveAccountResult, SendTransactionParams, SendTransactionResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
@@ -458,6 +458,28 @@ export const startBackground = () => {
       } default: {
         throw new Error('Unsupported network.');
       }
+    }
+  });
+
+  messager.register(APIEvent.SAVE_ACTIVE_ACCOUNT, async (params: SaveActiveAccountParams): Promise<SaveActiveAccountResult> => {
+    const { accountId } = params;
+    const encrypted = await encrypt(accountId);
+    await storageManager.set(LocalStorageKey.ACTIVE_ACCOUNT, encrypted);
+    return {result: true};
+  });
+
+  messager.register(APIEvent.GET_ACTIVE_ACCOUNT, async (): Promise<GetActiveAccountResult> => {
+    try {
+      const encrypted = await storageManager.get(LocalStorageKey.ACTIVE_ACCOUNT);
+      console.log('encrypted', encrypted);
+      if(!encrypted) {
+        return {result: ''};
+      }
+      const decrypted = await decrypt(encrypted);
+      console.log('decrypted', decrypted);
+      return {result: decrypted};
+    } catch(err) {
+      return {result: ''};
     }
   });
 

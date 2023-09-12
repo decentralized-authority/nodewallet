@@ -16,6 +16,8 @@ export enum APIEvent {
   LOCK_USER_ACCOUNT = 'LOCK_USER_ACCOUNT',
   GET_ACCOUNT_BALANCES = 'GET_ACCOUNT_BALANCES',
   SEND_TRANSACTION = 'SEND_TRANSACTION',
+  SAVE_ACTIVE_ACCOUNT = 'SAVE_ACTIVE_ACCOUNT',
+  GET_ACTIVE_ACCOUNT = 'GET_ACTIVE_ACCOUNT',
 }
 
 export interface ErrorResult {
@@ -86,6 +88,15 @@ export type SendTransactionResult = ErrorResult | {
     txid: string
   }
 }
+export interface SaveActiveAccountParams {
+  accountId: string
+}
+export type SaveActiveAccountResult = ErrorResult | {
+  result: true
+}
+export type GetActiveAccountResult = ErrorResult | {
+  result: string
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -113,5 +124,9 @@ export interface ClientAPI {
   getAccountBalances(): Promise<GetAccountBalancesResult>
 
   sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult>
+
+  saveActiveAccount(params: SaveActiveAccountParams): Promise<SaveActiveAccountResult>
+
+  getActiveAccount(): Promise<GetActiveAccountResult>
 
 }

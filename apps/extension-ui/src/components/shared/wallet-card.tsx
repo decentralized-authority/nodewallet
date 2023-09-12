@@ -52,6 +52,16 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
     }
   };
 
+  const onOpenAccountClick = async (e: React.MouseEvent, accountId: string) => {
+    try {
+      await api.saveActiveAccount({
+        accountId,
+      });
+    } catch(err: any) {
+      errorHandler.handle(err);
+    }
+  };
+
   return (
     <div className={'card ms-1 me-1'}>
       <div className={'card-header pt-2 pb-1 ps-2 pe-2'}>
@@ -86,7 +96,7 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
 
                     return (
                       <tr key={ca.id}>
-                        <td className={'font-monospace'}><Link to={accountDetailPath} title={'View account details'}>{truncateAddress(ca.address)}</Link></td>
+                        <td className={'font-monospace'}><Link to={accountDetailPath} title={'View account details'} onClick={e => onOpenAccountClick(e, ca.id)}>{truncateAddress(ca.address)}</Link></td>
                         <td><span className={'font-monospace'}>{accountBalances[ca.id] || '0'}</span> <span className={'opacity-75'}>POKT</span></td>
                       </tr>
                     );

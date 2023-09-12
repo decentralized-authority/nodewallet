@@ -8,7 +8,11 @@ import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import isNull from 'lodash/isNull';
 import { UserStatus } from '@nodewallet/constants';
 import { useNavigate } from 'react-router-dom';
-import { RouteBuilder } from '@nodewallet/util-browser';
+import {
+  findCryptoAccountInUserAccount,
+  findCryptoAccountInUserAccountByAddress, getAccountDetailParamsFromUserAccount,
+  RouteBuilder
+} from '@nodewallet/util-browser';
 
 export const UnlockAccount = () => {
 
@@ -50,7 +54,26 @@ export const UnlockAccount = () => {
             window.close();
           }
         } else {
-          navigate(RouteBuilder.wallets.fullPath());
+          const activeAccountRes = await api.getActiveAccount();
+          if('error' in activeAccountRes) {
+            errorHandler.handle(activeAccountRes.error);
+          } else {
+            if(activeAccountRes.result) {
+              const account = findCryptoAccountInUserAccount(userAccount, activeAccountRes.result);
+              if(account) {
+                const accountDetailParams = getAccountDetailParamsFromUserAccount(userAccount, account.id);
+                if(accountDetailParams) {
+                  navigate(RouteBuilder.accountDetail.generateFullPath(accountDetailParams));
+                } else {
+                  navigate(RouteBuilder.wallets.fullPath());
+                }
+              } else {
+                navigate(RouteBuilder.wallets.fullPath());
+              }
+            } else {
+              navigate(RouteBuilder.wallets.fullPath());
+            }
+          }
         }
       }
     } catch(err: any) {
