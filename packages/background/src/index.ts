@@ -52,6 +52,7 @@ import {
 } from '@nodewallet/wallet-utils';
 import omit from 'lodash/omit';
 import * as math from 'mathjs';
+import { SessionSecretManager } from './session-secret-manager';
 
 const rpcEndpoints: {[network: string]: {[chain: string]: string}} = {
   [CoinType.POKT]: {
@@ -91,6 +92,14 @@ const getLogger = (): Logger => {
   }
   return loggerInstance;
 };
+
+const sessionSecretManager = new SessionSecretManager(sessionManager);
+sessionSecretManager.initialize()
+  .then(() => {
+    const logger = getLogger();
+    logger.info('SessionSecretManager initialized.');
+  })
+  .catch(console.error);
 
 const resetLockTimer = () => {
   chrome.alarms.clear(AlarmName.LOCK_USER_ACCOUNT)
@@ -157,7 +166,7 @@ export const startBackground = () => {
     return await sessionManager.get(SessionStorageKey.USER_ACCOUNT) || null;
   };
   const getUserKey = async (): Promise<string|null> => {
-    return await sessionManager.get(SessionStorageKey.USER_KEY) || null;
+    return await sessionSecretManager.get(SessionStorageKey.USER_KEY) || null;
   };
   const getEncryptionSettings = async (): Promise<AES256GCMConfig|null> => {
     return await sessionManager.get(SessionStorageKey.ENCRYPTION_SETTINGS) || null;
@@ -247,7 +256,7 @@ export const startBackground = () => {
     await storageManager.set(LocalStorageKey.KEY_SALT, salt);
 
     const key = await argon2(password, salt, encryptionSettings.keyLength, hashSettings);
-    await sessionManager.set(SessionStorageKey.USER_KEY, key);
+    await sessionSecretManager.set(SessionStorageKey.USER_KEY, key);
 
     logger.info('Saving encrypted user account.');
     await encryptSaveUserAccount(account);
@@ -264,7 +273,7 @@ export const startBackground = () => {
     await sessionManager.set(SessionStorageKey.ENCRYPTION_SETTINGS, encryptionSettings);
     const salt = await storageManager.get(LocalStorageKey.KEY_SALT);
     const key = await argon2(password, salt, encryptionSettings.keyLength, hashSettings);
-    await sessionManager.set(SessionStorageKey.USER_KEY, key);
+    await sessionSecretManager.set(SessionStorageKey.USER_KEY, key);
 
     try {
       const decrypted: UserAccount = await decrypt(encrypted);
@@ -397,7 +406,7 @@ export const startBackground = () => {
 
   const lockUserAccount = async (): Promise<void> => {
     await sessionManager.remove(SessionStorageKey.USER_ACCOUNT);
-    await sessionManager.remove(SessionStorageKey.USER_KEY);
+    await sessionSecretManager.remove(SessionStorageKey.USER_KEY);
     await sessionManager.remove(SessionStorageKey.ENCRYPTION_SETTINGS);
   };
 
