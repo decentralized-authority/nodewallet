@@ -41,3 +41,7 @@ export enum UserStatus {
   LOCKED = 'LOCKED',
   UNLOCKED = 'UNLOCKED',
 }
+
+export enum AlarmName {
+  LOCK_USER_ACCOUNT = 'LOCK_USER_ACCOUNT',
+}

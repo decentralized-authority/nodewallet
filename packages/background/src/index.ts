@@ -1,4 +1,12 @@
-import { AppLang, ChainType, CoinType, LocalStorageKey, SessionStorageKey, UserStatus } from '@nodewallet/constants';
+import {
+  AlarmName,
+  AppLang,
+  ChainType,
+  CoinType,
+  LocalStorageKey,
+  SessionStorageKey,
+  UserStatus
+} from '@nodewallet/constants';
 import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
@@ -82,6 +90,20 @@ const getLogger = (): Logger => {
     loggerInstance = new Logger(chrome.storage.local);
   }
   return loggerInstance;
+};
+
+const resetLockTimer = () => {
+  chrome.alarms.clear(AlarmName.LOCK_USER_ACCOUNT)
+    .then(() => {
+      chrome.alarms.create(AlarmName.LOCK_USER_ACCOUNT, {
+        delayInMinutes: 5,
+      }).catch(err => {
+        console.error(err);
+      });
+    })
+    .catch(err => {
+      console.error(err);
+    });
 };
 
 type EncryptFunc = (data: any)=>Promise<EncryptionResult>;
@@ -373,10 +395,14 @@ export const startBackground = () => {
     return {result: sanitizeCryptoAccount(newCryptAccount)};
   });
 
-  messager.register(APIEvent.LOCK_USER_ACCOUNT, async (): Promise<LockUserAccountResult> => {
+  const lockUserAccount = async (): Promise<void> => {
     await sessionManager.remove(SessionStorageKey.USER_ACCOUNT);
     await sessionManager.remove(SessionStorageKey.USER_KEY);
     await sessionManager.remove(SessionStorageKey.ENCRYPTION_SETTINGS);
+  };
+
+  messager.register(APIEvent.LOCK_USER_ACCOUNT, async (): Promise<LockUserAccountResult> => {
+    await lockUserAccount();
     return {result: true};
   });
 
@@ -485,11 +511,16 @@ export const startBackground = () => {
     }
   });
 
-  chrome.runtime.onInstalled.addListener(async ({ reason }) => {
-    const logger = getLogger();
-    if(reason === 'install') {
-      logger.info('Extension installed!');
-      await openTosTab();
+  chrome.runtime.onMessage.addListener(() => {
+    resetLockTimer();
+  });
+
+  chrome.alarms.onAlarm.addListener(async (alarm) => {
+    switch(alarm.name) {
+      case AlarmName.LOCK_USER_ACCOUNT: {
+        await lockUserAccount();
+        break;
+      }
     }
   });
 
