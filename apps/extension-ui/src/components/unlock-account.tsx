@@ -98,6 +98,7 @@ export const UnlockAccount = () => {
                 value={password}
                 placeholder={'Enter user password'}
                 autoFocus={true}
+                disabled={disableSubmit}
                 onBlur={() => {
                   if(passwordError && isValidPassword(password)) {
                     setPasswordError('');
