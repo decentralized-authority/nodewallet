@@ -68,6 +68,9 @@ export class UnlockRoute extends RouteMeta {
 export class WalletsRoute extends RouteMeta {
   readonly _path = 'wallets';
 }
+export class OpenPopupInfoRoute extends RouteMeta {
+  readonly _path = 'open-popup-info';
+}
 
 export class RouteBuilder {
   static accountDetail = new AccountDetailRoute();
@@ -78,4 +81,5 @@ export class RouteBuilder {
   static tos = new TosRoute();
   static unlock = new UnlockRoute();
   static wallets = new WalletsRoute();
+  static openPopupInfo = new OpenPopupInfoRoute();
 }

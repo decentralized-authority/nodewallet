@@ -20,6 +20,7 @@ import { Send } from './components/send';
 import { SelectNewWalletType } from './components/select-new-wallet-type';
 import { RegisterAccount } from './components/register-account';
 import { NewHdWallet } from './components/new-hd-wallet';
+import { OpenPopupInfo } from './components/open-popup-info';
 
 window.Buffer = Buffer;
 
@@ -70,6 +71,10 @@ const start = () => {
           path: RouteBuilder.tos.path(),
           element: <TOS />,
         },
+        {
+          path: RouteBuilder.openPopupInfo.path(),
+          element: <OpenPopupInfo />
+        }
       ],
     },
   ]);

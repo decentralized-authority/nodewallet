@@ -84,8 +84,7 @@ export const SelectNewWalletType = () => {
           icon: 'success',
           title: 'New HD Wallet imported successfully!',
         });
-        dispatch(setUserAccount({userAccount: updatedUserAccount.result}));
-        navigate(RouteBuilder.wallets.fullPath());
+        navigate(RouteBuilder.openPopupInfo.fullPath());
       }
     } catch(err: any) {
       errorHandler.handle(err);

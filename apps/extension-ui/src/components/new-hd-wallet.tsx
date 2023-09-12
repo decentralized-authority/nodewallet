@@ -63,8 +63,7 @@ export const NewHdWallet = () => {
         icon: 'success',
         title: 'New HD Wallet created successfully!',
       });
-      dispatch(setUserAccount({userAccount: updatedUserAccount.result}));
-      navigate(RouteBuilder.wallets.fullPath());
+      navigate(RouteBuilder.openPopupInfo.fullPath());
     }
   };
 

@@ -168,13 +168,14 @@ export const App = () => {
     },
   };
 
-  const showNavbarPatterns = [
+  const hideNavbarPatterns = [
     RouteBuilder.tos.generatePathPattern(),
     RouteBuilder.registerAccount.generatePathPattern(),
     RouteBuilder.selectNewWalletType.generatePathPattern(),
     RouteBuilder.unlock.generatePathPattern(),
     RouteBuilder.newHdWallet.generatePathPattern(),
-  ]
+    RouteBuilder.openPopupInfo.generatePathPattern(),
+  ];
 
   return (
     <div
@@ -186,7 +187,7 @@ export const App = () => {
         style={styles.innerFlexContainer as React.CSSProperties}
       >
         <Container>
-          {!userStatus || showNavbarPatterns.some(p => p.test(location.pathname)) ? null : <Navbar />}
+          {!userStatus || hideNavbarPatterns.some(p => p.test(location.pathname)) ? null : <Navbar />}
           <div className={'flex-grow-1 position-relative'}>
             <Outlet />
           </div>
