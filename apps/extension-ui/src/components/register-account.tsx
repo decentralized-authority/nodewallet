@@ -39,7 +39,6 @@ export const RegisterAccount = () => {
         errorHandler.handle(res.error);
         setDisableSubmit(false);
       } else {
-        console.log('userAccount', res.result);
         dispatch(setUserAccount({
           userAccount: res.result,
         }));

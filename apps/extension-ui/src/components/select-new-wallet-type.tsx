@@ -23,7 +23,6 @@ export const SelectNewWalletType = () => {
 
   const onNewClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    console.log('onNewClick!');
     navigate(RouteBuilder.newHdWallet.fullPath());
   };
   const onImportPassphraseClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -93,7 +92,6 @@ export const SelectNewWalletType = () => {
   const onImportKeyfileClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
       e.preventDefault();
-      console.log('onImportKeyfileClick!');
       if(fileInputRef.current) {
         fileInputRef.current.click();
       }
@@ -116,7 +114,6 @@ export const SelectNewWalletType = () => {
           },
         },
       });
-      console.log('val', val);
     } catch(err: any) {
       errorHandler.handle(err);
     }
@@ -126,7 +123,6 @@ export const SelectNewWalletType = () => {
       const file = e.target.files?.[0];
       if(file) {
         const text = await file.text();
-        console.log('text', text);
       }
     } catch(err: any) {
       errorHandler.handle(err);

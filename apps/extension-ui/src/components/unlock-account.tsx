@@ -41,7 +41,6 @@ export const UnlockAccount = () => {
         setDisableSubmit(false);
       } else {
         const userAccount = res.result;
-        console.log('userAccount', userAccount);
         dispatch(setUserAccount({
           userAccount,
         }));

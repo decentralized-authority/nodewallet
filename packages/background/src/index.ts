@@ -475,12 +475,10 @@ export const startBackground = () => {
   messager.register(APIEvent.GET_ACTIVE_ACCOUNT, async (): Promise<GetActiveAccountResult> => {
     try {
       const encrypted = await storageManager.get(LocalStorageKey.ACTIVE_ACCOUNT);
-      console.log('encrypted', encrypted);
       if(!encrypted) {
         return {result: ''};
       }
       const decrypted = await decrypt(encrypted);
-      console.log('decrypted', decrypted);
       return {result: decrypted};
     } catch(err) {
       return {result: ''};

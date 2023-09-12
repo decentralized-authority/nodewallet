@@ -57,7 +57,6 @@ export const App = () => {
 
     chrome.storage.local.get([LocalStorageKey.SELECTED_CHAIN])
       .then((res) => {
-        console.log('selectedChain', res);
         dispatch(setActiveChain({
           activeChain: res[LocalStorageKey.SELECTED_CHAIN] || ChainType.MAINNET,
         }));

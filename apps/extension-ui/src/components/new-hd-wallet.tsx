@@ -67,8 +67,6 @@ export const NewHdWallet = () => {
     }
   };
 
-  console.log('mnemonic', mnemonic);
-
   const rowLength = 6;
 
   return (
