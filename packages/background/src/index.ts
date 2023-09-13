@@ -30,7 +30,7 @@ import {
   ValidateMnemonicResult,
   WalletAccount
 } from '@nodewallet/types';
-import { findCryptoAccountInUserAccount, Messager, prepMnemonic, RouteBuilder } from '@nodewallet/util-browser';
+import { Messager, prepMnemonic, RouteBuilder } from '@nodewallet/util-browser';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import {
@@ -53,6 +53,35 @@ import {
 import omit from 'lodash/omit';
 import * as math from 'mathjs';
 import { SessionSecretManager } from './session-secret-manager';
+
+interface ExtendedCryptoAccount extends CryptoAccount {
+  privateKey: EncryptionResult
+}
+interface ExtendedWalletAccount extends WalletAccount {
+  accounts: ExtendedCryptoAccount[]
+}
+interface ExtendedUserWallet extends UserWallet {
+  seed: EncryptionResult
+  accounts: ExtendedWalletAccount[]
+}
+interface ExtendedUserAccount extends UserAccount {
+  wallets: ExtendedUserWallet[]
+}
+
+const findCryptoAccountInUserAccount = (userAccount: ExtendedUserAccount, accountId: string): ExtendedCryptoAccount|null => {
+  let cryptoAccount: ExtendedCryptoAccount|null = null;
+  for(const wallet of userAccount.wallets) {
+    for(const walletAccount of wallet.accounts) {
+      for(const ca of walletAccount.accounts) {
+        if(ca.id === accountId) {
+          cryptoAccount = ca;
+          break;
+        }
+      }
+    }
+  }
+  return cryptoAccount;
+};
 
 const rpcEndpoints: {[network: string]: {[chain: string]: string}} = {
   [CoinType.POKT]: {
@@ -115,26 +144,26 @@ const resetLockTimer = () => {
     });
 };
 
-const sanitizeCryptoAccount = (account: CryptoAccount): CryptoAccount => {
+const sanitizeCryptoAccount = (account: ExtendedCryptoAccount): CryptoAccount => {
   return {
     ...omit(account, ['privateKey']),
   };
 };
-const sanitizeWalletAccount = (account: WalletAccount): WalletAccount => {
+const sanitizeWalletAccount = (account: ExtendedWalletAccount): WalletAccount => {
   return {
     ...account,
     accounts: account.accounts
       .map((a): CryptoAccount => sanitizeCryptoAccount(a)),
   };
 };
-const sanitizeUserWallet = (wallet: UserWallet): UserWallet => {
+const sanitizeUserWallet = (wallet: ExtendedUserWallet): UserWallet => {
   return {
-    ...omit(wallet, ['passphrase']),
+    ...omit(wallet, ['seed']),
     accounts: wallet.accounts
       .map((a): WalletAccount => sanitizeWalletAccount(a)),
   };
 };
-const sanitizeUserAccount = (account: UserAccount): UserAccount => {
+const sanitizeUserAccount = (account: ExtendedUserAccount): UserAccount => {
   return {
     ...account,
     wallets: account.wallets
@@ -146,7 +175,7 @@ export const startBackground = () => {
 
   const logger = getLogger();
 
-  const getUserAccount = async (): Promise<UserAccount|null> => {
+  const getUserAccount = async (): Promise<ExtendedUserAccount|null> => {
     return await sessionManager.get(SessionStorageKey.USER_ACCOUNT) || null;
   };
   const getUserKey = async (): Promise<string|null> => {
@@ -172,7 +201,7 @@ export const startBackground = () => {
     return await generalDecrypt(encrypted, key);
   };
 
-  const encryptSaveUserAccount = async (account: UserAccount) => {
+  const encryptSaveUserAccount = async (account: ExtendedUserAccount) => {
     const encrypted = await encrypt(account);
     await storageManager.set(LocalStorageKey.USER_ACCOUNT, encrypted);
   }
@@ -204,7 +233,7 @@ export const startBackground = () => {
     if(userAccount) {
       return { result: UserStatus.UNLOCKED };
     }
-    const res: string = await storageManager.get(LocalStorageKey.USER_ACCOUNT);
+    const res: EncryptionResult|undefined = await storageManager.get(LocalStorageKey.USER_ACCOUNT);
     if(res) {
       return { result: UserStatus.LOCKED };
     }
@@ -213,7 +242,7 @@ export const startBackground = () => {
 
   messager.register(APIEvent.REGISTER_USER, async ({ password }: RegisterUserParams): Promise<RegisterUserResult> => {
     logger.info('Registering user.');
-    const account: UserAccount = {
+    const account: ExtendedUserAccount = {
       language: AppLang.en,
       tosAccepted: dayjs.utc().toISOString(),
       settings: {
@@ -260,7 +289,7 @@ export const startBackground = () => {
     await sessionSecretManager.set(SessionStorageKey.USER_KEY, key);
 
     try {
-      const decrypted: UserAccount = await decrypt(encrypted);
+      const decrypted: ExtendedUserAccount = await decrypt(encrypted);
       await sessionManager.set(SessionStorageKey.USER_ACCOUNT, decrypted);
 
       await updateBalances();
@@ -299,6 +328,7 @@ export const startBackground = () => {
       throw new Error('User account locked.');
     }
     const seed = await mnemonicToSeed(prepped);
+    const encryptedSeed = await encrypt(seed);
     const id = seedToMasterId(seed);
     const found = userAccount.wallets.find(w => w.id === id);
     if(found) {
@@ -306,12 +336,13 @@ export const startBackground = () => {
     }
     const ed25519Utils = new ED25519Utils(PoktUtils.chainMeta[ChainType.MAINNET].derivationPath);
     const account0Node = await ed25519Utils.fromSeed(seed, 0);
-    const newWallet: UserWallet = {
+    const encryptedPrivateKey = await encrypt(account0Node.privateKey);
+    const newWallet: ExtendedUserWallet = {
       id,
       name: `HD Wallet ${userAccount.wallets.filter(w => !w.legacy).length + 1}`,
       createdAt: dayjs.utc().toISOString(),
       legacy: false,
-      passphrase: prepped,
+      seed: encryptedSeed,
       language: userAccount.language,
       accounts: [
         {
@@ -326,7 +357,7 @@ export const startBackground = () => {
               derivationPath: ed25519Utils.pathAtIdx(0),
               index: account0Node.index,
               address: account0Node.address,
-              privateKey: account0Node.privateKey,
+              privateKey: encryptedPrivateKey,
               publicKey: account0Node.publicKey,
             }
           ]
@@ -366,12 +397,13 @@ export const startBackground = () => {
         return a.index > num ? a.index : num;
       }, -1);
     const ed25519Utils = new ED25519Utils(PoktUtils.chainMeta[chain].derivationPath);
-    const phrase = userAccount.wallets[walletIdx].passphrase;
-    if(!phrase) {
-      throw new Error('Wallet passphrase not found.');
+    const seed = await decrypt(userAccount.wallets[walletIdx].seed);
+    if(!seed) {
+      throw new Error('Wallet seed not found.');
     }
-    const accountNode = await ed25519Utils.fromPhrase(phrase, lastDerivationIdx + 1);
-    const newCryptAccount: CryptoAccount = {
+    const accountNode = await ed25519Utils.fromSeed(seed, lastDerivationIdx + 1);
+    const encryptedPrivateKey = await encrypt(accountNode.privateKey);
+    const newCryptAccount: ExtendedCryptoAccount = {
       id: generateCryptoAccountId(network, chain, accountNode.address),
       name: `${network} Account ${accountNode.index + 1}`,
       network,
@@ -379,7 +411,7 @@ export const startBackground = () => {
       derivationPath: ed25519Utils.pathAtIdx(accountNode.index),
       index: accountNode.index,
       address: accountNode.address,
-      privateKey: accountNode.privateKey,
+      privateKey: encryptedPrivateKey,
       publicKey: accountNode.publicKey,
     };
     userAccount.wallets[walletIdx].accounts[walletAccountIdx].accounts.push(newCryptAccount);
@@ -464,10 +496,10 @@ export const startBackground = () => {
         } else if(!cryptoAccount.privateKey) {
           throw new Error('Private key not found.');
         }
-
+        const privateKey = await decrypt(cryptoAccount.privateKey);
         const res = await PoktUtils.send(
           endpoint,
-          cryptoAccount.privateKey,
+          privateKey,
           recipient,
           cryptoAccount.chain,
           PoktUtils.toBaseDenom(amount),

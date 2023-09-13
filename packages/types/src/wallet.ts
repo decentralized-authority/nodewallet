@@ -8,7 +8,6 @@ export interface CryptoAccount {
   derivationPath: string
   index: number
   address: string
-  privateKey?: string
   publicKey: string
 }
 export interface WalletAccount {
@@ -21,7 +20,6 @@ export interface UserWallet {
   name: string
   createdAt: string // ISO data string
   legacy: boolean // true if it is not an HD wallet
-  passphrase?: string
   language: AppLang
   accounts: WalletAccount[]
 }
