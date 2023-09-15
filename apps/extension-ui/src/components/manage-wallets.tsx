@@ -36,6 +36,7 @@ export const ManageWallets = () => {
       <div className={'flex-grow-1 position-relative'}>
         <div className={'position-absolute top-0 start-0 end-0 bottom-0 overflow-x-hidden overflow-y-auto'}>
           {userAccount?.wallets
+            .filter((wallet) => !wallet.legacy || wallet.accounts.some((account) => account.chain === activeChain))
             .map((wallet) => {
               return (
                 <WalletCard wallet={wallet} />

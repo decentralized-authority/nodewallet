@@ -402,7 +402,7 @@ export const startBackground = () => {
     if(!userAccount) {
       throw new Error('User account locked.');
     }
-    const { network } = params;
+    const { chain, network } = params;
     let privateKey: string;
     if('privateKeyEncrypted' in params) {
       const res = await PoktUtils.getAccountFromEncryptedPrivateKey(
@@ -414,47 +414,39 @@ export const startBackground = () => {
       privateKey = params.privateKey.trim();
     }
     const account = await PoktUtils.getAccountFromPrivateKey(privateKey);
-    const ed25519Utils = new ED25519Utils(PoktUtils.chainMeta[ChainType.MAINNET].derivationPath);
     const encryptedPrivateKey = await encrypt(privateKey);
-    const mainnetAccount: ExtendedCryptoAccount = {
-      id: generateCryptoAccountId(CoinType.POKT, ChainType.MAINNET, account.address),
+    const cryptoAccount: ExtendedCryptoAccount = {
+      id: generateCryptoAccountId(CoinType.POKT, chain, account.address),
       name: `${CoinType.POKT} Account ${account.address.slice(-4)}`,
       network,
-      chain: ChainType.MAINNET,
+      chain,
       derivationPath: '',
       index: -1,
       address: account.address,
       privateKey: encryptedPrivateKey,
       publicKey: account.publicKey,
     };
-    const testnetAccount: ExtendedCryptoAccount = {
-      ...mainnetAccount,
-      id: generateCryptoAccountId(CoinType.POKT, ChainType.TESTNET, account.address),
-      chain: ChainType.TESTNET,
-    };
-    const prev = userAccount.wallets.find(w => w.id === account.address);
+    const walletId = `${account.address}-${chain}`;
+    const prev = userAccount.wallets.find(w => w.id === walletId);
     if(prev) {
       throw new Error('Wallet already exists.');
     }
+    const legacyWalletCount = userAccount.wallets
+      .filter(w => w.legacy)
+      .filter(w => w.accounts.some(a => a.network === network && a.chain === chain))
+      .length;
     const newWallet: ExtendedLegacyUserWallet = {
-      id: account.address,
-      name: `Legacy Wallet ${userAccount.wallets.filter(w => w.legacy).length + 1}`,
+      id: walletId,
+      name: `Legacy Wallet ${legacyWalletCount + 1}`,
       createdAt: dayjs.utc().toISOString(),
       legacy: true,
       language: userAccount.language,
       accounts: [
         {
           network,
-          chain: ChainType.MAINNET,
+          chain,
           accounts: [
-            mainnetAccount,
-          ],
-        },
-        {
-          network,
-          chain: ChainType.TESTNET,
-          accounts: [
-            testnetAccount,
+            cryptoAccount,
           ],
         },
       ],

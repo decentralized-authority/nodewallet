@@ -19,6 +19,7 @@ export const SelectNewWalletType = () => {
   const api = useContext(ApiContext);
   const dispatch = useDispatch();
   const {
+    activeChain,
     userAccount,
   } = useSelector(({ appState }: RootState) => appState);
 
@@ -129,7 +130,7 @@ export const SelectNewWalletType = () => {
         const prepped = val.trim();
         const insertRes = await api.insertLegacyWallet({
           network: CoinType.POKT,
-          chain: ChainType.MAINNET,
+          chain: activeChain || ChainType.MAINNET,
           privateKey: prepped,
         });
         if('error' in insertRes) {
@@ -191,7 +192,7 @@ export const SelectNewWalletType = () => {
           const prepped = password.trim();
           const insertRes = await api.insertLegacyWallet({
             network: CoinType.POKT,
-            chain: ChainType.MAINNET,
+            chain: activeChain || ChainType.MAINNET,
             privateKeyEncrypted: text,
             privateKeyPassword: prepped,
           });
