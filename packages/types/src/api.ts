@@ -12,6 +12,7 @@ export enum APIEvent {
   GENERATE_MNEMONIC = 'GENERATE_MNEMONIC',
   VALIDATE_MNEMONIC = 'VALIDATE_MNEMONIC',
   INSERT_HD_WALLET = 'INSERT_HD_WALLET',
+  INSERT_LEGACY_WALLET = 'INSERT_LEGACY_WALLET',
   INSERT_CRYPTO_ACCOUNT = 'INSERT_CRYPTO_ACCOUNT',
   LOCK_USER_ACCOUNT = 'LOCK_USER_ACCOUNT',
   GET_ACCOUNT_BALANCES = 'GET_ACCOUNT_BALANCES',
@@ -60,9 +61,21 @@ export type ValidateMnemonicResult = ErrorResult | {
 export interface InsertHdWalletParams {
   mnemonic: string
 }
-export type InsertHdWalletResult = ErrorResult | {
+interface InsertWalletResult {
   result: UserWallet
 }
+export type InsertHdWalletResult = ErrorResult | InsertWalletResult
+export type InsertLegacyWalletParams = {
+  network: CoinType
+  chain: ChainType
+  privateKey: string
+} | {
+  network: CoinType
+  chain: ChainType
+  privateKeyEncrypted: string
+  privateKeyPassword: string
+}
+export type InsertLegacyWalletResult = ErrorResult | InsertWalletResult
 export interface InsertCryptoAccountParams {
   walletId: string
   network: CoinType,
@@ -119,6 +132,8 @@ export interface ClientAPI {
   validateMnemonic(params: ValidateMnemonicParams): Promise<ValidateMnemonicResult>
 
   insertHdWallet(params: InsertHdWalletParams): Promise<InsertHdWalletResult>
+
+  insertLegacyWallet(params: InsertLegacyWalletParams): Promise<InsertLegacyWalletResult>
 
   insertCryptoAccount(params: InsertCryptoAccountParams): Promise<InsertCryptoAccountResult>
 

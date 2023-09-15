@@ -11,15 +11,26 @@ import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
   APIEvent,
-  CryptoAccount, GenerateMnemonicResult, GetAccountBalancesParams, GetAccountBalancesResult, GetActiveAccountResult,
+  CryptoAccount,
+  GenerateMnemonicResult,
+  GetAccountBalancesParams,
+  GetAccountBalancesResult,
+  GetActiveAccountResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
   InsertCryptoAccountResult,
   InsertHdWalletParams,
-  InsertHdWalletResult, LockUserAccountResult,
+  InsertHdWalletResult,
+  InsertLegacyWalletParams,
+  InsertLegacyWalletResult,
+  LockUserAccountResult,
   RegisterUserParams,
-  RegisterUserResult, SaveActiveAccountParams, SaveActiveAccountResult, SendTransactionParams, SendTransactionResult,
+  RegisterUserResult,
+  SaveActiveAccountParams,
+  SaveActiveAccountResult,
+  SendTransactionParams,
+  SendTransactionResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
@@ -35,11 +46,13 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import {
   AES256GCMConfig,
-  argon2, Argon2Config,
+  argon2,
   decrypt as generalDecrypt,
   defaultAES256GCMConfig,
-  defaultArgon2Config, defaultSeedBits,
-  encryptAES256GCM, EncryptionResult,
+  defaultArgon2Config,
+  defaultSeedBits,
+  encryptAES256GCM,
+  EncryptionResult,
   generateSalt
 } from '@nodewallet/util';
 import {
@@ -51,7 +64,6 @@ import {
   seedToMasterId
 } from '@nodewallet/wallet-utils';
 import omit from 'lodash/omit';
-import * as math from 'mathjs';
 import { SessionSecretManager } from './session-secret-manager';
 
 interface ExtendedCryptoAccount extends CryptoAccount {
@@ -64,8 +76,11 @@ interface ExtendedUserWallet extends UserWallet {
   seed: EncryptionResult
   accounts: ExtendedWalletAccount[]
 }
+interface ExtendedLegacyUserWallet extends UserWallet {
+  accounts: ExtendedWalletAccount[]
+}
 interface ExtendedUserAccount extends UserAccount {
-  wallets: ExtendedUserWallet[]
+  wallets: (ExtendedUserWallet|ExtendedLegacyUserWallet)[]
 }
 
 const findCryptoAccountInUserAccount = (userAccount: ExtendedUserAccount, accountId: string): ExtendedCryptoAccount|null => {
@@ -156,12 +171,20 @@ const sanitizeWalletAccount = (account: ExtendedWalletAccount): WalletAccount =>
       .map((a): CryptoAccount => sanitizeCryptoAccount(a)),
   };
 };
-const sanitizeUserWallet = (wallet: ExtendedUserWallet): UserWallet => {
-  return {
-    ...omit(wallet, ['seed']),
-    accounts: wallet.accounts
-      .map((a): WalletAccount => sanitizeWalletAccount(a)),
-  };
+const sanitizeUserWallet = (wallet: ExtendedUserWallet|ExtendedLegacyUserWallet): UserWallet => {
+  if('seed' in wallet) {
+    return {
+      ...omit(wallet, ['seed']),
+      accounts: wallet.accounts
+        .map((a): WalletAccount => sanitizeWalletAccount(a)),
+    };
+  } else {
+    return {
+      ...wallet,
+      accounts: wallet.accounts
+        .map((a): WalletAccount => sanitizeWalletAccount(a)),
+    };
+  }
 };
 const sanitizeUserAccount = (account: ExtendedUserAccount): UserAccount => {
   return {
@@ -374,6 +397,74 @@ export const startBackground = () => {
     return {result: sanitizeUserWallet(newWallet)};
   });
 
+  messager.register(APIEvent.INSERT_LEGACY_WALLET, async (params: InsertLegacyWalletParams): Promise<InsertLegacyWalletResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const { network } = params;
+    let privateKey: string;
+    if('privateKeyEncrypted' in params) {
+      privateKey = 'something';
+    } else {
+      privateKey = params.privateKey.trim();
+    }
+    const account = await PoktUtils.getAccountFromPrivateKey(privateKey);
+    const ed25519Utils = new ED25519Utils(PoktUtils.chainMeta[ChainType.MAINNET].derivationPath);
+    const encryptedPrivateKey = await encrypt(privateKey);
+    const mainnetAccount: ExtendedCryptoAccount = {
+      id: generateCryptoAccountId(CoinType.POKT, ChainType.MAINNET, account.address),
+      name: `${CoinType.POKT} Account ${account.address.slice(-4)}`,
+      network,
+      chain: ChainType.MAINNET,
+      derivationPath: '',
+      index: -1,
+      address: account.address,
+      privateKey: encryptedPrivateKey,
+      publicKey: account.publicKey,
+    };
+    const testnetAccount: ExtendedCryptoAccount = {
+      ...mainnetAccount,
+      id: generateCryptoAccountId(CoinType.POKT, ChainType.TESTNET, account.address),
+      chain: ChainType.TESTNET,
+    };
+    const prev = userAccount.wallets.find(w => w.id === account.address);
+    if(prev) {
+      throw new Error('Wallet already exists.');
+    }
+    const newWallet: ExtendedLegacyUserWallet = {
+      id: account.address,
+      name: `Legacy Wallet ${userAccount.wallets.filter(w => w.legacy).length + 1}`,
+      createdAt: dayjs.utc().toISOString(),
+      legacy: true,
+      language: userAccount.language,
+      accounts: [
+        {
+          network,
+          chain: ChainType.MAINNET,
+          accounts: [
+            mainnetAccount,
+          ],
+        },
+        {
+          network,
+          chain: ChainType.TESTNET,
+          accounts: [
+            testnetAccount,
+          ],
+        },
+      ],
+    };
+    userAccount.wallets.push(newWallet);
+    await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
+    await encryptSaveUserAccount(userAccount);
+    updateBalances()
+      .catch(err => {
+        console.error(err);
+      });
+    return {result: sanitizeUserWallet(newWallet)};
+  });
+
   messager.register(APIEvent.INSERT_CRYPTO_ACCOUNT, async ({ walletId, network, chain }: InsertCryptoAccountParams): Promise<InsertCryptoAccountResult> => {
     const userAccount = await getUserAccount();
     if(!userAccount) {
@@ -397,27 +488,32 @@ export const startBackground = () => {
         return a.index > num ? a.index : num;
       }, -1);
     const ed25519Utils = new ED25519Utils(PoktUtils.chainMeta[chain].derivationPath);
-    const seed = await decrypt(userAccount.wallets[walletIdx].seed);
-    if(!seed) {
-      throw new Error('Wallet seed not found.');
+    if('seed' in userAccount.wallets[walletIdx]) {
+      // @ts-ignore
+      const seed = await decrypt(userAccount.wallets[walletIdx].seed);
+      if(!seed) {
+        throw new Error('Wallet seed not found.');
+      }
+      const accountNode = await ed25519Utils.fromSeed(seed, lastDerivationIdx + 1);
+      const encryptedPrivateKey = await encrypt(accountNode.privateKey);
+      const newCryptAccount: ExtendedCryptoAccount = {
+        id: generateCryptoAccountId(network, chain, accountNode.address),
+        name: `${network} Account ${accountNode.index + 1}`,
+        network,
+        chain,
+        derivationPath: ed25519Utils.pathAtIdx(accountNode.index),
+        index: accountNode.index,
+        address: accountNode.address,
+        privateKey: encryptedPrivateKey,
+        publicKey: accountNode.publicKey,
+      };
+      userAccount.wallets[walletIdx].accounts[walletAccountIdx].accounts.push(newCryptAccount);
+      await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
+      await encryptSaveUserAccount(userAccount);
+      return {result: sanitizeCryptoAccount(newCryptAccount)};
+    } else {
+      throw new Error('You cannot insert new accounts into legacy wallets.');
     }
-    const accountNode = await ed25519Utils.fromSeed(seed, lastDerivationIdx + 1);
-    const encryptedPrivateKey = await encrypt(accountNode.privateKey);
-    const newCryptAccount: ExtendedCryptoAccount = {
-      id: generateCryptoAccountId(network, chain, accountNode.address),
-      name: `${network} Account ${accountNode.index + 1}`,
-      network,
-      chain,
-      derivationPath: ed25519Utils.pathAtIdx(accountNode.index),
-      index: accountNode.index,
-      address: accountNode.address,
-      privateKey: encryptedPrivateKey,
-      publicKey: accountNode.publicKey,
-    };
-    userAccount.wallets[walletIdx].accounts[walletAccountIdx].accounts.push(newCryptAccount);
-    await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
-    await encryptSaveUserAccount(userAccount);
-    return {result: sanitizeCryptoAccount(newCryptAccount)};
   });
 
   const lockUserAccount = async (): Promise<void> => {

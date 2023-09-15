@@ -8,6 +8,7 @@ import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { ApiContext } from '../hooks/api-context';
 import { useNavigate } from 'react-router-dom';
 import { RouteBuilder } from '@nodewallet/util-browser';
+import { ChainType, CoinType } from '@nodewallet/constants';
 
 export const SelectNewWalletType = () => {
 
@@ -114,6 +115,23 @@ export const SelectNewWalletType = () => {
           },
         },
       });
+      if(val) {
+        const prepped = val.trim();
+        const insertRes = await api.insertLegacyWallet({
+          network: CoinType.POKT,
+          chain: ChainType.MAINNET,
+          privateKey: prepped,
+        });
+        if('error' in insertRes) {
+          errorHandler.handle(insertRes.error);
+        } else if(insertRes.result) {
+          await swal({
+            icon: 'success',
+            title: 'Legacy account imported successfully!',
+          });
+          navigate(RouteBuilder.openPopupInfo.fullPath());
+        }
+      }
     } catch(err: any) {
       errorHandler.handle(err);
     }

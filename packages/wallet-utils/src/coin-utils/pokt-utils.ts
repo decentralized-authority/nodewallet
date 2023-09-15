@@ -6,6 +6,7 @@ import { TransactionBuilder } from '@pokt-foundation/pocketjs-transaction-builde
 import bip44Constants from 'bip44-constants';
 import { ChainMeta } from '../interfaces';
 import { ChainType, CoinType, KeyType } from '@nodewallet/constants';
+import { isHex } from '@nodewallet/util-browser';
 
 // https://github.com/satoshilabs/slips/blob/master/slip-0044.md
 const bip44Type = bip44Constants.findIndex((c) => c[1] === 'POKT');
@@ -110,6 +111,18 @@ export class PoktUtils {
       txMsg,
     });
     return txHash;
+  }
+
+  static async getAccountFromPrivateKey(privateKey: string): Promise<{address: string, publicKey: string}> {
+    privateKey = privateKey.trim();
+    if(privateKey.length !== 128 || !isHex(privateKey)) {
+      throw new Error('Invalid private key');
+    }
+    const account = await KeyManager.fromPrivateKey(privateKey);
+    return {
+      address: account.getAddress(),
+      publicKey: account.getPublicKey(),
+    };
   }
 
   _chain: ChainType;
