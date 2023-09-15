@@ -103,8 +103,7 @@ export const SelectNewWalletType = () => {
   const onImportRawClick = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     try {
       e.preventDefault();
-      // @ts-ignore
-      const val = await swal({buttons: ['Cancel', 'Import'],
+      const val = await swal({
         title: 'Enter or paste your raw private key',
         content: {
           element: 'input',
@@ -113,6 +112,17 @@ export const SelectNewWalletType = () => {
             placeholder: 'Enter raw private key',
             style: 'color:#333',
           },
+        },
+        buttons: {
+          cancel: {
+            text: 'Cancel',
+            visible: true,
+          },
+          confirm: {
+            text: 'Import',
+            visible: true,
+            closeModal: false,
+          }
         },
       });
       if(val) {
@@ -131,9 +141,17 @@ export const SelectNewWalletType = () => {
           });
           navigate(RouteBuilder.openPopupInfo.fullPath());
         }
+      } else {
+        // @ts-ignore
+        swal.close();
       }
     } catch(err: any) {
       errorHandler.handle(err);
+    }
+  };
+  const resetFileInput = () => {
+    if(fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
   const onFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,8 +159,59 @@ export const SelectNewWalletType = () => {
       const file = e.target.files?.[0];
       if(file) {
         const text = await file.text();
+        try {
+          JSON.parse(text);
+        } catch(err) {
+          resetFileInput();
+          throw new Error('Invalid keyfile');
+        }
+        const password = await swal({
+          title: 'Enter keyfile decryption password',
+          content: {
+            element: 'input',
+            attributes: {
+              type: 'password',
+              placeholder: 'Enter password',
+              style: 'color:#333',
+            },
+          },
+          buttons: {
+            cancel: {
+              text: 'Cancel',
+              visible: true,
+            },
+            confirm: {
+              text: 'Import',
+              visible: true,
+              closeModal: false,
+            }
+          },
+        });
+        if(password) {
+          const prepped = password.trim();
+          const insertRes = await api.insertLegacyWallet({
+            network: CoinType.POKT,
+            chain: ChainType.MAINNET,
+            privateKeyEncrypted: text,
+            privateKeyPassword: prepped,
+          });
+          if('error' in insertRes) {
+            errorHandler.handle(insertRes.error);
+          } else if(insertRes.result) {
+            await swal({
+              icon: 'success',
+              title: 'Legacy account imported successfully!',
+            });
+            navigate(RouteBuilder.openPopupInfo.fullPath());
+          }
+        } else {
+          // @ts-ignore
+          swal.close();
+        }
+        resetFileInput();
       }
     } catch(err: any) {
+      resetFileInput();
       errorHandler.handle(err);
     }
   };

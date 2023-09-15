@@ -113,14 +113,26 @@ export class PoktUtils {
     return txHash;
   }
 
-  static async getAccountFromPrivateKey(privateKey: string): Promise<{address: string, publicKey: string}> {
-    privateKey = privateKey.trim();
+  static async getAccountFromPrivateKey(privateKey: string): Promise<{address: string, privateKey: string, publicKey: string}> {
     if(privateKey.length !== 128 || !isHex(privateKey)) {
       throw new Error('Invalid private key');
     }
     const account = await KeyManager.fromPrivateKey(privateKey);
     return {
       address: account.getAddress(),
+      privateKey,
+      publicKey: account.getPublicKey(),
+    };
+  }
+
+  static async getAccountFromEncryptedPrivateKey(encryptedPrivateKey: string, password: string): Promise<{address: string, privateKey: string, publicKey: string}> {
+    const account = await KeyManager.fromPPK({
+      password,
+      ppk: encryptedPrivateKey,
+    });
+    return {
+      address: account.getAddress(),
+      privateKey: account.getPrivateKey(),
       publicKey: account.getPublicKey(),
     };
   }

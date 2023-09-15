@@ -405,7 +405,11 @@ export const startBackground = () => {
     const { network } = params;
     let privateKey: string;
     if('privateKeyEncrypted' in params) {
-      privateKey = 'something';
+      const res = await PoktUtils.getAccountFromEncryptedPrivateKey(
+        params.privateKeyEncrypted.trim(),
+        params.privateKeyPassword.trim(),
+      );
+      privateKey = res.privateKey;
     } else {
       privateKey = params.privateKey.trim();
     }
