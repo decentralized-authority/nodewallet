@@ -57,7 +57,7 @@ export const BalanceCard = ({ walletId, account, hideButtons, backRoute }: Balan
         </div>
         {!hideButtons ?
           <div className={'d-flex flex-row justify-content-evenly'}>
-            <button style={styles.button} className={'btn btn-primary text-uppercase fw-bold'}>Stake</button>
+            <button style={styles.button} className={'btn btn-primary text-uppercase fw-bold'} disabled={true}>Stake</button>
             <Link to={sendPath} style={styles.button} className={'btn btn-primary text-uppercase fw-bold'}>Send</Link>
           </div>
           :
