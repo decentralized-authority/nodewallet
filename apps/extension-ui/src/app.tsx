@@ -96,24 +96,26 @@ export const App = () => {
                   window.close();
                 }
               } else {
-                const activeAccountRes = await api.getActiveAccount();
-                if('error' in activeAccountRes) {
-                  errorHandler.handle(activeAccountRes.error);
-                } else {
-                  if(activeAccountRes.result) {
-                    const cryptoAccount = findCryptoAccountInUserAccount(account, activeAccountRes.result);
-                    if(cryptoAccount) {
-                      const accountDetailParams = getAccountDetailParamsFromUserAccount(account, cryptoAccount.id);
-                      if(accountDetailParams) {
-                        navigate(RouteBuilder.accountDetail.generateFullPath(accountDetailParams));
+                if(!isTab()) {
+                  const activeAccountRes = await api.getActiveAccount();
+                  if('error' in activeAccountRes) {
+                    errorHandler.handle(activeAccountRes.error);
+                  } else {
+                    if(activeAccountRes.result) {
+                      const cryptoAccount = findCryptoAccountInUserAccount(account, activeAccountRes.result);
+                      if(cryptoAccount) {
+                        const accountDetailParams = getAccountDetailParamsFromUserAccount(account, cryptoAccount.id);
+                        if(accountDetailParams) {
+                          navigate(RouteBuilder.accountDetail.generateFullPath(accountDetailParams));
+                        } else {
+                          navigate(RouteBuilder.wallets.fullPath());
+                        }
                       } else {
                         navigate(RouteBuilder.wallets.fullPath());
                       }
                     } else {
                       navigate(RouteBuilder.wallets.fullPath());
                     }
-                  } else {
-                    navigate(RouteBuilder.wallets.fullPath());
                   }
                 }
               }

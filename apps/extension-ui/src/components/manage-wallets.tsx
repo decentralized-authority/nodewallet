@@ -24,13 +24,10 @@ export const ManageWallets = () => {
     })
   }, [api, errorHandler]);
 
-  const onImportWalletClick = (e: React.MouseEvent) => {
+  const onImportWalletClick = async (e: React.MouseEvent) => {
     e.preventDefault();
-    // dispatch(setActiveView({activeView: AppView.SELECT_IMPORT_TYPE}));
-  };
-  const onNewWalletClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    // dispatch(setActiveView({activeView: AppView.NEW_HD_WALLET}));
+    await api.startNewWallet();
+    window.close();
   };
 
   return (
@@ -48,8 +45,7 @@ export const ManageWallets = () => {
         </div>
       </div>
       <div className={'d-flex flex-row justify-content-start p-2'}>
-        <button className={'btn btn-primary flex-grow-1 me-2'} onClick={onImportWalletClick}><i className={'mdi mdi-upload'} /> Import wallet</button>
-        <button className={'btn btn-primary flex-grow-1'} onClick={onNewWalletClick}><i className={'mdi mdi-plus-thick'} /> New HD wallet</button>
+        <button className={'btn btn-primary me-2'} onClick={onImportWalletClick}><i className={'mdi mdi-upload'} /> Add/Import wallet</button>
       </div>
     </Container>
   );

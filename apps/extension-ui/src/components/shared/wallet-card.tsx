@@ -69,7 +69,7 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
   };
 
   return (
-    <div className={'card ms-1 me-1'}>
+    <div className={'card ms-1 me-1 mb-2'}>
       <div className={'card-header pt-2 pb-1 ps-2 pe-2'}>
         <div className={'d-flex flex-row justify-content-between align-items-center'}>
           <h4 className={'mt-0 mb-0'}>{wallet.name} <a href={'#'} title={'Edit wallet name'}><i className={' mdi mdi-pencil'} /></a></h4>

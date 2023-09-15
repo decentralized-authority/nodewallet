@@ -138,7 +138,7 @@ export const SelectNewWalletType = () => {
   return (
     <Container className={'flex-column justify-content-start align-items-center p-2'}>
       <h1 className={'mt-3'}>New Wallet Select</h1>
-      <p className={'text-center mb-4'}>Start by creating a new wallet. You can also import existing wallets or accounts.</p>
+      <p className={'text-center mb-4'}>Create a new HD wallet or import an existing wallet or account.</p>
       <div className={' d-flex flex-column justify-content-start'} style={styles.buttonContainer}>
 
         <button
