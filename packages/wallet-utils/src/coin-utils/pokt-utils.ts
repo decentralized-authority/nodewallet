@@ -137,6 +137,11 @@ export class PoktUtils {
     };
   }
 
+  static async encryptExportPrivateKey(privateKey: string, password: string): Promise<string> {
+    const account = await KeyManager.fromPrivateKey(privateKey);
+    return await account.exportPPK({password});
+  }
+
   _chain: ChainType;
 
   constructor(chain: ChainType) {

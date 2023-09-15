@@ -1,16 +1,30 @@
 import {
   APIEvent,
   ClientAPI,
-  GenerateMnemonicResult, GetAccountBalancesParams, GetAccountBalancesResult, GetActiveAccountResult,
+  ExportKeyfileParams,
+  ExportKeyfileResult,
+  ExportPrivateKeyParams,
+  ExportPrivateKeyResult,
+  GenerateMnemonicResult,
+  GetAccountBalancesParams,
+  GetAccountBalancesResult,
+  GetActiveAccountResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
   InsertCryptoAccountResult,
   InsertHdWalletParams,
-  InsertHdWalletResult, InsertLegacyWalletParams, InsertLegacyWalletResult,
+  InsertHdWalletResult,
+  InsertLegacyWalletParams,
+  InsertLegacyWalletResult,
   LockUserAccountResult,
   RegisterUserParams,
-  RegisterUserResult, SaveActiveAccountParams, SaveActiveAccountResult, SendTransactionParams, SendTransactionResult,
+  RegisterUserResult,
+  SaveActiveAccountParams,
+  SaveActiveAccountResult,
+  SaveFileParams,
+  SendTransactionParams,
+  SendTransactionResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
@@ -90,6 +104,18 @@ export class API implements ClientAPI {
 
   async getActiveAccount(): Promise<GetActiveAccountResult> {
     return await this._messager.send(APIEvent.GET_ACTIVE_ACCOUNT);
+  }
+
+  async exportPrivateKey(params: ExportPrivateKeyParams): Promise<ExportPrivateKeyResult> {
+    return await this._messager.send(APIEvent.EXPORT_PRIVATE_KEY, params);
+  }
+
+  async exportKeyfile(params: ExportKeyfileParams): Promise<ExportKeyfileResult> {
+    return await this._messager.send(APIEvent.EXPORT_KEYFILE, params);
+  }
+
+  async saveFile(params: SaveFileParams): Promise<void> {
+    return await this._messager.send(APIEvent.SAVE_FILE, params);
   }
 
 }

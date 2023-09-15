@@ -63,3 +63,10 @@ export const getAccountDetailParamsFromUserAccount = (userAccount: UserAccount, 
   }
   return null;
 }
+
+export const prepFilename = (name: string) => {
+  return name
+    .toLowerCase()
+    .replace(/\s+/g, '_')
+    .replace(/\W+/g, '');
+};

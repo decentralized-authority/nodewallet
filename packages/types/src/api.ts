@@ -19,6 +19,9 @@ export enum APIEvent {
   SEND_TRANSACTION = 'SEND_TRANSACTION',
   SAVE_ACTIVE_ACCOUNT = 'SAVE_ACTIVE_ACCOUNT',
   GET_ACTIVE_ACCOUNT = 'GET_ACTIVE_ACCOUNT',
+  EXPORT_PRIVATE_KEY = 'EXPORT_PRIVATE_KEY',
+  EXPORT_KEYFILE = 'EXPORT_KEYFILE',
+  SAVE_FILE = 'SAVE_FILE',
 }
 
 export interface ErrorResult {
@@ -113,6 +116,25 @@ export type SaveActiveAccountResult = ErrorResult | {
 export type GetActiveAccountResult = ErrorResult | {
   result: string
 }
+export interface ExportPrivateKeyParams {
+  password: string
+  accountId: string
+}
+export type ExportPrivateKeyResult = ErrorResult | {
+  result: string
+}
+export interface ExportKeyfileParams {
+  password: string
+  keyfilePassword: string
+  accountId: string
+}
+export type ExportKeyfileResult = ErrorResult | {
+  result: string
+}
+export interface SaveFileParams {
+  filename: string
+  url: string
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -146,5 +168,11 @@ export interface ClientAPI {
   saveActiveAccount(params: SaveActiveAccountParams): Promise<SaveActiveAccountResult>
 
   getActiveAccount(): Promise<GetActiveAccountResult>
+
+  exportPrivateKey(params: ExportPrivateKeyParams): Promise<ExportPrivateKeyResult>
+
+  exportKeyfile(params: ExportKeyfileParams): Promise<ExportKeyfileResult>
+
+  saveFile(params: SaveFileParams): Promise<void>
 
 }

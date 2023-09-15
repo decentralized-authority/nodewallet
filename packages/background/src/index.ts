@@ -11,7 +11,7 @@ import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
   APIEvent,
-  CryptoAccount,
+  CryptoAccount, ExportKeyfileParams, ExportKeyfileResult, ExportPrivateKeyParams, ExportPrivateKeyResult,
   GenerateMnemonicResult,
   GetAccountBalancesParams,
   GetAccountBalancesResult,
@@ -28,7 +28,7 @@ import {
   RegisterUserParams,
   RegisterUserResult,
   SaveActiveAccountParams,
-  SaveActiveAccountResult,
+  SaveActiveAccountResult, SaveFileParams,
   SendTransactionParams,
   SendTransactionResult,
   StartNewWalletResult,
@@ -634,6 +634,75 @@ export const startBackground = () => {
     } catch(err) {
       return {result: ''};
     }
+  });
+
+  messager.register(APIEvent.EXPORT_PRIVATE_KEY, async (params: ExportPrivateKeyParams): Promise<ExportPrivateKeyResult> => {
+    const { accountId } = params;
+    const password = params.password.trim();
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const cryptoAccount = findCryptoAccountInUserAccount(userAccount, accountId);
+    if(!cryptoAccount) {
+      throw new Error('Account not found.');
+    }
+    switch(cryptoAccount.network) {
+      case CoinType.POKT: {
+        if(!cryptoAccount.privateKey) {
+          throw new Error('Private key not found.');
+        }
+        const hashSettings = await storageManager.get(LocalStorageKey.HASH_SETTINGS);
+        const encryptionSettings = await storageManager.get(LocalStorageKey.ENCRYPTION_SETTINGS);
+        const salt = await storageManager.get(LocalStorageKey.KEY_SALT);
+        const key = await argon2(password, salt, encryptionSettings.keyLength, hashSettings);
+        const privateKey = await generalDecrypt(cryptoAccount.privateKey, key);
+        return {
+          result: privateKey,
+        };
+      } default: {
+        throw new Error('Unsupported network.');
+      }
+    }
+  });
+
+  messager.register(APIEvent.EXPORT_KEYFILE, async (params: ExportKeyfileParams): Promise<ExportKeyfileResult> => {
+    const { accountId } = params;
+    const password = params.password.trim();
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const cryptoAccount = findCryptoAccountInUserAccount(userAccount, accountId);
+    if(!cryptoAccount) {
+      throw new Error('Account not found.');
+    }
+    switch(cryptoAccount.network) {
+      case CoinType.POKT: {
+        if(!cryptoAccount.privateKey) {
+          throw new Error('Private key not found.');
+        }
+        const hashSettings = await storageManager.get(LocalStorageKey.HASH_SETTINGS);
+        const encryptionSettings = await storageManager.get(LocalStorageKey.ENCRYPTION_SETTINGS);
+        const salt = await storageManager.get(LocalStorageKey.KEY_SALT);
+        const key = await argon2(password, salt, encryptionSettings.keyLength, hashSettings);
+        const privateKey = await generalDecrypt(cryptoAccount.privateKey, key);
+        const encrypted = await PoktUtils.encryptExportPrivateKey(privateKey, password);
+        return {
+          result: encrypted,
+        };
+      } default: {
+        throw new Error('Unsupported network.');
+      }
+    }
+  });
+
+  messager.register(APIEvent.SAVE_FILE, async ({ filename, url }: SaveFileParams): Promise<void> => {
+    await chrome.downloads.download({
+      saveAs: true,
+      url,
+      filename,
+    });
   });
 
   chrome.runtime.onInstalled.addListener(async ({ reason }) => {
