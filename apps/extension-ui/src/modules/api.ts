@@ -7,7 +7,7 @@ import {
   ExportPrivateKeyResult,
   GenerateMnemonicResult,
   GetAccountBalancesParams,
-  GetAccountBalancesResult,
+  GetAccountBalancesResult, GetAccountTransactionsParams, GetAccountTransactionsResult,
   GetActiveAccountResult,
   GetUserAccountResult,
   GetUserStatusResult,
@@ -92,6 +92,10 @@ export class API implements ClientAPI {
 
   async getAccountBalances(params?: GetAccountBalancesParams): Promise<GetAccountBalancesResult> {
     return await this._messager.send(APIEvent.GET_ACCOUNT_BALANCES, params || {});
+  }
+
+  async getAccountTransactions(params?: GetAccountTransactionsParams): Promise<GetAccountTransactionsResult> {
+    return await this._messager.send(APIEvent.GET_ACCOUNT_TRANSACTIONS, params || {});
   }
 
   async sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult> {

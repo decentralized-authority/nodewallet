@@ -7,9 +7,17 @@ import bip44Constants from 'bip44-constants';
 import { ChainMeta } from '../interfaces';
 import { ChainType, CoinType, KeyType } from '@nodewallet/constants';
 import { isHex } from '@nodewallet/util-browser';
+import { AccountTransaction } from '@nodewallet/types';
+import { Transaction } from '@pokt-foundation/pocketjs-types';
 
 // https://github.com/satoshilabs/slips/blob/master/slip-0044.md
 const bip44Type = bip44Constants.findIndex((c) => c[1] === 'POKT');
+
+interface PocketQueryTransactionsResponse {
+  page_count: number
+  total_txs: number
+  txs: Transaction[]
+}
 
 export enum PoktDenom {
   POKT = 'Pokt',
@@ -140,6 +148,65 @@ export class PoktUtils {
   static async encryptExportPrivateKey(privateKey: string, password: string): Promise<string> {
     const account = await KeyManager.fromPrivateKey(privateKey);
     return await account.exportPPK({password});
+  }
+
+  static async getTransactions(endpoint: string, address: string, total = 10): Promise<AccountTransaction[]> {
+    const provider = new JsonRpcProvider({rpcUrl: endpoint});
+    const [ res0, res1 ] = await Promise.all([
+      fetch(`${endpoint}/v1/query/accounttxs`, {
+        method: 'POST',
+        body: JSON.stringify({
+          address,
+          page: 1,
+          per_page: total,
+          received: false,
+          prove: false,
+          order: 'asc',
+        }),
+      }),
+      fetch(`${endpoint}/v1/query/accounttxs`, {
+        method: 'POST',
+        body: JSON.stringify({
+          address,
+          page: 1,
+          per_page: total,
+          received: true,
+          prove: false,
+          order: 'asc',
+        }),
+      })
+    ]);
+    const [ body0, body1 ]: PocketQueryTransactionsResponse[] = await Promise.all([
+      res0.json(),
+      res1.json(),
+    ]);
+    const transactions =  [
+      ...body0.txs.map(t => ({...t, received: false})),
+      ...body1.txs.map(t => ({...t, received: true})),
+    ]
+      .sort((a, b) => {
+        if(a.height === b.height) {
+          return a.index > b.index ? -1 : 1;
+        } else {
+          return a.height > b.height ? -1 : 1;
+        }
+      })
+      .slice(0, total);
+    return transactions
+      .map((tx) => {
+        // @ts-ignore
+        const amount = tx.stdTx?.msg?.value?.amount || '';
+        // @ts-ignore
+        const type = tx.stdTx?.msg?.type || '';
+        return {
+          hash: tx.hash,
+          received: tx.received,
+          amount: amount ? PoktUtils.fromBaseDenom(amount).toString() : amount,
+          type,
+          height: tx.height.toString(10),
+          index: tx.index,
+        };
+      });
   }
 
   _chain: ChainType;

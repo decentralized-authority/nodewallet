@@ -14,7 +14,7 @@ import {
   CryptoAccount, ExportKeyfileParams, ExportKeyfileResult, ExportPrivateKeyParams, ExportPrivateKeyResult,
   GenerateMnemonicResult,
   GetAccountBalancesParams,
-  GetAccountBalancesResult,
+  GetAccountBalancesResult, GetAccountTransactionsParams, GetAccountTransactionsResult,
   GetActiveAccountResult,
   GetUserAccountResult,
   GetUserStatusResult,
@@ -24,7 +24,7 @@ import {
   InsertHdWalletResult,
   InsertLegacyWalletParams,
   InsertLegacyWalletResult,
-  LockUserAccountResult,
+  LockUserAccountResult, AccountTransaction,
   RegisterUserParams,
   RegisterUserResult,
   SaveActiveAccountParams,
@@ -315,7 +315,10 @@ export const startBackground = () => {
       const decrypted: ExtendedUserAccount = await decrypt(encrypted);
       await sessionManager.set(SessionStorageKey.USER_ACCOUNT, decrypted);
 
-      await updateBalances();
+      await Promise.all([
+        updateBalances(),
+        updateAccountTransactions(),
+      ]);
 
       return { result: sanitizeUserAccount(decrypted) };
     } catch(err) {
@@ -390,7 +393,11 @@ export const startBackground = () => {
     userAccount.wallets.push(newWallet);
     await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
     await encryptSaveUserAccount(userAccount);
-    updateBalances()
+    Promise
+      .all([
+        updateBalances(),
+        updateAccountTransactions(),
+      ])
       .catch(err => {
         console.error(err);
       });
@@ -454,7 +461,11 @@ export const startBackground = () => {
     userAccount.wallets.push(newWallet);
     await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
     await encryptSaveUserAccount(userAccount);
-    updateBalances()
+    Promise
+      .all([
+        updateBalances(),
+        updateAccountTransactions(),
+      ])
       .catch(err => {
         console.error(err);
       });
@@ -568,6 +579,53 @@ export const startBackground = () => {
       balances = await sessionManager.get(SessionStorageKey.BALANCES) || {};
     }
     return {result: balances};
+  });
+
+  const updateAccountTransactions = async (): Promise<void> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      return;
+    }
+    const transactions: {[id: string]: any[]} = {};
+    const total = 10;
+    const promises: Promise<void>[] = [];
+    for(const wallet of userAccount.wallets) {
+      for(const walletAccount of wallet.accounts) {
+        for(const account of walletAccount.accounts) {
+          promises.push((async () => {
+            switch(account.network) {
+              case CoinType.POKT: {
+                const endpoint = rpcEndpoints[account.network][account.chain];
+                if(!endpoint) {
+                  transactions[account.id] = [];
+                } else {
+                  try {
+                    transactions[account.id] = await PoktUtils.getTransactions(endpoint, account.address, total);
+                  } catch(err) {
+                    transactions[account.id] = [];
+                  }
+                }
+                break;
+              } default: {
+                transactions[account.id] = [];
+              }
+            }
+          })());
+        }
+      }
+    }
+    await Promise.all(promises);
+    await sessionManager.set(SessionStorageKey.TRANSACTIONS, transactions);
+  };
+  setInterval(updateAccountTransactions, 60000);
+
+  messager.register(APIEvent.GET_ACCOUNT_TRANSACTIONS, async (params?: GetAccountTransactionsParams): Promise<GetAccountTransactionsResult> => {
+    let transactions = await sessionManager.get(SessionStorageKey.TRANSACTIONS);
+    if(!transactions || params?.forceUpdate) {
+      await updateAccountTransactions();
+      transactions = await sessionManager.get(SessionStorageKey.TRANSACTIONS) || {};
+    }
+    return {result: transactions};
   });
 
   messager.register(APIEvent.SEND_TRANSACTION, async (params: SendTransactionParams): Promise<SendTransactionResult> => {

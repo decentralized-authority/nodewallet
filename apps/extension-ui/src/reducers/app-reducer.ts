@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { UserAccount } from '@nodewallet/types';
+import { AccountTransaction, UserAccount } from '@nodewallet/types';
 import { ChainType, UserStatus } from '@nodewallet/constants';
 
-type AccountBalances = {[id: string]: string}
+export type AccountBalances = {[id: string]: string}
+export type AccountTransactions = {[id: string]: AccountTransaction[]}
 
 export interface AppState {
   userStatus: UserStatus|''
@@ -12,6 +13,7 @@ export interface AppState {
   windowHeight: number
   activeAccount: string
   accountBalances: AccountBalances
+  accountTransactions: AccountTransactions
   activeChain: ChainType
 }
 const getInitialState = (): AppState => ({
@@ -22,6 +24,7 @@ const getInitialState = (): AppState => ({
   windowHeight: window.innerHeight,
   activeAccount: '',
   accountBalances: {},
+  accountTransactions: {},
   activeChain: ChainType.MAINNET,
 });
 export const appSlice = createSlice({
@@ -46,6 +49,9 @@ export const appSlice = createSlice({
     setAccountBalances: (state, action: PayloadAction<{accountBalances: AccountBalances}>) => {
       state.accountBalances = action.payload.accountBalances;
     },
+    setAccountTransactions: (state, action: PayloadAction<{accountTransactions: AccountTransactions}>) => {
+      state.accountTransactions = action.payload.accountTransactions;
+    },
     setActiveChain: (state, action: PayloadAction<{activeChain: ChainType}>) => {
       state.activeChain = action.payload.activeChain;
     },
@@ -59,6 +65,7 @@ export const {
   setWindowWidth,
   setActiveAccount,
   setAccountBalances,
+  setAccountTransactions,
   setActiveChain,
 } = appSlice.actions;
 

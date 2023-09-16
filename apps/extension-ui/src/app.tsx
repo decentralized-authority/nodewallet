@@ -7,7 +7,7 @@ import { MAX_BODY_WIDTH, POPUP_HEIGHT, POPUP_WIDTH } from './constants';
 import $ from 'jquery';
 import { isTab } from './util';
 import {
-  setAccountBalances,
+  setAccountBalances, setAccountTransactions,
   setActiveChain,
   setUserAccount,
   setUserStatus
@@ -145,14 +145,32 @@ export const App = () => {
       }
     };
 
-    let interval: NodeJS.Timer;
+    const getAccountTransactions = async () => {
+      try {
+        const res = await api.getAccountTransactions();
+        if('error' in res) {
+          errorHandler.handle(res.error);
+        } else {
+          dispatch(setAccountTransactions({accountTransactions: res.result}));
+        }
+      } catch(err: any) {
+        errorHandler.handle(err);
+      }
+    };
+
+    let balancesInterval: NodeJS.Timer;
+    let transactionsInterval: NodeJS.Timer;
     if(userStatus === UserStatus.UNLOCKED) {
-      interval = setInterval(getAccountBalances, 10000);
+      balancesInterval = setInterval(getAccountBalances, 10000);
+      transactionsInterval = setInterval(getAccountTransactions, 10000);
       getAccountBalances()
+        .catch(err => errorHandler.handle(err));
+      getAccountTransactions()
         .catch(err => errorHandler.handle(err));
     }
     return () => {
-      clearInterval(interval);
+      clearInterval(balancesInterval);
+      clearInterval(transactionsInterval);
     };
   }, [dispatch, api, errorHandler, userStatus]);
 

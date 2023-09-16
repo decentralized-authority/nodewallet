@@ -167,7 +167,9 @@ export const AccountDetail = () => {
         account={cryptoAccount}
         backRoute={RouteBuilder.wallets.fullPath()}
       />
-      <TransactionList />
+      <TransactionList
+        account={cryptoAccount}
+      />
       <div className={'d-flex flex-row justify-content-start p-2'}>
         <button className={'btn btn-primary flex-grow-1 me-2'} style={styles.bottomButton} onClick={onViewClick}><i className={'mdi mdi-key-variant'} /> View Private Key</button>
         <button className={'btn btn-primary flex-grow-1'} style={styles.bottomButton} onClick={onExportClick}><i className={'mdi mdi-export'} /> Export Keyfile</button>

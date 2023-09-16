@@ -1,6 +1,7 @@
 import { ChainType, CoinType, UserStatus } from '@nodewallet/constants';
 import { UserAccount } from './user';
 import { CryptoAccount, UserWallet } from './wallet';
+import { AccountTransaction } from './index';
 
 export enum APIEvent {
   START_ONBOARDING = 'START_ONBOARDING',
@@ -16,6 +17,7 @@ export enum APIEvent {
   INSERT_CRYPTO_ACCOUNT = 'INSERT_CRYPTO_ACCOUNT',
   LOCK_USER_ACCOUNT = 'LOCK_USER_ACCOUNT',
   GET_ACCOUNT_BALANCES = 'GET_ACCOUNT_BALANCES',
+  GET_ACCOUNT_TRANSACTIONS = 'GET_ACCOUNT_TRANSACTIONS',
   SEND_TRANSACTION = 'SEND_TRANSACTION',
   SAVE_ACTIVE_ACCOUNT = 'SAVE_ACTIVE_ACCOUNT',
   GET_ACTIVE_ACCOUNT = 'GET_ACTIVE_ACCOUNT',
@@ -96,6 +98,12 @@ export interface GetAccountBalancesParams {
 export type GetAccountBalancesResult = ErrorResult | {
   result: {[id: string]: string}
 }
+export interface GetAccountTransactionsParams {
+  forceUpdate?: boolean
+}
+export type GetAccountTransactionsResult = ErrorResult | {
+  result: {[id: string]: AccountTransaction[]}
+}
 export interface SendTransactionParams {
   accountId: string
   amount: string
@@ -162,6 +170,8 @@ export interface ClientAPI {
   lockUserAccount(): Promise<LockUserAccountResult>
 
   getAccountBalances(params?: GetAccountBalancesParams): Promise<GetAccountBalancesResult>
+
+  getAccountTransactions(params?: GetAccountTransactionsParams): Promise<GetAccountTransactionsResult>
 
   sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult>
 

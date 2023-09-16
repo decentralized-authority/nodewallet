@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { truncateAddress } from '../../util';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAccountBalances, setUserAccount } from '../../reducers/app-reducer';
+import { setAccountBalances, setAccountTransactions, setUserAccount } from '../../reducers/app-reducer';
 import { UserWallet } from '@nodewallet/types';
 import { RootState } from '../../store';
 import { ApiContext } from '../../hooks/api-context';
@@ -22,16 +22,18 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
     accountBalances,
     activeChain,
   } = useSelector(({ appState }: RootState) => appState);
+  const [ disableNewAddress, setDisableNewAddress ] = useState(false);
 
-  // const onAddressClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>, id: string) => {
-  //   e.preventDefault();
-  //   dispatch(setActiveAccount({activeAccount: id}));
-  //
-  //   // dispatch(setActiveView({activeView: AppView.ACCOUNT_DETAIL}))
-  // };
   const onNewAddressClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     try {
       e.preventDefault();
+      if(disableNewAddress) {
+        return;
+      }
+      setDisableNewAddress(true);
+      setTimeout(() => {
+        setDisableNewAddress(false);
+      }, 1000);
       const res = await api.insertCryptoAccount({
         walletId: wallet.id,
         network: CoinType.POKT,
@@ -45,11 +47,19 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
           errorHandler.handle(updatedUserAccount.error);
         } else if(updatedUserAccount.result) {
           dispatch(setUserAccount({userAccount: updatedUserAccount.result}));
-          const balancesRes = await api.getAccountBalances({forceUpdate: true});
+          const [ balancesRes, transactionsRes ] = await Promise.all([
+            api.getAccountBalances({forceUpdate: true}),
+            api.getAccountTransactions({forceUpdate: true}),
+          ]);
           if('error' in balancesRes) {
             errorHandler.handle(balancesRes.error);
           } else {
             dispatch(setAccountBalances({accountBalances: balancesRes.result}));
+          }
+          if('error' in transactionsRes) {
+            errorHandler.handle(transactionsRes.error);
+          } else {
+            dispatch(setAccountTransactions({accountTransactions: transactionsRes.result}));
           }
         }
       }
