@@ -28,5 +28,10 @@
     "jest": "^27.5.1",
     "tsconfig": "*",
     "typescript": "^4.8.3"
+  },
+  "dependencies": {
+    "@nodewallet/util-browser": "*",
+    "events": "^3.3.0",
+    "lodash": "^4.17.21"
   }
 }

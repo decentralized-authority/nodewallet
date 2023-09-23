@@ -18,7 +18,8 @@
       "matches": ["<all_urls>"],
       "js": [
         "content.js"
-      ]
+      ],
+      "world": "MAIN"
     }
   ],
   "action": {
