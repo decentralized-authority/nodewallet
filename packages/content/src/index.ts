@@ -1,4 +1,5 @@
-import { pocketNetwork } from './pocket-network';
+import { createPocketNetwork } from './pocket-network';
+import { API } from './api';
 
 declare global {
   interface Window {
@@ -12,5 +13,6 @@ export const startContent = () => {
   if(window.pocketNetwork) {
     window.prevPocketNetwork = window.pocketNetwork;
   }
-  window.pocketNetwork = pocketNetwork;
+  const api = new API();
+  window.pocketNetwork = createPocketNetwork(api);
 };

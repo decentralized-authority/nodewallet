@@ -3,6 +3,9 @@ import { ContentBridge } from './content-bridge';
 import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
 import { isHex } from '@nodewallet/util-browser';
+import { API } from './api';
+import { CryptoAccount } from '@nodewallet/types';
+import { CoinType } from '@nodewallet/constants';
 
 enum PocketNetworkMethod {
   REQUEST_ACCOUNTS = 'pokt_requestAccounts',
@@ -13,18 +16,57 @@ enum PocketNetworkMethod {
   // BLOCK = 'pokt_block',
 }
 
-const requestAccounts = async (): Promise<[string]> => {
-  return ['abcd1234'];
+const notConnectedErrorMessage = 'Not connected. You must run requestAccounts first.';
+const notFoundErrorMessage = 'Invalid address. Please run requestAccounts to get the connected address.';
+
+const addressToAccount = new Map<string, CryptoAccount>();
+let connected = false;
+
+const requestAccounts = async (api: API): Promise<[string]> => {
+  const res = await api.requestAccount({
+    network: CoinType.POKT,
+  });
+  if('error' in res) {
+    throw new Error(res.error.message);
+  }
+  addressToAccount.set(res.result.address, res.result);
+  connected = true;
+  return [res.result.address];
 };
 
-const balance = async ([params]: {address: string}[]): Promise<{balance: number}> => {
-  if(!params || !params.address) {
+const checkConnected = (): void => {
+  if(!connected) {
+    throw new Error(notConnectedErrorMessage);
+  }
+}
+
+const getAccount = (address: string): CryptoAccount => {
+  const account = addressToAccount.get(address);
+  if(!account) {
+    throw new Error(notFoundErrorMessage);
+  }
+  return account;
+}
+
+const balance = async (paramsArr: {address: string}[], api: API): Promise<{balance: number}> => {
+  checkConnected();
+  const [ params ] = paramsArr || [];
+  if(!params || !params.address || !isString(params.address)) {
     throw new Error(`${PocketNetworkMethod.BALANCE} method params must be an array containing an object with an address string`);
   }
-  return {balance: 1234};
+  const account = getAccount(params.address);
+  const res = await api.getBalance({
+    accountId: account.id,
+  });
+  if('error' in res) {
+    throw new Error(res.error.message);
+  }
+  return {balance: Number(res.result)};
 };
 
-const sendTransaction = async ([params]: {amount: string, to: string, from: string, memo?: string}[]): Promise<{hash: string}> => {
+const sendTransaction = async (paramsArr: {amount: string, to: string, from: string, memo?: string}[], api: API): Promise<{hash: string}> => {
+  checkConnected();
+  const [ params ] = paramsArr || [];
   if(!params || !isString(params.amount) || !isString(params.to) || !isString(params.from) || (params.memo && !isString(params.memo))) {
     throw new Error(`${PocketNetworkMethod.SEND_TRANSACTION} method params must be an array containing an object with an amount, to, from, and optional memo string`);
   }
@@ -32,6 +74,7 @@ const sendTransaction = async ([params]: {amount: string, to: string, from: stri
   const to = params.to.trim();
   const from = params.from.trim();
   const memo = params.memo ? params.memo.trim() : '';
+  const account = getAccount(from);
   if(!amount || /\D/.test(amount)) {
     throw new Error('invalid amount');
   } else if(!to || !isHex(to)) {
@@ -39,48 +82,78 @@ const sendTransaction = async ([params]: {amount: string, to: string, from: stri
   } else if(!from || !isHex(from)) {
     throw new Error('invalid from address');
   }
-  return {hash: '0123456789abcdef'};
+  const res = await api.sendTransaction({
+    accountId: account.id,
+    amount,
+    recipient: to,
+    memo: memo,
+  });
+  if('error' in res) {
+    throw new Error(res.error.message);
+  }
+  return {hash: res.result.txid};
 };
 
-const tx = async ([params]: {hash: string}[]): Promise<any> => {
-  if(!params || !isString(params.hash)) {
+const tx = async (paramsArr: {hash: string}[], api: API): Promise<any> => {
+  checkConnected();
+  const [ params ] = paramsArr || [];
+  if(!params || !params || !isString(params.hash)) {
     throw new Error(`${PocketNetworkMethod.TX} method params must be an array containing an object with a hash string`);
   }
   const hash = params.hash.trim();
   if(!hash || !isHex(hash)) {
     throw new Error('invalid hash');
   }
-  return {tx: 'info'};
+  const res = await api.getTransaction({
+    txid: hash,
+  });
+  if('error' in res) {
+    throw new Error(res.error.message);
+  }
+  return {tx: res.result};
 };
 
-const height = async (): Promise<{height: number}> => {
-  return {height: 1234};
+const height = async (api: API): Promise<{height: number}> => {
+  checkConnected();
+  const [ account ] = [...addressToAccount.values()];
+  const res = await api.getHeight({
+    network: account.network,
+    chain: account.chain,
+  });
+  if('error' in res) {
+    throw new Error(res.error.message);
+  }
+  return {height: Number(res.result)};
 };
 
-class PocketNetwork extends EventEmitter implements ContentBridge {
+export const createPocketNetwork = (api: API) => {
 
-  async send(method: PocketNetworkMethod, params: any[]): Promise<any> {
-    if(!isString(method)) {
-      throw new Error('Method must be a string');
-    } else if(params && !isArray(params)) {
-      throw new Error('Params must be an array');
+  class PocketNetwork extends EventEmitter implements ContentBridge {
+
+    async send(method: PocketNetworkMethod, params: any[]): Promise<any> {
+      if(!isString(method)) {
+        throw new Error('Method must be a string');
+      } else if(params && !isArray(params)) {
+        throw new Error('Params must be an array');
+      }
+      switch(method) {
+        case PocketNetworkMethod.REQUEST_ACCOUNTS:
+          return requestAccounts(api);
+        case PocketNetworkMethod.BALANCE:
+          return balance(params, api);
+        case PocketNetworkMethod.SEND_TRANSACTION:
+          return sendTransaction(params, api);
+        case PocketNetworkMethod.TX:
+          return tx(params, api);
+        case PocketNetworkMethod.HEIGHT:
+          return height(api);
+        default:
+          throw new Error(`Unknown method: ${method}`);
+      }
     }
-    switch(method) {
-      case PocketNetworkMethod.REQUEST_ACCOUNTS:
-        return requestAccounts();
-      case PocketNetworkMethod.BALANCE:
-        return balance(params);
-      case PocketNetworkMethod.SEND_TRANSACTION:
-        return sendTransaction(params);
-      case PocketNetworkMethod.TX:
-        return tx(params);
-      case PocketNetworkMethod.HEIGHT:
-        return height();
-      default:
-        throw new Error(`Unknown method: ${method}`);
-    }
+
   }
 
-}
+  return new PocketNetwork();
 
-export const pocketNetwork = new PocketNetwork();
+}
