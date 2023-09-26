@@ -7,7 +7,7 @@ import { API } from './api';
 import { CryptoAccount } from '@nodewallet/types';
 import { CoinType } from '@nodewallet/constants';
 
-enum PocketNetworkMethod {
+export enum PocketNetworkMethod {
   REQUEST_ACCOUNTS = 'pokt_requestAccounts',
   BALANCE = 'pokt_balance',
   SEND_TRANSACTION = 'pokt_sendTransaction',
@@ -126,34 +126,35 @@ const height = async (api: API): Promise<{height: number}> => {
   return {height: Number(res.result)};
 };
 
-export const createPocketNetwork = (api: API) => {
+export class PocketNetwork extends EventEmitter implements ContentBridge {
 
-  class PocketNetwork extends EventEmitter implements ContentBridge {
+  _api: API;
 
-    async send(method: PocketNetworkMethod, params: any[]): Promise<any> {
-      if(!isString(method)) {
-        throw new Error('Method must be a string');
-      } else if(params && !isArray(params)) {
-        throw new Error('Params must be an array');
-      }
-      switch(method) {
-        case PocketNetworkMethod.REQUEST_ACCOUNTS:
-          return requestAccounts(api);
-        case PocketNetworkMethod.BALANCE:
-          return balance(params, api);
-        case PocketNetworkMethod.SEND_TRANSACTION:
-          return sendTransaction(params, api);
-        case PocketNetworkMethod.TX:
-          return tx(params, api);
-        case PocketNetworkMethod.HEIGHT:
-          return height(api);
-        default:
-          throw new Error(`Unknown method: ${method}`);
-      }
-    }
-
+  constructor(api: API) {
+    super();
+    this._api = api;
   }
 
-  return new PocketNetwork();
+  async send(method: PocketNetworkMethod, params: any[]): Promise<any> {
+    if(!isString(method)) {
+      throw new Error('Method must be a string');
+    } else if(params && !isArray(params)) {
+      throw new Error('Params must be an array');
+    }
+    switch(method) {
+      case PocketNetworkMethod.REQUEST_ACCOUNTS:
+        return requestAccounts(this._api);
+      case PocketNetworkMethod.BALANCE:
+        return balance(params, this._api);
+      case PocketNetworkMethod.SEND_TRANSACTION:
+        return sendTransaction(params, this._api);
+      case PocketNetworkMethod.TX:
+        return tx(params, this._api);
+      case PocketNetworkMethod.HEIGHT:
+        return height(this._api);
+      default:
+        throw new Error(`Unknown method: ${method}`);
+    }
+  }
 
 }

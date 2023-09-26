@@ -4,7 +4,8 @@
   "private": true,
   "dependencies": {
     "@nodewallet/background": "*",
-    "@nodewallet/content": "*"
+    "@nodewallet/content": "*",
+    "@nodewallet/content-bridge": "*"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",
@@ -28,9 +29,10 @@
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
-    "build": "npm run build:background && npm run build:content",
+    "build": "npm run build:background && npm run build:content && npm run build:content-bridge",
     "build:background": "webpack --config webpack.background.config.js",
     "build:content": "webpack --config webpack.content.config.js",
+    "build:content-bridge": "webpack --config webpack.content-bridge.config.js",
     "bundle": "node scripts/clean.js dist && npm run build && node scripts/bundle.js",
     "clean": "node scripts/clean.js dist .turbo node_modules"
   }

@@ -65,6 +65,7 @@ import {
 } from '@nodewallet/wallet-utils';
 import omit from 'lodash/omit';
 import { SessionSecretManager } from './session-secret-manager';
+import { ContentAPIEvent, RequestAccountParams, RequestAccountResult } from '@nodewallet/types/dist/content-api';
 
 interface ExtendedCryptoAccount extends CryptoAccount {
   privateKey: EncryptionResult
@@ -755,6 +756,21 @@ export const startBackground = () => {
     });
   });
 
+  messager.register(ContentAPIEvent.REQUEST_ACCOUNT, async ({ network }: RequestAccountParams): Promise<RequestAccountResult> => {
+    return {
+      result: {
+        id: 'abcd1234',
+        name: 'Test Account',
+        address: '0x1234567890abcdef',
+        network: CoinType.POKT,
+        chain: ChainType.TESTNET,
+        index: 0,
+        publicKey: '',
+        derivationPath: '',
+      }
+    };
+  });
+
   chrome.runtime.onInstalled.addListener(async ({ reason }) => {
     const logger = getLogger();
     if(reason === 'install') {
@@ -777,3 +793,6 @@ export const startBackground = () => {
   });
 
 };
+
+// @ts-ignore
+self.addEventListener('message', (e) => console.log('message event', e));

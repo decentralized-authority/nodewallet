@@ -10,6 +10,7 @@ const fs = require('fs-extra');
     {
       overwrite: true,
     });
+  await fs.copy(path.join(rootDir, 'service-worker.js'), path.join(distDir, 'service-worker.js'));
   await fs.copy(
     path.join(rootDir, 'manifest.json'),
     path.join(distDir, 'manifest.json'),

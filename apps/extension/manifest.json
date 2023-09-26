@@ -19,6 +19,13 @@
       "js": [
         "content.js"
       ],
+      "world": "ISOLATED"
+    },
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "content-bridge.js"
+      ],
       "world": "MAIN"
     }
   ],

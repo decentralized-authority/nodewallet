@@ -1,5 +1,5 @@
 import {
-  ContentAPI,
+  ContentAPI, ContentAPIEvent,
   GetBalanceParams,
   GetBalanceResult,
   GetHeightParams,
@@ -11,22 +11,18 @@ import {
 } from '@nodewallet/types/dist/content-api';
 import { ChainType, CoinType } from '@nodewallet/constants';
 import { SendTransactionParams, SendTransactionResult } from '@nodewallet/types';
+import { Messager } from '@nodewallet/util-browser';
 
 export class API implements ContentAPI {
 
+  _messager: Messager;
+
+  constructor(messager: Messager) {
+    this._messager = messager;
+  }
+
   async requestAccount(params: RequestAccountParams): Promise<RequestAccountResult> {
-    return {
-      result: {
-        id: 'abcd1234',
-        name: 'Test Account',
-        address: '0x1234567890abcdef',
-        network: CoinType.POKT,
-        chain: ChainType.TESTNET,
-        index: 0,
-        publicKey: '',
-        derivationPath: '',
-      }
-    };
+    return await this._messager.send(ContentAPIEvent.REQUEST_ACCOUNT, params);
   }
 
   async getBalance(params: GetBalanceParams): Promise<GetBalanceResult> {

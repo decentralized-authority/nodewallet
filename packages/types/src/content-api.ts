@@ -2,6 +2,14 @@ import { CryptoAccount } from './wallet';
 import { ErrorResult } from './api';
 import { ChainType, CoinType } from '@nodewallet/constants';
 
+export enum ContentAPIEvent {
+  REQUEST_ACCOUNT = 'REQUEST_ACCOUNT',
+  GET_BALANCE = 'GET_BALANCE',
+  SEND_TRANSACTION = 'SEND_TRANSACTION',
+  GET_TRANSACTION = 'GET_TRANSACTION',
+  GET_HEIGHT = 'GET_HEIGHT',
+}
+
 export interface RequestAccountParams {
   network: CoinType
 }
