@@ -65,7 +65,12 @@ import {
 } from '@nodewallet/wallet-utils';
 import omit from 'lodash/omit';
 import { SessionSecretManager } from './session-secret-manager';
-import { ContentAPIEvent, RequestAccountParams, RequestAccountResult } from '@nodewallet/types/dist/content-api';
+import {
+  ContentAPIEvent,
+  GetBalanceParams, GetBalanceResult, GetHeightParams, GetHeightResult,
+  RequestAccountParams,
+  RequestAccountResult
+} from '@nodewallet/types/dist/content-api';
 
 interface ExtendedCryptoAccount extends CryptoAccount {
   privateKey: EncryptionResult
@@ -674,14 +679,21 @@ export const startBackground = () => {
     return {result: true};
   });
 
+  const getActiveAccount = async (): Promise<string> => {
+    const encrypted = await storageManager.get(LocalStorageKey.ACTIVE_ACCOUNT);
+    if(!encrypted) {
+      return '';
+    }
+    return await decrypt(encrypted);
+  }
+
   messager.register(APIEvent.GET_ACTIVE_ACCOUNT, async (): Promise<GetActiveAccountResult> => {
     try {
-      const encrypted = await storageManager.get(LocalStorageKey.ACTIVE_ACCOUNT);
-      if(!encrypted) {
+      const result = await getActiveAccount();
+      if(!result) {
         return {result: ''};
       }
-      const decrypted = await decrypt(encrypted);
-      return {result: decrypted};
+      return {result};
     } catch(err) {
       return {result: ''};
     }
@@ -757,18 +769,81 @@ export const startBackground = () => {
   });
 
   messager.register(ContentAPIEvent.REQUEST_ACCOUNT, async ({ network }: RequestAccountParams): Promise<RequestAccountResult> => {
+    const activeAccount = await getActiveAccount();
+    if(!activeAccount) {
+      throw new Error('No account selected.');
+    }
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const cryptoAccount = findCryptoAccountInUserAccount(userAccount, activeAccount);
+    if(!cryptoAccount) {
+      throw new Error('Account not found.');
+    }
     return {
-      result: {
-        id: 'abcd1234',
-        name: 'Test Account',
-        address: '0x1234567890abcdef',
-        network: CoinType.POKT,
-        chain: ChainType.TESTNET,
-        index: 0,
-        publicKey: '',
-        derivationPath: '',
-      }
+      result: sanitizeCryptoAccount(cryptoAccount),
     };
+  });
+
+  messager.register(ContentAPIEvent.GET_BALANCE, async ({ accountId }: GetBalanceParams): Promise<GetBalanceResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const cryptoAccount = findCryptoAccountInUserAccount(userAccount, accountId);
+    if(!cryptoAccount) {
+      throw new Error('Account not found.');
+    }
+    let result: string;
+    switch(cryptoAccount.network) {
+      case CoinType.POKT: {
+        const endpoint = rpcEndpoints[cryptoAccount.network][cryptoAccount.chain];
+        if(!endpoint) {
+          throw new Error(`No RPC endpoint found for ${cryptoAccount.network} ${cryptoAccount.chain}.`);
+        } else {
+          try {
+            const res = await PoktUtils.getBalance(endpoint, cryptoAccount.address);
+            result = res.toString();
+          } catch(err) {
+            result = '0';
+          }
+        }
+        return {
+          result,
+        };
+      } default: {
+        throw new Error('Unsupported network.');
+      }
+    }
+  });
+
+  messager.register(ContentAPIEvent.GET_HEIGHT, async ({ network, chain }: GetHeightParams): Promise<GetHeightResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    let result: string;
+    switch(network) {
+      case CoinType.POKT: {
+        const endpoint = rpcEndpoints[network][chain];
+        if(!endpoint) {
+          throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
+        } else {
+          try {
+            const res = await PoktUtils.getBlockHeight(endpoint);
+            result = res.toString();
+          } catch(err) {
+            result = '0';
+          }
+        }
+        return {
+          result,
+        };
+      } default: {
+        throw new Error('Unsupported network.');
+      }
+    }
   });
 
   chrome.runtime.onInstalled.addListener(async ({ reason }) => {
@@ -793,6 +868,3 @@ export const startBackground = () => {
   });
 
 };
-
-// @ts-ignore
-self.addEventListener('message', (e) => console.log('message event', e));

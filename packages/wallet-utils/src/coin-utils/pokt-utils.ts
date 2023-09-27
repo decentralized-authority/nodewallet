@@ -74,6 +74,12 @@ export class PoktUtils {
    * RPC Utilities
    */
 
+  static async getBlockHeight(endpoint: string): Promise<BigNumber> {
+    const provider = new JsonRpcProvider({rpcUrl: endpoint});
+    const res = await provider.getBlockNumber();
+    return bignumber(res);
+  }
+
   /**
    * Gets the balance of an account
    * @param endpoint Pocket Network RPC endpoint

@@ -43,7 +43,7 @@ export interface GetHeightParams {
   network: CoinType
   chain: ChainType
 }
-export type GetHeightResponse = ErrorResult | {
+export type GetHeightResult = ErrorResult | {
   result: string
 }
 
@@ -57,6 +57,6 @@ export interface ContentAPI {
 
   getTransaction(params: GetTransactionParams): Promise<GetTransactionResult>
 
-  getHeight(params: GetHeightParams): Promise<GetHeightResponse>
+  getHeight(params: GetHeightParams): Promise<GetHeightResult>
 
 }

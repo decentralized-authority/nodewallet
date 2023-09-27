@@ -3,7 +3,7 @@ import {
   GetBalanceParams,
   GetBalanceResult,
   GetHeightParams,
-  GetHeightResponse,
+  GetHeightResult,
   GetTransactionParams,
   GetTransactionResult,
   RequestAccountParams,
@@ -26,9 +26,7 @@ export class API implements ContentAPI {
   }
 
   async getBalance(params: GetBalanceParams): Promise<GetBalanceResult> {
-    return {
-      result: '1234321'
-    };
+    return await this._messager.send(ContentAPIEvent.GET_BALANCE, params);
   }
 
   async sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult> {
@@ -47,10 +45,8 @@ export class API implements ContentAPI {
     };
   }
 
-  async getHeight(params: GetHeightParams): Promise<GetHeightResponse> {
-    return {
-      result: '1234555'
-    };
+  async getHeight(params: GetHeightParams): Promise<GetHeightResult> {
+    return await this._messager.send(ContentAPIEvent.GET_HEIGHT, params);
   }
 
 }
