@@ -3,11 +3,11 @@ import { ErrorResult } from './api';
 import { ChainType, CoinType } from '@nodewallet/constants';
 
 export enum ContentAPIEvent {
-  REQUEST_ACCOUNT = 'REQUEST_ACCOUNT',
-  GET_BALANCE = 'GET_BALANCE',
-  SEND_TRANSACTION = 'SEND_TRANSACTION',
-  GET_TRANSACTION = 'GET_TRANSACTION',
-  GET_HEIGHT = 'GET_HEIGHT',
+  REQUEST_ACCOUNT = 'CONTENT_REQUEST_ACCOUNT',
+  GET_BALANCE = 'CONTENT_GET_BALANCE',
+  SEND_TRANSACTION = 'CONTENT_SEND_TRANSACTION',
+  GET_TRANSACTION = 'CONTENT_GET_TRANSACTION',
+  GET_HEIGHT = 'CONTENT_GET_HEIGHT',
 }
 
 export interface RequestAccountParams {
@@ -35,6 +35,8 @@ export type SendTransactionResult = ErrorResult | {
 }
 export interface GetTransactionParams {
   txid: string
+  network: CoinType
+  chain: ChainType
 }
 export type GetTransactionResult = ErrorResult | {
   result: any

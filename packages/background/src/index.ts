@@ -67,7 +67,7 @@ import omit from 'lodash/omit';
 import { SessionSecretManager } from './session-secret-manager';
 import {
   ContentAPIEvent,
-  GetBalanceParams, GetBalanceResult, GetHeightParams, GetHeightResult,
+  GetBalanceParams, GetBalanceResult, GetHeightParams, GetHeightResult, GetTransactionParams, GetTransactionResult,
   RequestAccountParams,
   RequestAccountResult
 } from '@nodewallet/types/dist/content-api';
@@ -844,6 +844,54 @@ export const startBackground = () => {
         throw new Error('Unsupported network.');
       }
     }
+  });
+
+  messager.register(ContentAPIEvent.GET_TRANSACTION, async ({ txid, network, chain }: GetTransactionParams): Promise<GetTransactionResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    let result: string;
+    switch(network) {
+      case CoinType.POKT: {
+        const endpoint = rpcEndpoints[network][chain];
+        if(!endpoint) {
+          throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
+        }
+        return {
+          result: await PoktUtils.getTransaction(endpoint, txid),
+        };
+      } default: {
+        throw new Error('Unsupported network.');
+      }
+    }
+  });
+
+  messager.register(ContentAPIEvent.SEND_TRANSACTION, async ({ accountId, amount, recipient, memo }: SendTransactionParams): Promise<SendTransactionResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const cryptoAccount = findCryptoAccountInUserAccount(userAccount, accountId);
+    return {
+      result: {
+        txid: '0123456789abcdef',
+      },
+    };
+    // let result: string;
+    // switch(network) {
+    //   case CoinType.POKT: {
+    //     const endpoint = rpcEndpoints[network][chain];
+    //     if(!endpoint) {
+    //       throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
+    //     }
+    //     return {
+    //       result: await PoktUtils.getTransaction(endpoint, txid),
+    //     };
+    //   } default: {
+    //     throw new Error('Unsupported network.');
+    //   }
+    // }
   });
 
   chrome.runtime.onInstalled.addListener(async ({ reason }) => {

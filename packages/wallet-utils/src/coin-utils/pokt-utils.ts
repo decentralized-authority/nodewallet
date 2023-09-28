@@ -215,6 +215,11 @@ export class PoktUtils {
       });
   }
 
+  static async getTransaction(endpoint: string, txid: string): Promise<any> {
+    const provider = new JsonRpcProvider({rpcUrl: endpoint});
+    return await provider.getTransaction(txid);
+  }
+
   _chain: ChainType;
 
   constructor(chain: ChainType) {

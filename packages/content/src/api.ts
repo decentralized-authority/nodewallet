@@ -30,19 +30,11 @@ export class API implements ContentAPI {
   }
 
   async sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult> {
-    return {
-      result: {
-        txid: '0123456789abcdef'
-      },
-    };
+    return await this._messager.send(ContentAPIEvent.SEND_TRANSACTION, params);
   }
 
   async getTransaction(params: GetTransactionParams): Promise<GetTransactionResult> {
-    return {
-      result: {
-        tx: 'some tx'
-      },
-    };
+    return await this._messager.send(ContentAPIEvent.GET_TRANSACTION, params);
   }
 
   async getHeight(params: GetHeightParams): Promise<GetHeightResult> {

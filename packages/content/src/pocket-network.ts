@@ -104,8 +104,11 @@ const tx = async (paramsArr: {hash: string}[], api: API): Promise<any> => {
   if(!hash || !isHex(hash)) {
     throw new Error('invalid hash');
   }
+  const [ account ] = [...addressToAccount.values()];
   const res = await api.getTransaction({
     txid: hash,
+    network: account.network,
+    chain: account.chain,
   });
   if('error' in res) {
     throw new Error(res.error.message);
