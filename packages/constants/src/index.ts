@@ -46,3 +46,7 @@ export enum UserStatus {
 export enum AlarmName {
   LOCK_USER_ACCOUNT = 'LOCK_USER_ACCOUNT',
 }
+
+export const POPUP_WIDTH = 400;
+export const POPUP_HEIGHT = 600;
+

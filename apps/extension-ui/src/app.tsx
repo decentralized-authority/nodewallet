@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Navbar } from './components/shared/navbar';
 import { Container } from './components/shared/container';
 import { RootState } from './store';
-import { MAX_BODY_WIDTH, POPUP_HEIGHT, POPUP_WIDTH } from './constants';
+import { MAX_BODY_WIDTH } from './constants';
 import $ from 'jquery';
 import { isTab } from './util';
 import {
@@ -15,7 +15,7 @@ import {
 import { GetUserStatusResult } from '@nodewallet/types';
 import { ApiContext } from './hooks/api-context';
 import { ErrorHandlerContext } from './hooks/error-handler-context';
-import { ChainType, LocalStorageKey, UserStatus } from '@nodewallet/constants';
+import { ChainType, LocalStorageKey, POPUP_HEIGHT, POPUP_WIDTH, UserStatus } from '@nodewallet/constants';
 import isNull from 'lodash/isNull';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -105,10 +105,12 @@ export const App = () => {
                       const cryptoAccount = findCryptoAccountInUserAccount(account, activeAccountRes.result);
                       if(cryptoAccount) {
                         const accountDetailParams = getAccountDetailParamsFromUserAccount(account, cryptoAccount.id);
-                        if(accountDetailParams) {
-                          navigate(RouteBuilder.accountDetail.generateFullPath(accountDetailParams));
-                        } else {
-                          navigate(RouteBuilder.wallets.fullPath());
+                        if(location.pathname === '/') {
+                          if(accountDetailParams) {
+                            navigate(RouteBuilder.accountDetail.generateFullPath(accountDetailParams));
+                          } else {
+                            navigate(RouteBuilder.wallets.fullPath());
+                          }
                         }
                       } else {
                         navigate(RouteBuilder.wallets.fullPath());

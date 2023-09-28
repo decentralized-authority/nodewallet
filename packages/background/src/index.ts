@@ -3,7 +3,7 @@ import {
   AppLang,
   ChainType,
   CoinType,
-  LocalStorageKey,
+  LocalStorageKey, POPUP_HEIGHT, POPUP_WIDTH,
   SessionStorageKey,
   UserStatus
 } from '@nodewallet/constants';
@@ -39,7 +39,7 @@ import {
   UserWallet,
   ValidateMnemonicParams,
   ValidateMnemonicResult,
-  WalletAccount
+  WalletAccount,
 } from '@nodewallet/types';
 import { Messager, prepMnemonic, RouteBuilder } from '@nodewallet/util-browser';
 import dayjs from 'dayjs';
@@ -96,6 +96,27 @@ const findCryptoAccountInUserAccount = (userAccount: ExtendedUserAccount, accoun
       for(const ca of walletAccount.accounts) {
         if(ca.id === accountId) {
           cryptoAccount = ca;
+          break;
+        }
+      }
+    }
+  }
+  return cryptoAccount;
+};
+
+interface ExtendedCryptoAccountWithWalletId extends ExtendedCryptoAccount {
+  walletId: string
+}
+const findCryptoAccountInUserAccountWithWalletId = (userAccount: ExtendedUserAccount, accountId: string): ExtendedCryptoAccountWithWalletId|null => {
+  let cryptoAccount: ExtendedCryptoAccountWithWalletId|null = null;
+  for(const wallet of userAccount.wallets) {
+    for(const walletAccount of wallet.accounts) {
+      for(const ca of walletAccount.accounts) {
+        if(ca.id === accountId) {
+          cryptoAccount = {
+            ...ca,
+            walletId: wallet.id,
+          }
           break;
         }
       }
@@ -872,26 +893,35 @@ export const startBackground = () => {
     if(!userAccount) {
       throw new Error('User account locked.');
     }
-    const cryptoAccount = findCryptoAccountInUserAccount(userAccount, accountId);
+    const cryptoAccount = findCryptoAccountInUserAccountWithWalletId(userAccount, accountId);
+    if(!cryptoAccount) {
+      throw new Error('Account not found.');
+    }
+    const urlPath = RouteBuilder.send.generateFullPath({
+      walletId: cryptoAccount.walletId,
+      networkId: cryptoAccount.network,
+      chainId: cryptoAccount.chain,
+      address: cryptoAccount.address,
+    });
+    const currentWindow = await chrome.windows.getCurrent();
+    // @ts-ignore
+    const windowLeft = currentWindow.left + currentWindow.width - POPUP_WIDTH;
+    // @ts-ignore
+    const windowTop = currentWindow.top || 0;
+    const popup = await chrome.windows.create({
+      focused: true,
+      url: chrome.runtime.getURL(`index.html#${urlPath}?amount=${encodeURIComponent(Number(amount) / 1000000)}&recipient=${encodeURIComponent(recipient)}&memo=${encodeURIComponent(memo || '')}`),
+      width: POPUP_WIDTH,
+      height: POPUP_HEIGHT,
+      left: windowLeft,
+      top: windowTop + 68,
+      type: 'popup',
+    });
     return {
       result: {
         txid: '0123456789abcdef',
       },
     };
-    // let result: string;
-    // switch(network) {
-    //   case CoinType.POKT: {
-    //     const endpoint = rpcEndpoints[network][chain];
-    //     if(!endpoint) {
-    //       throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
-    //     }
-    //     return {
-    //       result: await PoktUtils.getTransaction(endpoint, txid),
-    //     };
-    //   } default: {
-    //     throw new Error('Unsupported network.');
-    //   }
-    // }
   });
 
   chrome.runtime.onInstalled.addListener(async ({ reason }) => {

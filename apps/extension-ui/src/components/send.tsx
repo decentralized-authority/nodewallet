@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { ApiContext } from '../hooks/api-context';
@@ -8,7 +8,7 @@ import { BalanceCard } from './shared/balance-card';
 import * as math from 'mathjs';
 import { findCryptoAccountInUserAccountByAddress, isHex, RouteBuilder, SendParams } from '@nodewallet/util-browser';
 import swal from 'sweetalert';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 export const Send = () => {
 
@@ -19,6 +19,7 @@ export const Send = () => {
     address,
   } = useParams<Partial<SendParams>>();
 
+  const location = useLocation();
   const navigate = useNavigate();
   const api = useContext(ApiContext);
   const errorHandler = useContext(ErrorHandlerContext);
@@ -34,6 +35,18 @@ export const Send = () => {
   // const [ amountError, setAmountError ] = useState('');
   const [ memo, setMemo ] = useState('');
   const [ disableSubmit, setDisableSubmit ] = useState(false);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const amount = queryParams.get('amount') || '';
+    const recipient = queryParams.get('recipient') || '';
+    const memo = queryParams.get('memo') || '';
+    if(amount && recipient) {
+      setAmount(amount);
+      setToAddress(recipient);
+      setMemo(memo);
+    }
+  }, []);
 
   if(!userAccount || !walletId || !networkId || !chainId || !address) {
     return null;
