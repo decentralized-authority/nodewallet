@@ -6,6 +6,7 @@ import { ErrorHandlerContext } from '../../hooks/error-handler-context';
 import { RootState } from '../../store';
 import { Link, useLocation } from 'react-router-dom';
 import { RouteBuilder } from '@nodewallet/util-browser';
+import { ChainType } from '@nodewallet/constants';
 
 export interface BalanceCardProps {
   walletId: string
@@ -49,7 +50,7 @@ export const BalanceCard = ({ walletId, account, hideButtons, backRoute }: Balan
       <div className={`card-body pt-2 ${hideButtons ? 'pb-0' : 'pb-2'} ps-2 pe-2`}>
         <h5 className={'d-flex flex-row justify-content-between align-items-center mt-0 mb-0'}>
           <div><Link to={backRoute} title={'View wallets'} onClick={e => fromContentScript ? e.preventDefault() : null}><i className={`mdi mdi-menu-left ${fromContentScript ? 'd-none' : ''}`} />{account.name}</Link></div>
-          <div className={'font-monospace'}>{truncateAddress(account.address)} <a href={'#'} title={'Copy address'} onClick={onCopyAddressClick}><i className={'mdi mdi-content-copy'} /></a> <a href={`https://poktscan.com/account/${account.address}`} target={'_blank'} title={'Open in POKTscan'}><i className={'mdi mdi-open-in-new'} /></a></div>
+          <div className={'font-monospace'}>{truncateAddress(account.address)} <a href={'#'} title={'Copy address'} onClick={onCopyAddressClick}><i className={'mdi mdi-content-copy'} /></a> <a href={`https://poktscan.com${account.chain === ChainType.TESTNET ? '/testnet' : ''}/account/${account.address}`} target={'_blank'} title={'Open in POKTscan'}><i className={'mdi mdi-open-in-new'} /></a></div>
         </h5>
         <div className={'d-flex flex-row justify-content-center pt-3 pb-3'}>
           <div>

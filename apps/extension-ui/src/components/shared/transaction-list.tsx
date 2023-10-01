@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { CryptoAccount } from '@nodewallet/types';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
+import { ChainType } from '@nodewallet/constants';
 
 export interface TransactionListProps {
   account: CryptoAccount,
@@ -46,7 +47,7 @@ export const TransactionList = ({ account }: TransactionListProps) => {
                         <td className={'font-monospace'}>{amount || ''}</td>
                         <td><strong className={(isProof || isClaim || isStake) ? '' : received ? 'text-success' : 'text-danger'}>{isProof ? 'Proof' : isClaim ? 'Claim' : isStake ? 'Stake' : received ? 'Received' : 'Sent'}</strong></td>
                         <td className={'font-monospace'}>
-                          <a href={`https://poktscan.com/tx/${tx.hash}`} title={'Open in Poktscan'} target={'_blank'}>{truncateAddress(tx.hash)}</a> <a href={'#'} title={'Copy txid'} onClick={e => onCopyTxidClick(e, tx.hash)}><i className={'mdi mdi-content-copy'} /></a>
+                          <a href={`https://poktscan.com${account.chain === ChainType.TESTNET ? '/testnet' : ''}/tx/${tx.hash}`} title={'Open in Poktscan'} target={'_blank'}>{truncateAddress(tx.hash)}</a> <a href={'#'} title={'Copy txid'} onClick={e => onCopyTxidClick(e, tx.hash)}><i className={'mdi mdi-content-copy'} /></a>
                         </td>
                       </tr>
                     );
