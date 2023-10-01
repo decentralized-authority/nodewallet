@@ -2,24 +2,26 @@ import React, { useContext, useState } from 'react';
 import { Container } from './shared/container';
 import { useDispatch } from 'react-redux';
 import { setUserAccount, setUserStatus } from '../reducers/app-reducer';
-import { isTab, isValidPassword } from '../util';
+import { calledFromContentScript, isTab, isValidPassword } from '../util';
 import { ApiContext } from '../hooks/api-context';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import isNull from 'lodash/isNull';
 import { UserStatus } from '@nodewallet/constants';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   findCryptoAccountInUserAccount,
-  findCryptoAccountInUserAccountByAddress, getAccountDetailParamsFromUserAccount,
+  getAccountDetailParamsFromUserAccount,
   RouteBuilder
 } from '@nodewallet/util-browser';
 
 export const UnlockAccount = () => {
 
+  const location = useLocation();
   const dispatch = useDispatch();
   const api = useContext(ApiContext);
   const errorHandler = useContext(ErrorHandlerContext);
   const navigate = useNavigate();
+  const fromContentScript = calledFromContentScript(location);
 
   const [ disableSubmit, setDisableSubmit ] = useState(false);
   const [ passwordError, setPasswordError ] = useState('');
@@ -40,6 +42,10 @@ export const UnlockAccount = () => {
         setPasswordError('Invalid password.');
         setDisableSubmit(false);
       } else {
+        if(fromContentScript) {
+          window.close();
+          return;
+        }
         const userAccount = res.result;
         dispatch(setUserAccount({
           userAccount,

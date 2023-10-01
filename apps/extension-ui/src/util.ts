@@ -1,5 +1,6 @@
 import * as uuid from 'uuid';
 import { PASSWORD_MIN_LENGTH } from './constants';
+import { Location } from 'react-router-dom';
 
 export const getRandomInt = (min: number, max: number) => {
   min = Math.ceil(min);
@@ -30,4 +31,10 @@ export const isValidPassword = (password: string): boolean => {
 
 export const generatePoktscanAccountUrl = (address: string) => {
   return `https://poktscan.com/account/${address}`;
+}
+
+export const calledFromContentScript = (location: Location): boolean => {
+  const queryParams = new URLSearchParams(location.search);
+  console.log('content', queryParams.get('content'));
+  return queryParams.get('content') === 'true';
 }

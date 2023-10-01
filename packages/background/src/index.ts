@@ -3,7 +3,9 @@ import {
   AppLang,
   ChainType,
   CoinType,
-  LocalStorageKey, POPUP_HEIGHT, POPUP_WIDTH,
+  LocalStorageKey,
+  POPUP_HEIGHT,
+  POPUP_WIDTH,
   SessionStorageKey,
   UserStatus
 } from '@nodewallet/constants';
@@ -11,10 +13,16 @@ import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
   APIEvent,
-  CryptoAccount, ExportKeyfileParams, ExportKeyfileResult, ExportPrivateKeyParams, ExportPrivateKeyResult,
+  CryptoAccount,
+  ExportKeyfileParams,
+  ExportKeyfileResult,
+  ExportPrivateKeyParams,
+  ExportPrivateKeyResult,
   GenerateMnemonicResult,
   GetAccountBalancesParams,
-  GetAccountBalancesResult, GetAccountTransactionsParams, GetAccountTransactionsResult,
+  GetAccountBalancesResult,
+  GetAccountTransactionsParams,
+  GetAccountTransactionsResult,
   GetActiveAccountResult,
   GetUserAccountResult,
   GetUserStatusResult,
@@ -24,11 +32,12 @@ import {
   InsertHdWalletResult,
   InsertLegacyWalletParams,
   InsertLegacyWalletResult,
-  LockUserAccountResult, AccountTransaction,
+  LockUserAccountResult,
   RegisterUserParams,
   RegisterUserResult,
   SaveActiveAccountParams,
-  SaveActiveAccountResult, SaveFileParams,
+  SaveActiveAccountResult,
+  SaveFileParams,
   SendTransactionParams,
   SendTransactionResult,
   StartNewWalletResult,
@@ -67,10 +76,16 @@ import omit from 'lodash/omit';
 import { SessionSecretManager } from './session-secret-manager';
 import {
   ContentAPIEvent,
-  GetBalanceParams, GetBalanceResult, GetHeightParams, GetHeightResult, GetTransactionParams, GetTransactionResult,
+  GetBalanceParams,
+  GetBalanceResult,
+  GetHeightParams,
+  GetHeightResult,
+  GetTransactionParams,
+  GetTransactionResult,
   RequestAccountParams,
   RequestAccountResult
 } from '@nodewallet/types/dist/content-api';
+import MessageSender = chrome.runtime.MessageSender;
 
 interface ExtendedCryptoAccount extends CryptoAccount {
   privateKey: EncryptionResult
@@ -146,6 +161,14 @@ const openNewWalletTab = async () => {
 };
 const generateCryptoAccountId = (network: CoinType, chain: ChainType, address: string): string => {
   return `${network}-${chain}-${address}`;
+};
+const splitCryptoAccountId = (accountId: string): {network: CoinType, chain: ChainType, address: string} => {
+  const [ network, chain, address ] = accountId.split('-') as [CoinType, ChainType, string];
+  return {
+    network,
+    chain,
+    address,
+  };
 };
 
 dayjs.extend(utc);
@@ -789,14 +812,56 @@ export const startBackground = () => {
     });
   });
 
+  const createPopupWindow = async (url: string): Promise<chrome.windows.Window> => {
+    const currentWindow = await chrome.windows.getCurrent();
+    // @ts-ignore
+    const windowLeft = currentWindow.left + currentWindow.width - POPUP_WIDTH;
+    // @ts-ignore
+    const windowTop = currentWindow.top || 0;
+    return await chrome.windows.create({
+      focused: true,
+      url,
+      width: POPUP_WIDTH,
+      height: POPUP_HEIGHT,
+      type: 'popup',
+      left: windowLeft,
+      top: windowTop + 68,
+    });
+  };
+
+  const waitForWindowClose = (window: chrome.windows.Window): Promise<void> => {
+    return new Promise<void>(resolve => {
+      const onRemovedCallback = (windowId: number): void => {
+        if(windowId === window.id) {
+          chrome.windows.onRemoved.removeListener(onRemovedCallback);
+          resolve();
+        }
+      };
+      chrome.windows.onRemoved.addListener(onRemovedCallback);
+    });
+  };
+
+  const unlockAndGetUserAccount = async (): Promise<ExtendedUserAccount> => {
+    let userAccount = await getUserAccount();
+    if(userAccount) {
+      return userAccount;
+    }
+    const urlPath = RouteBuilder.unlock.generateFullPath({});
+    const url = chrome.runtime.getURL(`index.html#${urlPath}?content=true`);
+    const popup = await createPopupWindow(url);
+    await waitForWindowClose(popup);
+    userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    return userAccount;
+  }
+
   messager.register(ContentAPIEvent.REQUEST_ACCOUNT, async ({ network }: RequestAccountParams): Promise<RequestAccountResult> => {
+    const userAccount = await unlockAndGetUserAccount();
     const activeAccount = await getActiveAccount();
     if(!activeAccount) {
       throw new Error('No account selected.');
-    }
-    const userAccount = await getUserAccount();
-    if(!userAccount) {
-      throw new Error('User account locked.');
     }
     const cryptoAccount = findCryptoAccountInUserAccount(userAccount, activeAccount);
     if(!cryptoAccount) {
@@ -808,10 +873,7 @@ export const startBackground = () => {
   });
 
   messager.register(ContentAPIEvent.GET_BALANCE, async ({ accountId }: GetBalanceParams): Promise<GetBalanceResult> => {
-    const userAccount = await getUserAccount();
-    if(!userAccount) {
-      throw new Error('User account locked.');
-    }
+    const userAccount = await unlockAndGetUserAccount();
     const cryptoAccount = findCryptoAccountInUserAccount(userAccount, accountId);
     if(!cryptoAccount) {
       throw new Error('Account not found.');
@@ -840,10 +902,7 @@ export const startBackground = () => {
   });
 
   messager.register(ContentAPIEvent.GET_HEIGHT, async ({ network, chain }: GetHeightParams): Promise<GetHeightResult> => {
-    const userAccount = await getUserAccount();
-    if(!userAccount) {
-      throw new Error('User account locked.');
-    }
+    const userAccount = await unlockAndGetUserAccount();
     let result: string;
     switch(network) {
       case CoinType.POKT: {
@@ -868,10 +927,7 @@ export const startBackground = () => {
   });
 
   messager.register(ContentAPIEvent.GET_TRANSACTION, async ({ txid, network, chain }: GetTransactionParams): Promise<GetTransactionResult> => {
-    const userAccount = await getUserAccount();
-    if(!userAccount) {
-      throw new Error('User account locked.');
-    }
+    const userAccount = await unlockAndGetUserAccount();
     let result: string;
     switch(network) {
       case CoinType.POKT: {
@@ -889,10 +945,7 @@ export const startBackground = () => {
   });
 
   messager.register(ContentAPIEvent.SEND_TRANSACTION, async ({ accountId, amount, recipient, memo }: SendTransactionParams): Promise<SendTransactionResult> => {
-    const userAccount = await getUserAccount();
-    if(!userAccount) {
-      throw new Error('User account locked.');
-    }
+    const userAccount = await unlockAndGetUserAccount();
     const cryptoAccount = findCryptoAccountInUserAccountWithWalletId(userAccount, accountId);
     if(!cryptoAccount) {
       throw new Error('Account not found.');
@@ -903,23 +956,25 @@ export const startBackground = () => {
       chainId: cryptoAccount.chain,
       address: cryptoAccount.address,
     });
-    const currentWindow = await chrome.windows.getCurrent();
-    // @ts-ignore
-    const windowLeft = currentWindow.left + currentWindow.width - POPUP_WIDTH;
-    // @ts-ignore
-    const windowTop = currentWindow.top || 0;
-    const popup = await chrome.windows.create({
-      focused: true,
-      url: chrome.runtime.getURL(`index.html#${urlPath}?amount=${encodeURIComponent(Number(amount) / 1000000)}&recipient=${encodeURIComponent(recipient)}&memo=${encodeURIComponent(memo || '')}`),
-      width: POPUP_WIDTH,
-      height: POPUP_HEIGHT,
-      left: windowLeft,
-      top: windowTop + 68,
-      type: 'popup',
-    });
+    const url = chrome.runtime.getURL(`index.html#${urlPath}?amount=${encodeURIComponent(Number(amount) / 1000000)}&recipient=${encodeURIComponent(recipient)}&memo=${encodeURIComponent(memo || '')}&content=true`);
+    const popup = await createPopupWindow(url);
+    let txid = '';
+    const txidListener = (message: {type: string, payload: string}, sender: MessageSender) => {
+      const { type, payload } = message;
+      if(sender.tab?.windowId === popup.id && type === 'txid') {
+        chrome.runtime.onMessage.removeListener(txidListener);
+        txid = payload;
+      }
+    };
+    chrome.runtime.onMessage.addListener(txidListener);
+    await waitForWindowClose(popup);
+    if(!txid) {
+      chrome.runtime.onMessage.removeListener(txidListener);
+      throw new Error('Transaction cancelled.');
+    }
     return {
       result: {
-        txid: '0123456789abcdef',
+        txid,
       },
     };
   });

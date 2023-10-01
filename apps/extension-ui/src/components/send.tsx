@@ -9,6 +9,7 @@ import * as math from 'mathjs';
 import { findCryptoAccountInUserAccountByAddress, isHex, RouteBuilder, SendParams } from '@nodewallet/util-browser';
 import swal from 'sweetalert';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { calledFromContentScript } from '../util';
 
 export const Send = () => {
 
@@ -28,6 +29,7 @@ export const Send = () => {
     accountBalances,
     userAccount,
   } = useSelector(({ appState }: RootState) => appState);
+  const fromContentScript = calledFromContentScript(location);
 
   const [ toAddress, setToAddress ] = useState('');
   const [ toAddressError, setToAddressError ] = useState('');
@@ -134,12 +136,21 @@ export const Send = () => {
         setDisableSubmit(false);
         return;
       } else if(res.result.txid) {
+        // ToDo move to api
+        await chrome.runtime.sendMessage({
+          type: 'txid',
+          payload: res.result.txid,
+        });
         await swal({
           title: 'Success!',
           icon: 'success',
           text: `Your transaction has been successfully submitted to the network. The transaction ID is:\n\n${res.result.txid}`,
         });
-        navigate(accountDetailRoute);
+        if(fromContentScript) {
+          window.close();
+        } else {
+          navigate(accountDetailRoute);
+        }
       }
       setDisableSubmit(false);
     } catch(err: any) {
@@ -187,6 +198,7 @@ export const Send = () => {
                 value={amount}
                 placeholder={'Enter amount of POKT to send'}
                 autoFocus={true}
+                readOnly={fromContentScript}
                 onChange={(e) => setAmount(e.target.value)}
                 onBlur={() => {
                   if(toAddressError && isHex(toAddress)) {
@@ -208,6 +220,7 @@ export const Send = () => {
                 id={'address'}
                 value={toAddress}
                 placeholder={`Enter recipient POKT ${activeChain.toLowerCase()} address`}
+                readOnly={fromContentScript}
                 onChange={(e) => setToAddress(e.target.value.trim())}
                 onBlur={() => {
                   if(toAddressError && isHex(toAddress)) {
@@ -228,6 +241,7 @@ export const Send = () => {
                 value={memo}
                 placeholder={'Enter optional memo'}
                 style={{resize: 'vertical'}}
+                readOnly={fromContentScript}
                 onChange={(e) => setMemo(e.target.value)}
               />
             </div>

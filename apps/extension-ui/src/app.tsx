@@ -5,7 +5,7 @@ import { Container } from './components/shared/container';
 import { RootState } from './store';
 import { MAX_BODY_WIDTH } from './constants';
 import $ from 'jquery';
-import { isTab } from './util';
+import { calledFromContentScript, isTab } from './util';
 import {
   setAccountBalances, setAccountTransactions,
   setActiveChain,
@@ -31,6 +31,7 @@ export const App = () => {
   const dispatch = useDispatch();
   const api = useContext(ApiContext);
   const errorHandler = useContext(ErrorHandlerContext);
+  const fromContext = calledFromContentScript(location);
 
   const {
     userStatus,
@@ -77,7 +78,9 @@ export const App = () => {
               window.close();
             }
           } else if(result === UserStatus.LOCKED) {
-            navigate(RouteBuilder.unlock.fullPath());
+            if(!fromContext) {
+              navigate(RouteBuilder.unlock.fullPath());
+            }
           } else if(result === UserStatus.UNLOCKED) {
             const getRes = await api.getUserAccount();
             if('error' in getRes) {
