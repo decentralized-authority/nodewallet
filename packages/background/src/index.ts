@@ -859,6 +859,10 @@ export const startBackground = () => {
 
   messager.register(ContentAPIEvent.REQUEST_ACCOUNT, async ({ network }: RequestAccountParams): Promise<RequestAccountResult> => {
     const userAccount = await unlockAndGetUserAccount();
+    const urlPath = RouteBuilder.connect.generateFullPath({});
+    const url = chrome.runtime.getURL(`index.html#${urlPath}?content=true`);
+    const popup = await createPopupWindow(url);
+    await waitForWindowClose(popup);
     const activeAccount = await getActiveAccount();
     if(!activeAccount) {
       throw new Error('No account selected.');

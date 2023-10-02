@@ -31,7 +31,7 @@ export const App = () => {
   const dispatch = useDispatch();
   const api = useContext(ApiContext);
   const errorHandler = useContext(ErrorHandlerContext);
-  const fromContext = calledFromContentScript(location);
+  const fromContent = calledFromContentScript(location);
 
   const {
     userStatus,
@@ -78,7 +78,7 @@ export const App = () => {
               window.close();
             }
           } else if(result === UserStatus.LOCKED) {
-            if(!fromContext) {
+            if(!fromContent) {
               navigate(RouteBuilder.unlock.fullPath());
             }
           } else if(result === UserStatus.UNLOCKED) {
@@ -94,12 +94,12 @@ export const App = () => {
               if(account.wallets.length === 0) {
                 if(isTab()) {
                   navigate(RouteBuilder.selectNewWalletType.fullPath());
-                } else {
+                } else if(!fromContent) {
                   await api.startNewWallet();
                   window.close();
                 }
               } else {
-                if(!isTab()) {
+                if(!fromContent && !isTab()) {
                   const activeAccountRes = await api.getActiveAccount();
                   if('error' in activeAccountRes) {
                     errorHandler.handle(activeAccountRes.error);
@@ -199,6 +199,7 @@ export const App = () => {
     RouteBuilder.unlock.generatePathPattern(),
     RouteBuilder.newHdWallet.generatePathPattern(),
     RouteBuilder.openPopupInfo.generatePathPattern(),
+    RouteBuilder.connect.generatePathPattern(),
   ];
 
   return (

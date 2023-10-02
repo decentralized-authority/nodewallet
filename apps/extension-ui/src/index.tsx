@@ -21,6 +21,7 @@ import { SelectNewWalletType } from './components/select-new-wallet-type';
 import { RegisterAccount } from './components/register-account';
 import { NewHdWallet } from './components/new-hd-wallet';
 import { OpenPopupInfo } from './components/open-popup-info';
+import { Connect } from './components/connect';
 
 window.Buffer = Buffer;
 
@@ -73,8 +74,12 @@ const start = () => {
         },
         {
           path: RouteBuilder.openPopupInfo.path(),
-          element: <OpenPopupInfo />
-        }
+          element: <OpenPopupInfo />,
+        },
+        {
+          path: RouteBuilder.connect.path(),
+          element: <Connect />,
+        },
       ],
     },
   ]);
