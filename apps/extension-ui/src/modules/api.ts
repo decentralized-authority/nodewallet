@@ -1,6 +1,6 @@
 import {
   APIEvent,
-  ClientAPI,
+  ClientAPI, ConnectSiteParams, ConnectSiteResult,
   ExportKeyfileParams,
   ExportKeyfileResult,
   ExportPrivateKeyParams,
@@ -120,6 +120,10 @@ export class API implements ClientAPI {
 
   async saveFile(params: SaveFileParams): Promise<void> {
     return await this._messager.send(APIEvent.SAVE_FILE, params);
+  }
+
+  async connectSite(params: ConnectSiteParams): Promise<ConnectSiteResult> {
+    return await this._messager.send(APIEvent.CONNECT_SITE, params);
   }
 
 }

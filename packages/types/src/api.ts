@@ -24,6 +24,7 @@ export enum APIEvent {
   EXPORT_PRIVATE_KEY = 'EXPORT_PRIVATE_KEY',
   EXPORT_KEYFILE = 'EXPORT_KEYFILE',
   SAVE_FILE = 'SAVE_FILE',
+  CONNECT_SITE = 'CONNECT_SITE',
 }
 
 export interface ErrorResult {
@@ -143,6 +144,12 @@ export interface SaveFileParams {
   filename: string
   url: string
 }
+export interface ConnectSiteParams {
+  origin: string
+}
+export type ConnectSiteResult = ErrorResult | {
+  result: boolean
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -184,5 +191,7 @@ export interface ClientAPI {
   exportKeyfile(params: ExportKeyfileParams): Promise<ExportKeyfileResult>
 
   saveFile(params: SaveFileParams): Promise<void>
+
+  connectSite(params: ConnectSiteParams): Promise<ConnectSiteResult>
 
 }

@@ -12,7 +12,8 @@ import {
 import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
-  APIEvent,
+  AllowedOrigin,
+  APIEvent, ConnectSiteParams, ConnectSiteResult,
   CryptoAccount,
   ExportKeyfileParams,
   ExportKeyfileResult,
@@ -50,7 +51,7 @@ import {
   ValidateMnemonicResult,
   WalletAccount,
 } from '@nodewallet/types';
-import { Messager, prepMnemonic, RouteBuilder } from '@nodewallet/util-browser';
+import { getHostFromOrigin, Messager, prepMnemonic, RouteBuilder } from '@nodewallet/util-browser';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import {
@@ -318,6 +319,7 @@ export const startBackground = () => {
     const account: ExtendedUserAccount = {
       language: AppLang.en,
       tosAccepted: dayjs.utc().toISOString(),
+      allowedOrigins: [],
       settings: {
         showTestnets: false,
       },
@@ -812,6 +814,36 @@ export const startBackground = () => {
     });
   });
 
+  messager.register(APIEvent.CONNECT_SITE, async ({ origin }: ConnectSiteParams): Promise<ConnectSiteResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const { allowedOrigins = [] } = userAccount;
+    const found = allowedOrigins.some(o => o.origin === origin);
+    if(found) { // origin has already been allowed
+      return {
+        result: true,
+      };
+    }
+    const host = getHostFromOrigin(origin);
+    const newOrigin: AllowedOrigin = {
+      date: dayjs.utc().toISOString(),
+      origin,
+      host,
+    };
+    if(userAccount.allowedOrigins) {
+      userAccount.allowedOrigins.push(newOrigin);
+    } else {
+      userAccount.allowedOrigins = [newOrigin];
+    }
+    await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
+    await encryptSaveUserAccount(userAccount);
+    return {
+      result: true,
+    };
+  });
+
   const createPopupWindow = async (url: string): Promise<chrome.windows.Window> => {
     const currentWindow = await chrome.windows.getCurrent();
     // @ts-ignore
@@ -857,12 +889,38 @@ export const startBackground = () => {
     return userAccount;
   }
 
-  messager.register(ContentAPIEvent.REQUEST_ACCOUNT, async ({ network }: RequestAccountParams): Promise<RequestAccountResult> => {
-    const userAccount = await unlockAndGetUserAccount();
-    const urlPath = RouteBuilder.connect.generateFullPath({});
-    const url = chrome.runtime.getURL(`index.html#${urlPath}?content=true`);
-    const popup = await createPopupWindow(url);
-    await waitForWindowClose(popup);
+  const checkIfOriginAllowed = (userAccount: ExtendedUserAccount, origin: string): boolean => {
+    const { allowedOrigins = [] } = userAccount;
+    return allowedOrigins.some(o => o.origin === origin);
+  }
+
+  messager.register(ContentAPIEvent.REQUEST_ACCOUNT, async ({ network }: RequestAccountParams, sender): Promise<RequestAccountResult> => {
+    let userAccount = await unlockAndGetUserAccount();
+    const { origin, tab } = sender;
+    if(!origin || !tab) {
+      throw new Error('Invalid sender.');
+    }
+
+    let allowed = checkIfOriginAllowed(userAccount, origin);
+
+    if(!allowed) {
+      const { favIconUrl = '', title = '' } = tab;
+      const urlPath = RouteBuilder.connect.generateFullPath({});
+      const url = chrome.runtime.getURL(`index.html#${urlPath}?content=true&favicon=${encodeURIComponent(favIconUrl)}&title=${encodeURIComponent(title)}&origin=${encodeURIComponent(origin)}`);
+      const popup = await createPopupWindow(url);
+      await waitForWindowClose(popup);
+      const updatedUserAccount = await getUserAccount();
+      if(!updatedUserAccount) {
+        throw new Error('Updated user account not found!');
+      }
+      userAccount = updatedUserAccount;
+      allowed = checkIfOriginAllowed(userAccount, origin);
+    }
+
+    if(!allowed) {
+      throw new Error('Not allowed by user.');
+    }
+
     const activeAccount = await getActiveAccount();
     if(!activeAccount) {
       throw new Error('No account selected.');

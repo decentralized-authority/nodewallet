@@ -70,3 +70,7 @@ export const prepFilename = (name: string) => {
     .replace(/\s+/g, '_')
     .replace(/\W+/g, '');
 };
+
+export const getHostFromOrigin = (origin: string): string => {
+  return origin.replace(/^https?:\/\//, '');
+}

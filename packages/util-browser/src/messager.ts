@@ -3,7 +3,7 @@ import { ErrorResult } from '@nodewallet/types';
 export class Messager {
 
   _runtime: typeof chrome.runtime;
-  _handlers: {[eventName: string]: (res: any)=>Promise<any>} = {};
+  _handlers: {[eventName: string]: (res: any, sender: chrome.runtime.MessageSender)=>Promise<any>} = {};
 
   constructor(runtime: typeof chrome.runtime, listen = false) {
     this._runtime = runtime;
@@ -16,7 +16,7 @@ export class Messager {
   _listener(message: {eventName: string, body: any}, sender: chrome.runtime.MessageSender, sendResponse: (res: any)=>void) {
     const { eventName, body } = message;
     if(this._handlers[eventName]) {
-      this._handlers[eventName](body)
+      this._handlers[eventName](body, sender)
         .then(res => sendResponse(res))
         .catch(err => sendResponse({
           error: {
@@ -41,7 +41,7 @@ export class Messager {
     this._runtime.onMessage.removeListener(this._listener);
   }
 
-  register(eventName: string, callback: (res: any)=>Promise<any>): void {
+  register(eventName: string, callback: (res: any, sender: chrome.runtime.MessageSender)=>Promise<any>): void {
     if(this._handlers[eventName]) {
       throw new Error(`Event ${eventName} already registered.`);
     }
