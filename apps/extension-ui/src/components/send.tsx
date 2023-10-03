@@ -177,7 +177,7 @@ export const Send = () => {
   };
 
   return (
-    <Container>
+    <Container className={'nw-bg-gradient-vertical'}>
       <BalanceCard
         walletId={walletId}
         account={cryptoAccount}
