@@ -46,7 +46,7 @@ export const ManageWallets = () => {
         </div>
       </div>
       <div className={'d-flex flex-row justify-content-start p-2'}>
-        <button className={'btn btn-primary me-2'} onClick={onImportWalletClick}><i className={'mdi mdi-upload'} /> Add/Import wallet</button>
+        <button className={'btn btn-outline-primary me-2'} onClick={onImportWalletClick}><i className={'mdi mdi-upload'} /> Add/Import wallet</button>
       </div>
     </Container>
   );

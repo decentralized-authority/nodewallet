@@ -7,3 +7,15 @@ html {
 .flex-basis-1 {
   flex-basis: 1px;
 }
+
+@mixin nw-gradient($direction) {
+  opacity: 1;
+  background-color: $body-bg-dark;
+  background-image: linear-gradient($direction, #{$body-bg-dark}, #{darken(#17446e, 10%)});
+}
+.nw-bg-gradient-vertical {
+  @include nw-gradient(to bottom);
+}
+.nw-bg-gradient-horizontal {
+  @include nw-gradient(to left);
+}

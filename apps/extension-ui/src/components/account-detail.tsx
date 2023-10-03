@@ -161,7 +161,7 @@ export const AccountDetail = () => {
   }
 
   return (
-    <Container>
+    <Container className={'nw-bg-gradient-vertical'}>
       <BalanceCard
         walletId={walletId}
         account={cryptoAccount}
@@ -171,8 +171,8 @@ export const AccountDetail = () => {
         account={cryptoAccount}
       />
       <div className={'d-flex flex-row justify-content-start p-2'}>
-        <button className={'btn btn-primary flex-grow-1 me-2'} style={styles.bottomButton} onClick={onViewClick}><i className={'mdi mdi-key-variant'} /> View Private Key</button>
-        <button className={'btn btn-primary flex-grow-1'} style={styles.bottomButton} onClick={onExportClick}><i className={'mdi mdi-export'} /> Export Keyfile</button>
+        <button className={'btn btn-outline-primary flex-grow-1 me-2'} style={styles.bottomButton} onClick={onViewClick}><i className={'mdi mdi-key-variant'} /> View Private Key</button>
+        <button className={'btn btn-outline-primary flex-grow-1'} style={styles.bottomButton} onClick={onExportClick}><i className={'mdi mdi-export'} /> Export Keyfile</button>
       </div>
     </Container>
   );

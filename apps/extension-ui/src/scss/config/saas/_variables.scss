@@ -297,11 +297,13 @@ $cyans: (
 );
 // fusv-enable
 
+$pokt-blue: #1d8aed;
+
 // scss-docs-start theme-color-variables
-$primary:       $indigo;
+$primary:       $pokt-blue;
 $secondary:     $gray-700;
 $success:       $green;
-$info:          $cyan;
+$info:          $indigo;
 $warning:       $yellow;
 $danger:        $red;
 $light:         $gray-200;
@@ -600,8 +602,8 @@ $aspect-ratios: (
 
 // scss-docs-start font-variables
 // stylelint-disable value-keyword-case
-$font-family-sans-serif:      'Nunito', sans-serif;
-$font-family-monospace:       SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+$font-family-sans-serif:      "Jura", "Nunito", sans-serif;
+$font-family-monospace:       "Red Hat Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 // stylelint-enable value-keyword-case
 $font-family-base:            var(--#{$prefix}font-sans-serif);
 $font-family-code:            var(--#{$prefix}font-monospace);
@@ -1359,7 +1361,7 @@ $card-border-width:                 var(--#{$prefix}theme-card-border-width);
 $card-border-color:                 var(--#{$prefix}border-color);
 //$card-border-radius:                var(--#{$prefix}border-radius);
 $card-border-radius:                0;
-$card-box-shadow:                   var(--#{$prefix}box-shadow);
+$card-box-shadow:                   none;
 $card-inner-border-radius:          subtract($card-border-radius, $card-border-width);
 $card-cap-padding-y:                $card-spacer-y * .75;
 $card-cap-padding-x:                $card-spacer-x;

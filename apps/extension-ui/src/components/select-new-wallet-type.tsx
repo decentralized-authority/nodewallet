@@ -239,7 +239,7 @@ export const SelectNewWalletType = () => {
           className={'btn btn-primary btn-lg w-100'}
           onClick={onImportPassphraseClick}
         >Import passphrase</button>
-        <div className={'pt-1 ps-2 pe-2 mb-3'}>Import the passphrase for an existing wallet.</div>
+        <div className={'pt-1 ps-2 pe-2 mb-3'}>Import existing passphrase. <em>(Compatible with MetaMask, SendWallet, & others)</em></div>
 
         <button
           className={'btn btn-primary btn-lg w-100'}

@@ -31,7 +31,7 @@ export const NewHdWallet = () => {
 
   const onBackClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate(RouteBuilder.wallets.fullPath());
+    navigate(-1);
   };
 
   const onCopyClick = async (e: React.MouseEvent) => {

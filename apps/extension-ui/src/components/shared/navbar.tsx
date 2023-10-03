@@ -75,7 +75,7 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="navbar bg-body-tertiary pt-0 pb-0 ps-2 pe-2 d-flex flex-row justify-content-start align-items-center" style={styles.nav}>
+    <nav className="navbar bg-transparent pt-0 pb-0 ps-2 pe-2 d-flex flex-row justify-content-start align-items-center" style={styles.nav}>
       <a href={'#'} title={'Pocket Network'} onClick={e => e.preventDefault()}>
         <img src={'/images/coins/pokt.png'} alt="Pocket" height={30} />
       </a>

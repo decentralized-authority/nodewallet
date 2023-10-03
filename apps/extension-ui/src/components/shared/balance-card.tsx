@@ -46,7 +46,7 @@ export const BalanceCard = ({ walletId, account, hideButtons, backRoute }: Balan
   });
 
   return (
-    <div className={'card mb-0'}>
+    <div className={'card mb-0 bg-transparent'}>
       <div className={`card-body pt-2 ${hideButtons ? 'pb-0' : 'pb-2'} ps-2 pe-2`}>
         <h5 className={'d-flex flex-row justify-content-between align-items-center mt-0 mb-0'}>
           <div><Link to={backRoute} title={'View wallets'} onClick={e => fromContentScript ? e.preventDefault() : null}><i className={`mdi mdi-menu-left ${fromContentScript ? 'd-none' : ''}`} />{account.name}</Link></div>
@@ -60,8 +60,8 @@ export const BalanceCard = ({ walletId, account, hideButtons, backRoute }: Balan
         </div>
         {!hideButtons ?
           <div className={'d-flex flex-row justify-content-evenly'}>
-            <button style={styles.button} className={'btn btn-primary text-uppercase fw-bold'} disabled={true}>Stake</button>
-            <Link to={sendPath} style={styles.button} className={'btn btn-primary text-uppercase fw-bold'}>Send</Link>
+            <button style={styles.button} className={'btn btn-outline-success text-uppercase fw-bold'} disabled={true}>Stake</button>
+            <Link to={sendPath} style={styles.button} className={'btn btn-outline-success text-uppercase fw-bold'}>Send</Link>
           </div>
           :
           null
