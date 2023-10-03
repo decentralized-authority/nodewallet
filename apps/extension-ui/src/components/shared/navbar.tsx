@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
@@ -25,6 +25,8 @@ export const Navbar = () => {
   const sendPattern = RouteBuilder.send.generatePathPattern();
   const accountDetailPatt = RouteBuilder.accountDetail.generatePathPattern();
   const walletsPatt = RouteBuilder.wallets.generatePathPattern();
+
+  const [ originAllowed, setOriginAllowed ] = useState(true);
 
   // const onMenuClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   //   try {
@@ -56,6 +58,10 @@ export const Navbar = () => {
     } catch(err: any) {
       errorHandler.handle(err);
     }
+  };
+  const onOriginAllowedClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setOriginAllowed(!originAllowed);
   };
 
   const showChainDropdown = sendPattern.test(location.pathname)
@@ -106,7 +112,8 @@ export const Navbar = () => {
       }
       <div className={'flex-grow-1'} />
       {/*<a href={'#'} title={'Menu'} onClick={onMenuClick}><i className={'mdi mdi-menu fs-2'} /></a>*/}
-      <a href={'#'} title={'Lock Wallets'} onClick={onLockClick} className={'ms-1'}><i className={`mdi mdi-lock-outline fs-2 ${fromContentScript ? 'd-none' : ''}`} /></a>
+      <a href={'#'} title={originAllowed ? 'Tab allowed access to wallet' : 'Tab not allowed access to wallet'} onClick={onOriginAllowedClick}><i className={`mdi mdi-${originAllowed ? 'link' : 'link-off'} fs-2 ${originAllowed ? 'text-success' : ''} ${fromContentScript ? 'd-none' : ''}`} /></a>
+      <a href={'#'} title={'Lock Wallets'} onClick={onLockClick} className={'ms-2'}><i className={`mdi mdi-lock-outline fs-2 ${fromContentScript ? 'd-none' : ''}`} /></a>
     </nav>
   );
 };
