@@ -302,10 +302,11 @@ $pokt-blue: #1d8aed;
 // scss-docs-start theme-color-variables
 $primary:       $pokt-blue;
 $secondary:     $gray-700;
-$success:       $green;
-$info:          $indigo;
+$success:       #00e2b7;
+$info:          #836cc5;
 $warning:       $yellow;
-$danger:        $red;
+//$danger:        $red;
+$danger:        #E3567F;
 $light:         $gray-200;
 $dark:          $gray-900;
 // scss-docs-end theme-color-variables
