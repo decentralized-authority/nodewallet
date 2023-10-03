@@ -13,6 +13,7 @@ export enum PocketNetworkMethod {
   SEND_TRANSACTION = 'pokt_sendTransaction',
   TX = 'pokt_tx',
   HEIGHT = 'pokt_height',
+  CHAIN = 'pokt_chain',
   // BLOCK = 'pokt_block',
 }
 
@@ -129,6 +130,12 @@ const height = async (api: API): Promise<{height: number}> => {
   return {height: Number(res.result)};
 };
 
+const chain = async (): Promise<{chain: string}> => {
+  checkConnected();
+  const [ account ] = [...addressToAccount.values()];
+  return {chain: account.chain};
+};
+
 export class PocketNetwork extends EventEmitter implements ContentBridge {
 
   _api: API;
@@ -155,6 +162,8 @@ export class PocketNetwork extends EventEmitter implements ContentBridge {
         return tx(params, this._api);
       case PocketNetworkMethod.HEIGHT:
         return height(this._api);
+      case PocketNetworkMethod.CHAIN:
+        return chain();
       default:
         throw new Error(`Unknown method: ${method}`);
     }
