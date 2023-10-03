@@ -46,6 +46,12 @@ export const Connect = () => {
       width: 100,
       height: 100,
     },
+    hostText: {
+      wordBreak: 'break-all',
+      width: 120,
+      maxWidth: 120,
+      minWidth: 120,
+    },
     iconContainer: {
       height: 100,
     },
@@ -59,14 +65,14 @@ export const Connect = () => {
       <div className={'d-flex flex-row justify-content-evenly w-100'}>
         <div className={'d-flex flex-column justify-content-start align-items-center'}>
           <img style={styles.image} src={favicon} alt={`${title} icon`} />
-          <div className={'pt-1'}>{getHostFromOrigin(origin)}</div>
+          <div className={'pt-1 text-center'} style={styles.hostText as React.CSSProperties}>{getHostFromOrigin(origin)}</div>
         </div>
         <div className={'d-flex flex-column justify-content-center'} style={styles.iconContainer}>
           <i className={'mdi mdi-arrow-right-bold text-success fs-1'} />
         </div>
         <div className={'d-flex flex-column justify-content-start align-items-center'}>
           <img style={styles.image} src={logo} alt={'NodeWallet logo'} />
-          <div className={'pt-1'}>{'NodeWallet'}</div>
+          <div className={'pt-1 text-center'} style={styles.hostText as React.CSSProperties}>{'NodeWallet'}</div>
         </div>
       </div>
 
