@@ -814,22 +814,22 @@ export const startBackground = () => {
     });
   });
 
-  messager.register(APIEvent.CONNECT_SITE, async ({ origin }: ConnectSiteParams): Promise<ConnectSiteResult> => {
+  messager.register(APIEvent.CONNECT_SITE, async ({ origin = '' }: ConnectSiteParams): Promise<ConnectSiteResult> => {
     const userAccount = await getUserAccount();
     if(!userAccount) {
       throw new Error('User account locked.');
     }
     const { allowedOrigins = [] } = userAccount;
-    const found = allowedOrigins.some(o => o.origin === origin);
+    const found = allowedOrigins.some(o => o.origin === origin.toLowerCase());
     if(found) { // origin has already been allowed
       return {
         result: true,
       };
     }
-    const host = getHostFromOrigin(origin);
+    const host = getHostFromOrigin(origin).toLowerCase();
     const newOrigin: AllowedOrigin = {
       date: dayjs.utc().toISOString(),
-      origin,
+      origin: origin.toLowerCase(),
       host,
     };
     if(userAccount.allowedOrigins) {
@@ -889,24 +889,35 @@ export const startBackground = () => {
     return userAccount;
   }
 
-  const checkIfOriginAllowed = (userAccount: ExtendedUserAccount, origin: string): boolean => {
+  const checkIfOriginAllowed = (userAccount: ExtendedUserAccount, sender: MessageSender): boolean => {
+    const { origin = '' } = sender;
+    if(!origin) {
+      throw new Error('Invalid sender.');
+    }
     const { allowedOrigins = [] } = userAccount;
-    return allowedOrigins.some(o => o.origin === origin);
+    return allowedOrigins.some(o => o.origin === origin.toLowerCase());
+  }
+
+  const checkIfOriginAllowedAndThrow = (userAccount: ExtendedUserAccount, sender: MessageSender): void => {
+    const allowed = checkIfOriginAllowed(userAccount, sender);
+    if(!allowed) {
+      throw new Error('Not allowed by user.');
+    }
   }
 
   messager.register(ContentAPIEvent.REQUEST_ACCOUNT, async ({ network }: RequestAccountParams, sender): Promise<RequestAccountResult> => {
     let userAccount = await unlockAndGetUserAccount();
-    const { origin, tab } = sender;
-    if(!origin || !tab) {
+    const { origin = '', tab } = sender;
+    if(!tab) {
       throw new Error('Invalid sender.');
     }
 
-    let allowed = checkIfOriginAllowed(userAccount, origin);
+    let allowed = checkIfOriginAllowed(userAccount, sender);
 
     if(!allowed) {
       const { favIconUrl = '', title = '' } = tab;
       const urlPath = RouteBuilder.connect.generateFullPath({});
-      const url = chrome.runtime.getURL(`index.html#${urlPath}?content=true&favicon=${encodeURIComponent(favIconUrl)}&title=${encodeURIComponent(title)}&origin=${encodeURIComponent(origin)}`);
+      const url = chrome.runtime.getURL(`index.html#${urlPath}?content=true&favicon=${encodeURIComponent(favIconUrl)}&title=${encodeURIComponent(title)}&origin=${encodeURIComponent(origin.toLowerCase())}`);
       const popup = await createPopupWindow(url);
       await waitForWindowClose(popup);
       const updatedUserAccount = await getUserAccount();
@@ -914,11 +925,7 @@ export const startBackground = () => {
         throw new Error('Updated user account not found!');
       }
       userAccount = updatedUserAccount;
-      allowed = checkIfOriginAllowed(userAccount, origin);
-    }
-
-    if(!allowed) {
-      throw new Error('Not allowed by user.');
+      checkIfOriginAllowedAndThrow(userAccount, sender);
     }
 
     const activeAccount = await getActiveAccount();
@@ -934,8 +941,9 @@ export const startBackground = () => {
     };
   });
 
-  messager.register(ContentAPIEvent.GET_BALANCE, async ({ accountId }: GetBalanceParams): Promise<GetBalanceResult> => {
+  messager.register(ContentAPIEvent.GET_BALANCE, async ({ accountId }: GetBalanceParams, sender): Promise<GetBalanceResult> => {
     const userAccount = await unlockAndGetUserAccount();
+    checkIfOriginAllowedAndThrow(userAccount, sender);
     const cryptoAccount = findCryptoAccountInUserAccount(userAccount, accountId);
     if(!cryptoAccount) {
       throw new Error('Account not found.');
@@ -963,8 +971,9 @@ export const startBackground = () => {
     }
   });
 
-  messager.register(ContentAPIEvent.GET_HEIGHT, async ({ network, chain }: GetHeightParams): Promise<GetHeightResult> => {
+  messager.register(ContentAPIEvent.GET_HEIGHT, async ({ network, chain }: GetHeightParams, sender): Promise<GetHeightResult> => {
     const userAccount = await unlockAndGetUserAccount();
+    checkIfOriginAllowedAndThrow(userAccount, sender);
     let result: string;
     switch(network) {
       case CoinType.POKT: {
@@ -988,8 +997,9 @@ export const startBackground = () => {
     }
   });
 
-  messager.register(ContentAPIEvent.GET_TRANSACTION, async ({ txid, network, chain }: GetTransactionParams): Promise<GetTransactionResult> => {
+  messager.register(ContentAPIEvent.GET_TRANSACTION, async ({ txid, network, chain }: GetTransactionParams, sender): Promise<GetTransactionResult> => {
     const userAccount = await unlockAndGetUserAccount();
+    checkIfOriginAllowedAndThrow(userAccount, sender);
     let result: string;
     switch(network) {
       case CoinType.POKT: {
@@ -1006,8 +1016,9 @@ export const startBackground = () => {
     }
   });
 
-  messager.register(ContentAPIEvent.SEND_TRANSACTION, async ({ accountId, amount, recipient, memo }: SendTransactionParams): Promise<SendTransactionResult> => {
+  messager.register(ContentAPIEvent.SEND_TRANSACTION, async ({ accountId, amount, recipient, memo }: SendTransactionParams, sender): Promise<SendTransactionResult> => {
     const userAccount = await unlockAndGetUserAccount();
+    checkIfOriginAllowedAndThrow(userAccount, sender);
     const cryptoAccount = findCryptoAccountInUserAccountWithWalletId(userAccount, accountId);
     if(!cryptoAccount) {
       throw new Error('Account not found.');
