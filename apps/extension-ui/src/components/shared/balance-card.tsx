@@ -7,6 +7,7 @@ import { RootState } from '../../store';
 import { Link, useLocation } from 'react-router-dom';
 import { RouteBuilder } from '@nodewallet/util-browser';
 import { ChainType } from '@nodewallet/constants';
+import { Pricing } from '../../modules/pricing';
 
 export interface BalanceCardProps {
   walletId: string
@@ -20,6 +21,7 @@ export const BalanceCard = ({ walletId, account, hideButtons, backRoute }: Balan
   const errorHandler = useContext(ErrorHandlerContext);
   const {
     accountBalances,
+    pricingMultipliers,
   } = useSelector(({ appState }: RootState) => appState);
   const fromContentScript = calledFromContentScript(location);
 
@@ -45,6 +47,8 @@ export const BalanceCard = ({ walletId, account, hideButtons, backRoute }: Balan
     address: account.address,
   });
 
+  const balance = accountBalances[account.id] || '0';
+
   return (
     <div className={'card mb-0 bg-transparent'}>
       <div className={`card-body pt-2 ${hideButtons ? 'pb-0' : 'pb-2'} ps-2 pe-2`}>
@@ -54,8 +58,8 @@ export const BalanceCard = ({ walletId, account, hideButtons, backRoute }: Balan
         </h5>
         <div className={'d-flex flex-row justify-content-center pt-3 pb-3'}>
           <div>
-            <h1 className={'mt-0 mb-0'}><span className={'font-monospace'}>{accountBalances[account.id] || '0'}</span> <span className={'fs-4 opacity-75'}>POKT</span></h1>
-            <div className={'d-flex flex-row justify-content-end fs-4 font-monospace'}>$0</div>
+            <h1 className={'mt-0 mb-0'}><span className={'font-monospace'}>{balance}</span> <span className={'fs-4 opacity-75'}>POKT</span></h1>
+            <div className={'d-flex flex-row justify-content-end fs-4 font-monospace'} title={'Value in USD'}>${account.chain !== ChainType.TESTNET ? Pricing.toUSD(account.network, balance, pricingMultipliers) : '0.00'}</div>
           </div>
         </div>
         {!hideButtons ?

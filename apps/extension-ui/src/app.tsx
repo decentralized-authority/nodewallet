@@ -8,14 +8,14 @@ import $ from 'jquery';
 import { calledFromContentScript, isTab } from './util';
 import {
   setAccountBalances, setAccountTransactions,
-  setActiveChain, setActiveTabOrigin,
+  setActiveChain, setActiveTabOrigin, setPricingMultipliers,
   setUserAccount,
   setUserStatus
 } from './reducers/app-reducer';
 import { GetActiveTabOriginResult, GetUserStatusResult } from '@nodewallet/types';
 import { ApiContext } from './hooks/api-context';
 import { ErrorHandlerContext } from './hooks/error-handler-context';
-import { ChainType, LocalStorageKey, POPUP_HEIGHT, POPUP_WIDTH, UserStatus } from '@nodewallet/constants';
+import { ChainType, LocalStorageKey, POPUP_HEIGHT, POPUP_WIDTH, SessionStorageKey, UserStatus } from '@nodewallet/constants';
 import isNull from 'lodash/isNull';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -23,6 +23,7 @@ import {
   getAccountDetailParamsFromUserAccount,
   RouteBuilder
 } from '@nodewallet/util-browser';
+import { Pricing, PricingEvent, PricingMultipliers } from './modules/pricing';
 
 export const App = () => {
 
@@ -134,6 +135,36 @@ export const App = () => {
       .catch(err => errorHandler.handle(err));
 
   }, [dispatch, api, errorHandler]);
+
+  useEffect(() => {
+    chrome.storage.session.get([SessionStorageKey.PRICING_MULTIPLIERS])
+      .then((res) => {
+        if(res) {
+          dispatch(setPricingMultipliers({
+            pricingMultipliers: res[SessionStorageKey.PRICING_MULTIPLIERS] || {},
+          }));
+        }
+      })
+      .catch((err) => errorHandler.handle(err));
+    const pricing = new Pricing();
+    const listener = (multipliers: PricingMultipliers) => {
+      chrome.storage.session.set({
+        [SessionStorageKey.PRICING_MULTIPLIERS]: multipliers,
+      }).catch(err => errorHandler.handle(err));
+      dispatch(setPricingMultipliers({pricingMultipliers: multipliers}));
+    };
+    pricing.on(PricingEvent.UPDATE, listener);
+    const updatePricing = () => {
+      pricing.update()
+        .catch(err => errorHandler.handle(err));
+    };
+    const interval = setInterval(updatePricing, 300000);
+    updatePricing();
+    return () => {
+      pricing.off(PricingEvent.UPDATE, listener);
+      clearInterval(interval);
+    }
+  }, [dispatch, errorHandler]);
 
   useEffect(() => {
 

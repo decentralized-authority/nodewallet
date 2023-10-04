@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AccountTransaction, UserAccount } from '@nodewallet/types';
 import { ChainType, UserStatus } from '@nodewallet/constants';
+import { PricingMultipliers } from '../modules/pricing';
 
 export type AccountBalances = {[id: string]: string}
 export type AccountTransactions = {[id: string]: AccountTransaction[]}
@@ -16,6 +17,7 @@ export interface AppState {
   accountTransactions: AccountTransactions
   activeChain: ChainType
   activeTabOrigin: string
+  pricingMultipliers: PricingMultipliers
 }
 const getInitialState = (): AppState => ({
   userStatus: '',
@@ -28,6 +30,7 @@ const getInitialState = (): AppState => ({
   accountTransactions: {},
   activeChain: ChainType.MAINNET,
   activeTabOrigin: '',
+  pricingMultipliers: {},
 });
 export const appSlice = createSlice({
   name: 'appState',
@@ -60,6 +63,9 @@ export const appSlice = createSlice({
     setActiveTabOrigin: (state, action: PayloadAction<{activeTabOrigin: string}>) => {
       state.activeTabOrigin = action.payload.activeTabOrigin;
     },
+    setPricingMultipliers: (state, action: PayloadAction<{pricingMultipliers: PricingMultipliers}>) => {
+      state.pricingMultipliers = action.payload.pricingMultipliers;
+    },
   }
 });
 
@@ -73,6 +79,7 @@ export const {
   setAccountTransactions,
   setActiveChain,
   setActiveTabOrigin,
+  setPricingMultipliers,
 } = appSlice.actions;
 
 export default appSlice.reducer;
