@@ -25,6 +25,8 @@ export enum APIEvent {
   EXPORT_KEYFILE = 'EXPORT_KEYFILE',
   SAVE_FILE = 'SAVE_FILE',
   CONNECT_SITE = 'CONNECT_SITE',
+  DISCONNECT_SITE = 'DISCONNECT_SITE',
+  GET_ACTIVE_TAB_ORIGIN = 'GET_ACTIVE_TAB_ORIGIN',
 }
 
 export interface ErrorResult {
@@ -150,6 +152,15 @@ export interface ConnectSiteParams {
 export type ConnectSiteResult = ErrorResult | {
   result: boolean
 }
+export interface DisconnectSiteParams {
+  origin: string
+}
+export type DisconnectSiteResult = ErrorResult | {
+  result: boolean
+}
+export type GetActiveTabOriginResult = ErrorResult | {
+  result: string
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -193,5 +204,9 @@ export interface ClientAPI {
   saveFile(params: SaveFileParams): Promise<void>
 
   connectSite(params: ConnectSiteParams): Promise<ConnectSiteResult>
+
+  disconnectSite(params: DisconnectSiteParams): Promise<DisconnectSiteResult>
+
+  getActiveTabOrigin(): Promise<GetActiveTabOriginResult>
 
 }

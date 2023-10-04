@@ -1,6 +1,6 @@
 import {
   APIEvent,
-  ClientAPI, ConnectSiteParams, ConnectSiteResult,
+  ClientAPI, ConnectSiteParams, ConnectSiteResult, DisconnectSiteParams, DisconnectSiteResult,
   ExportKeyfileParams,
   ExportKeyfileResult,
   ExportPrivateKeyParams,
@@ -8,7 +8,7 @@ import {
   GenerateMnemonicResult,
   GetAccountBalancesParams,
   GetAccountBalancesResult, GetAccountTransactionsParams, GetAccountTransactionsResult,
-  GetActiveAccountResult,
+  GetActiveAccountResult, GetActiveTabOriginResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
@@ -124,6 +124,14 @@ export class API implements ClientAPI {
 
   async connectSite(params: ConnectSiteParams): Promise<ConnectSiteResult> {
     return await this._messager.send(APIEvent.CONNECT_SITE, params);
+  }
+
+  async disconnectSite(params: DisconnectSiteParams): Promise<DisconnectSiteResult> {
+    return await this._messager.send(APIEvent.DISCONNECT_SITE, params);
+  }
+
+  async getActiveTabOrigin(): Promise<GetActiveTabOriginResult> {
+    return await this._messager.send(APIEvent.GET_ACTIVE_TAB_ORIGIN);
   }
 
 }

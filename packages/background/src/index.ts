@@ -14,7 +14,7 @@ import { StorageManager } from './storage-manager';
 import {
   AllowedOrigin,
   APIEvent, ConnectSiteParams, ConnectSiteResult,
-  CryptoAccount,
+  CryptoAccount, DisconnectSiteParams, DisconnectSiteResult,
   ExportKeyfileParams,
   ExportKeyfileResult,
   ExportPrivateKeyParams,
@@ -24,7 +24,7 @@ import {
   GetAccountBalancesResult,
   GetAccountTransactionsParams,
   GetAccountTransactionsResult,
-  GetActiveAccountResult,
+  GetActiveAccountResult, GetActiveTabOriginResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
@@ -841,6 +841,40 @@ export const startBackground = () => {
     await encryptSaveUserAccount(userAccount);
     return {
       result: true,
+    };
+  });
+
+  messager.register(APIEvent.DISCONNECT_SITE, async ({ origin = '' }: DisconnectSiteParams): Promise<DisconnectSiteResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const { allowedOrigins = [] } = userAccount;
+    userAccount.allowedOrigins = allowedOrigins
+      .filter(o => o.origin !== origin.toLowerCase());
+    await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
+    await encryptSaveUserAccount(userAccount);
+    return {
+      result: true,
+    };
+  });
+
+  messager.register(APIEvent.GET_ACTIVE_TAB_ORIGIN, async (): Promise<GetActiveTabOriginResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const [ tab ] = await chrome.tabs.query({
+      active: true,
+      lastFocusedWindow: true,
+    });
+    const url = tab?.url || '';
+    const originPatt = /^(https?:\/\/[^/?#]+)/;
+    const matches = url
+      .toLowerCase()
+      .match(originPatt);
+    return {
+      result: matches ? matches[1] : '',
     };
   });
 

@@ -8,11 +8,11 @@ import $ from 'jquery';
 import { calledFromContentScript, isTab } from './util';
 import {
   setAccountBalances, setAccountTransactions,
-  setActiveChain,
+  setActiveChain, setActiveTabOrigin,
   setUserAccount,
   setUserStatus
 } from './reducers/app-reducer';
-import { GetUserStatusResult } from '@nodewallet/types';
+import { GetActiveTabOriginResult, GetUserStatusResult } from '@nodewallet/types';
 import { ApiContext } from './hooks/api-context';
 import { ErrorHandlerContext } from './hooks/error-handler-context';
 import { ChainType, LocalStorageKey, POPUP_HEIGHT, POPUP_WIDTH, UserStatus } from '@nodewallet/constants';
@@ -172,6 +172,17 @@ export const App = () => {
         .catch(err => errorHandler.handle(err));
       getAccountTransactions()
         .catch(err => errorHandler.handle(err));
+
+      api.getActiveTabOrigin()
+        .then(async (res: GetActiveTabOriginResult) => {
+          if('error' in res) {
+            errorHandler.handle(res.error);
+          } else {
+            dispatch(setActiveTabOrigin({activeTabOrigin: res.result}));
+          }
+        })
+        .catch(err => errorHandler.handle(err));
+
     }
     return () => {
       clearInterval(balancesInterval);

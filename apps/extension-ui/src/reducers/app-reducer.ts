@@ -15,6 +15,7 @@ export interface AppState {
   accountBalances: AccountBalances
   accountTransactions: AccountTransactions
   activeChain: ChainType
+  activeTabOrigin: string
 }
 const getInitialState = (): AppState => ({
   userStatus: '',
@@ -26,6 +27,7 @@ const getInitialState = (): AppState => ({
   accountBalances: {},
   accountTransactions: {},
   activeChain: ChainType.MAINNET,
+  activeTabOrigin: '',
 });
 export const appSlice = createSlice({
   name: 'appState',
@@ -55,6 +57,9 @@ export const appSlice = createSlice({
     setActiveChain: (state, action: PayloadAction<{activeChain: ChainType}>) => {
       state.activeChain = action.payload.activeChain;
     },
+    setActiveTabOrigin: (state, action: PayloadAction<{activeTabOrigin: string}>) => {
+      state.activeTabOrigin = action.payload.activeTabOrigin;
+    },
   }
 });
 
@@ -67,6 +72,7 @@ export const {
   setAccountBalances,
   setAccountTransactions,
   setActiveChain,
+  setActiveTabOrigin,
 } = appSlice.actions;
 
 export default appSlice.reducer;

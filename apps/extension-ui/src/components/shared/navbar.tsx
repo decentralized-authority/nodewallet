@@ -1,14 +1,15 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
 import { ApiContext } from '../../hooks/api-context';
 import * as bootstrap from 'bootstrap';
 import { ChainType, LocalStorageKey } from '@nodewallet/constants';
-import { setActiveChain } from '../../reducers/app-reducer';
-import { useLocation, useMatches, useNavigate } from 'react-router-dom';
+import { setActiveChain, setUserAccount } from '../../reducers/app-reducer';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { RouteBuilder } from '@nodewallet/util-browser';
 import { calledFromContentScript } from '../../util';
+import swal from 'sweetalert';
 
 export const Navbar = () => {
 
@@ -19,6 +20,8 @@ export const Navbar = () => {
   const api = useContext(ApiContext);
   const {
     activeChain,
+    activeTabOrigin,
+    userAccount,
   } = useSelector(({ appState }: RootState) => appState);
   const fromContentScript = calledFromContentScript(location);
 
@@ -26,7 +29,12 @@ export const Navbar = () => {
   const accountDetailPatt = RouteBuilder.accountDetail.generatePathPattern();
   const walletsPatt = RouteBuilder.wallets.generatePathPattern();
 
-  const [ originAllowed, setOriginAllowed ] = useState(true);
+  const [ originAllowed, setOriginAllowed ] = React.useState(false);
+
+  useEffect(() => {
+    const { allowedOrigins = [] } = userAccount ? userAccount : {};
+    setOriginAllowed(allowedOrigins.some(o => o.origin === activeTabOrigin));
+  }, [userAccount, activeTabOrigin]);
 
   // const onMenuClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
   //   try {
@@ -59,9 +67,50 @@ export const Navbar = () => {
       errorHandler.handle(err);
     }
   };
-  const onOriginAllowedClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setOriginAllowed(!originAllowed);
+  const onOriginAllowedClick = async (e: React.MouseEvent) => {
+    try {
+      e.preventDefault();
+      const confirmed = await swal({
+        icon: 'warning',
+        title: 'Revoke Wallet Access?',
+        text: `Would you like to revoke wallet access for ${activeTabOrigin}?`,
+        buttons: {
+          cancel: {
+            text: 'Cancel',
+            visible: true,
+          },
+          confirm: {
+            text: 'Revoke Access',
+            visible: true,
+            closeModal: false,
+          },
+        },
+      });
+      if(!confirmed) {
+        return;
+      }
+      const res = await api.disconnectSite({origin: activeTabOrigin});
+      if('error' in res) {
+        errorHandler.handle(res.error);
+      } else if(res) {
+        const userAccountRes = await api.getUserAccount();
+        if('error' in userAccountRes) {
+          errorHandler.handle(userAccountRes.error);
+        } else {
+          if(!userAccountRes.result) {
+            throw new Error('User account not found.');
+          }
+          dispatch(setUserAccount({userAccount: userAccountRes.result}));
+          await swal({
+            icon: 'success',
+            title: 'Wallet Access Revoked',
+            text: `Wallet access for ${activeTabOrigin} has been revoked.`,
+          });
+        }
+      }
+    } catch(err: any) {
+      errorHandler.handle(err);
+    }
   };
 
   const showChainDropdown = sendPattern.test(location.pathname)
@@ -112,7 +161,11 @@ export const Navbar = () => {
       }
       <div className={'flex-grow-1'} />
       {/*<a href={'#'} title={'Menu'} onClick={onMenuClick}><i className={'mdi mdi-menu fs-2'} /></a>*/}
-      <a href={'#'} title={originAllowed ? 'Tab allowed access to wallet' : 'Tab not allowed access to wallet'} onClick={onOriginAllowedClick}><i className={`mdi mdi-${originAllowed ? 'link' : 'link-off'} fs-2 ${originAllowed ? 'text-success' : ''} ${fromContentScript ? 'd-none' : ''}`} /></a>
+      {originAllowed ?
+        <a href={'#'} title={'Tab allowed access to wallet'} onClick={onOriginAllowedClick}><i className={`mdi mdi-link fs-2 text-success ${fromContentScript ? 'd-none' : ''}`} /></a>
+        :
+        <a title={'Tab not allowed access to wallet'}><i className={`mdi mdi-link-off fs-2 ${fromContentScript ? 'd-none' : ''}`} /></a>
+      }
       <a href={'#'} title={'Lock Wallets'} onClick={onLockClick} className={'ms-2'}><i className={`mdi mdi-lock-outline fs-2 ${fromContentScript ? 'd-none' : ''}`} /></a>
     </nav>
   );
