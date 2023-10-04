@@ -13,8 +13,12 @@ import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
   AllowedOrigin,
-  APIEvent, ConnectSiteParams, ConnectSiteResult,
-  CryptoAccount, DisconnectSiteParams, DisconnectSiteResult,
+  APIEvent,
+  ConnectSiteParams,
+  ConnectSiteResult,
+  CryptoAccount,
+  DisconnectSiteParams,
+  DisconnectSiteResult,
   ExportKeyfileParams,
   ExportKeyfileResult,
   ExportPrivateKeyParams,
@@ -24,7 +28,8 @@ import {
   GetAccountBalancesResult,
   GetAccountTransactionsParams,
   GetAccountTransactionsResult,
-  GetActiveAccountResult, GetActiveTabOriginResult,
+  GetActiveAccountResult,
+  GetActiveTabOriginResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
@@ -461,7 +466,7 @@ export const startBackground = () => {
     if(!userAccount) {
       throw new Error('User account locked.');
     }
-    const { chain, network } = params;
+    const { network } = params;
     let privateKey: string;
     if('privateKeyEncrypted' in params) {
       const res = await PoktUtils.getAccountFromEncryptedPrivateKey(
@@ -475,24 +480,24 @@ export const startBackground = () => {
     const account = await PoktUtils.getAccountFromPrivateKey(privateKey);
     const encryptedPrivateKey = await encrypt(privateKey);
     const cryptoAccount: ExtendedCryptoAccount = {
-      id: generateCryptoAccountId(CoinType.POKT, chain, account.address),
+      id: generateCryptoAccountId(CoinType.POKT, ChainType.MAINNET, account.address),
       name: `${CoinType.POKT} Account ${account.address.slice(-4)}`,
       network,
-      chain,
+      chain: ChainType.MAINNET,
       derivationPath: '',
       index: -1,
       address: account.address,
       privateKey: encryptedPrivateKey,
       publicKey: account.publicKey,
     };
-    const walletId = `${account.address}-${chain}`;
+    const walletId = account.address;
     const prev = userAccount.wallets.find(w => w.id === walletId);
     if(prev) {
       throw new Error('Wallet already exists.');
     }
     const legacyWalletCount = userAccount.wallets
       .filter(w => w.legacy)
-      .filter(w => w.accounts.some(a => a.network === network && a.chain === chain))
+      .filter(w => w.accounts.some(a => a.network === network && a.chain === ChainType.MAINNET))
       .length;
     const newWallet: ExtendedLegacyUserWallet = {
       id: walletId,
@@ -503,9 +508,21 @@ export const startBackground = () => {
       accounts: [
         {
           network,
-          chain,
+          chain: ChainType.MAINNET,
           accounts: [
             cryptoAccount,
+          ],
+        },
+        {
+          network,
+          chain: ChainType.TESTNET,
+          accounts: [
+            {
+              ...cryptoAccount,
+              id: generateCryptoAccountId(CoinType.POKT, ChainType.TESTNET, account.address),
+              chain: ChainType.TESTNET,
+
+            },
           ],
         },
       ],
