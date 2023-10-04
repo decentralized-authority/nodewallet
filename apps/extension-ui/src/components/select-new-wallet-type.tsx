@@ -42,12 +42,12 @@ export const SelectNewWalletType = () => {
             visible: true,
           }
         },
-        title: 'Enter or paste your mnemonic passphrase',
+        title: 'Enter or paste your mnemonic seed phrase',
         content: {
           element: 'input',
           attributes: {
             type: 'password',
-            placeholder: 'Enter mnemonic passphrase',
+            placeholder: 'Enter mnemonic seed phrase',
             style: 'color:#333',
           },
         },
@@ -61,7 +61,7 @@ export const SelectNewWalletType = () => {
       if('error' in validateRes || !validateRes.result) {
         await swal({
           icon: 'error',
-          title: 'Invalid mnemonic passphrase',
+          title: 'Invalid mnemonic seed phrase',
         });
         return;
       }
@@ -233,13 +233,13 @@ export const SelectNewWalletType = () => {
           className={'btn btn-primary btn-lg w-100'}
           onClick={onNewClick}
         >Create new wallet</button>
-        <div className={'pt-1 ps-2 pe-2 mb-3'}>Generate a mnemonic passphrase and create a new wallet.</div>
+        <div className={'pt-1 ps-2 pe-2 mb-3'}>Generate a mnemonic seed phrase and create a new wallet.</div>
 
         <button
           className={'btn btn-primary btn-lg w-100'}
           onClick={onImportPassphraseClick}
-        >Import passphrase</button>
-        <div className={'pt-1 ps-2 pe-2 mb-3'}>Import existing passphrase. <em>(Compatible with MetaMask, SendWallet, & others)</em></div>
+        >Import seed phrase</button>
+        <div className={'pt-1 ps-2 pe-2 mb-3'}>Import existing seed phrase. <em>(Compatible with MetaMask, SendWallet, & others)</em></div>
 
         <button
           className={'btn btn-primary btn-lg w-100'}

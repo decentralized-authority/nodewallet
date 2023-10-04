@@ -18,8 +18,8 @@ export const SelectImportType = () => {
       <div className={'ps-4 pe-4 flex-grow-1 d-flex flex-column justify-content-center'}>
 
         <div>
-          <button onClick={onBackClick} className={'d-block w-100 btn btn-primary btn-lg text-uppercase'}>Import Passphrase</button>
-          <div className={'pt-1 ps-2 pe-2'}>Import the passphrase for an existing Pocket Network HD wallet</div>
+          <button onClick={onBackClick} className={'d-block w-100 btn btn-primary btn-lg text-uppercase'}>Import Seed Phrase</button>
+          <div className={'pt-1 ps-2 pe-2'}>Import the seed phrase for an existing Pocket Network HD wallet</div>
         </div>
 
         <div className={'mt-4 mb-4'}>

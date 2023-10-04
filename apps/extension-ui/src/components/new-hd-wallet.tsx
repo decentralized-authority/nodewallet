@@ -115,7 +115,7 @@ export const NewHdWallet = () => {
           </div>
 
           <div className={`${mnemonic.length === 0 ? 'd-none' : ''} mt-4 ms-2 me-2 mb-2`}>
-            <button className={'d-block w-100 btn btn-primary btn-lg'} onClick={onSavedClick}>I have saved the passphrase</button>
+            <button className={'d-block w-100 btn btn-primary btn-lg'} onClick={onSavedClick}>I have saved the seed phrase</button>
           </div>
 
         </div>
