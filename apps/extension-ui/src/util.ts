@@ -35,6 +35,5 @@ export const generatePoktscanAccountUrl = (address: string) => {
 
 export const calledFromContentScript = (location: Location): boolean => {
   const queryParams = new URLSearchParams(location.search);
-  console.log('content', queryParams.get('content'));
   return queryParams.get('content') === 'true';
 }
