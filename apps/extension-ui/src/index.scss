@@ -19,3 +19,7 @@ html {
 .nw-bg-gradient-horizontal {
   @include nw-gradient(to left);
 }
+
+.visibility-hidden {
+  visibility: hidden;
+}

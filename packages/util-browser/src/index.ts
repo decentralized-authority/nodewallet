@@ -74,3 +74,9 @@ export const prepFilename = (name: string) => {
 export const getHostFromOrigin = (origin: string): string => {
   return origin.replace(/^https?:\/\//, '');
 }
+
+export const truncateAtDecimalPlace = (num: number, decimalPlace: number): string => {
+  const multiplied = num * (10 ** decimalPlace);
+  const floored = Math.floor(multiplied);
+  return (floored / (10 ** decimalPlace)).toFixed(decimalPlace);
+};

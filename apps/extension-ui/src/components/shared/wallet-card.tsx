@@ -8,7 +8,7 @@ import { ApiContext } from '../../hooks/api-context';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
 import { CoinType } from '@nodewallet/constants';
 import { Link } from 'react-router-dom';
-import { RouteBuilder } from '@nodewallet/util-browser';
+import { RouteBuilder, truncateAtDecimalPlace } from '@nodewallet/util-browser';
 
 interface WalletCardProps {
   wallet: UserWallet,
@@ -78,6 +78,13 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
     }
   };
 
+  const longestBalance = Object
+    .values(accountBalances)
+    .map(b => parseInt(b))
+    .sort((a, b) => b - a)
+    .shift() || 0;
+  const numberLength = longestBalance.toString().length;
+
   return (
     <div className={'card ms-1 me-1 mb-2 nw-bg-gradient-horizontal'}>
       <div className={'card-header pt-2 pb-1 ps-2 pe-2'}>
@@ -110,10 +117,16 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
                       address: ca.address,
                     });
 
+                    const balance = truncateAtDecimalPlace(Number(accountBalances[ca.id] || '0'), 2);
+                    const currentLength = parseInt(balance).toString().length;
+                    const padding = new Array(numberLength - currentLength)
+                      .fill('0')
+                      .join('');
+
                     return (
                       <tr key={ca.id}>
                         <td className={'font-monospace'}><Link to={accountDetailPath} title={'View account details'} onClick={e => onOpenAccountClick(e, ca.id)}>{truncateAddress(ca.address)}</Link></td>
-                        <td><span className={'font-monospace'}>{accountBalances[ca.id] || '0'}</span> <span className={'opacity-75'}>POKT</span></td>
+                        <td><span className={'font-monospace'}><span className={'visibility-hidden'}>{padding}</span>{balance}</span> <span className={'opacity-75'}>POKT</span></td>
                       </tr>
                     );
                   });
