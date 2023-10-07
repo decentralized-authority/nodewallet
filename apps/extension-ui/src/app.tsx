@@ -41,7 +41,7 @@ export const App = () => {
 
   useEffect(() => {
 
-    if(isTab()) {
+    if(isTab() || fromContent) {
       $('body').css({
         left: 0,
         right: 0,

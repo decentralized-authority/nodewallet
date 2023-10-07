@@ -905,7 +905,7 @@ export const startBackground = () => {
       focused: true,
       url,
       width: POPUP_WIDTH,
-      height: POPUP_HEIGHT,
+      height: POPUP_HEIGHT + 35,
       type: 'popup',
       left: windowLeft,
       top: windowTop + 68,

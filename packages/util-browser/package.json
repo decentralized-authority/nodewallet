@@ -16,6 +16,7 @@
     "argon2-browser": "^1.18.0",
     "mocha": "^8.0.0",
     "@nodewallet/constants": "*",
+    "@nodewallet/types": "*",
     "should": "^13.2.3"
   }
 }
