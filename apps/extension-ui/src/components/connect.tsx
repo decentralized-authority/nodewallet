@@ -48,10 +48,9 @@ export const Connect = () => {
     },
     hostText: {
       wordBreak: 'break-all',
-      width: 100,
-      maxWidth: 100,
-      minWidth: 100,
-      fontSize: 13,
+      width: 120,
+      maxWidth: 120,
+      minWidth: 120,
     },
     iconContainer: {
       height: 100,
