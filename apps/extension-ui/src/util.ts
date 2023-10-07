@@ -1,6 +1,7 @@
 import * as uuid from 'uuid';
 import { PASSWORD_MIN_LENGTH } from './constants';
 import { Location } from 'react-router-dom';
+import { POPUP_WIDTH } from '@nodewallet/constants';
 
 export const getRandomInt = (min: number, max: number) => {
   min = Math.ceil(min);
@@ -22,7 +23,7 @@ export const isDev = (): boolean => {
 
 export const isTab = (): boolean => {
   // return window.location.hash === '#tab';
-  return window.innerWidth > 400;
+  return window.innerWidth > POPUP_WIDTH;
 };
 
 export const isValidPassword = (password: string): boolean => {
