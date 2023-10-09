@@ -18,6 +18,7 @@ export interface AppState {
   activeChain: ChainType
   activeTabOrigin: string
   pricingMultipliers: PricingMultipliers
+  version: string
 }
 const getInitialState = (): AppState => ({
   userStatus: '',
@@ -31,6 +32,7 @@ const getInitialState = (): AppState => ({
   activeChain: ChainType.MAINNET,
   activeTabOrigin: '',
   pricingMultipliers: {},
+  version: '',
 });
 export const appSlice = createSlice({
   name: 'appState',
@@ -66,6 +68,9 @@ export const appSlice = createSlice({
     setPricingMultipliers: (state, action: PayloadAction<{pricingMultipliers: PricingMultipliers}>) => {
       state.pricingMultipliers = action.payload.pricingMultipliers;
     },
+    setVersion: (state, action: PayloadAction<{version: string}>) => {
+      state.version = action.payload.version;
+    },
   }
 });
 
@@ -80,6 +85,7 @@ export const {
   setActiveChain,
   setActiveTabOrigin,
   setPricingMultipliers,
+  setVersion,
 } = appSlice.actions;
 
 export default appSlice.reducer;

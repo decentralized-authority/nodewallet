@@ -27,6 +27,7 @@ export enum APIEvent {
   CONNECT_SITE = 'CONNECT_SITE',
   DISCONNECT_SITE = 'DISCONNECT_SITE',
   GET_ACTIVE_TAB_ORIGIN = 'GET_ACTIVE_TAB_ORIGIN',
+  GET_VERSION = 'GET_VERSION',
 }
 
 export interface ErrorResult {
@@ -161,6 +162,9 @@ export type DisconnectSiteResult = ErrorResult | {
 export type GetActiveTabOriginResult = ErrorResult | {
   result: string
 }
+export type GetVersionResult = ErrorResult | {
+  result: string
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -208,5 +212,7 @@ export interface ClientAPI {
   disconnectSite(params: DisconnectSiteParams): Promise<DisconnectSiteResult>
 
   getActiveTabOrigin(): Promise<GetActiveTabOriginResult>
+
+  getVersion(): Promise<GetVersionResult>
 
 }

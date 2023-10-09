@@ -10,7 +10,7 @@ import {
   GetAccountBalancesResult, GetAccountTransactionsParams, GetAccountTransactionsResult,
   GetActiveAccountResult, GetActiveTabOriginResult,
   GetUserAccountResult,
-  GetUserStatusResult,
+  GetUserStatusResult, GetVersionResult,
   InsertCryptoAccountParams,
   InsertCryptoAccountResult,
   InsertHdWalletParams,
@@ -132,6 +132,22 @@ export class API implements ClientAPI {
 
   async getActiveTabOrigin(): Promise<GetActiveTabOriginResult> {
     return await this._messager.send(APIEvent.GET_ACTIVE_TAB_ORIGIN);
+  }
+
+  async getVersion(): Promise<GetVersionResult> {
+    try {
+      const manifest = chrome.runtime.getManifest();
+      return {
+        result: manifest.version,
+      };
+    } catch(err: any) {
+      return {
+        error: {
+          message: err.message,
+          stack: err.stack,
+        },
+      };
+    }
   }
 
 }

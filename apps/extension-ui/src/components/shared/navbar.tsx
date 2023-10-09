@@ -22,6 +22,7 @@ export const Navbar = () => {
     activeChain,
     activeTabOrigin,
     userAccount,
+    version,
   } = useSelector(({ appState }: RootState) => appState);
   const fromContentScript = calledFromContentScript(location);
 
@@ -191,7 +192,7 @@ export const Navbar = () => {
             <li><a className="dropdown-item" href="#" onClick={onSettingsClick}><i className={'mdi mdi-cog'} /> {'Settings'}</a></li>
             <li><a className="dropdown-item" href="#" onClick={onLockClick}><i className={'mdi mdi-lock-outline'} /> {'Lock Wallet'}</a></li>
             <li><hr className="dropdown-divider" /></li>
-            <li><a className="dropdown-item disabled">NodeWallet v<span className={'font-monospace fs-6'}>{'0.1.0'}</span></a></li>
+            <li><a className="dropdown-item disabled">NodeWallet v<span className={'font-monospace fs-6'}>{version}</span></a></li>
           </ul>
         </div>
         :

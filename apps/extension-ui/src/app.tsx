@@ -10,9 +10,9 @@ import {
   setAccountBalances, setAccountTransactions,
   setActiveChain, setActiveTabOrigin, setPricingMultipliers,
   setUserAccount,
-  setUserStatus
+  setUserStatus, setVersion
 } from './reducers/app-reducer';
-import { GetActiveTabOriginResult, GetUserStatusResult } from '@nodewallet/types';
+import { GetActiveTabOriginResult, GetUserStatusResult, GetVersionResult } from '@nodewallet/types';
 import { ApiContext } from './hooks/api-context';
 import { ErrorHandlerContext } from './hooks/error-handler-context';
 import { ChainType, LocalStorageKey, POPUP_HEIGHT, POPUP_WIDTH, SessionStorageKey, UserStatus } from '@nodewallet/constants';
@@ -210,6 +210,16 @@ export const App = () => {
             errorHandler.handle(res.error);
           } else {
             dispatch(setActiveTabOrigin({activeTabOrigin: res.result}));
+          }
+        })
+        .catch(err => errorHandler.handle(err));
+
+      api.getVersion()
+        .then(async (res: GetVersionResult) => {
+          if('error' in res) {
+            errorHandler.handle(res.error);
+          } else {
+            dispatch(setVersion({version: res.result}));
           }
         })
         .catch(err => errorHandler.handle(err));
