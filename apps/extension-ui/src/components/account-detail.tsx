@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Container } from './shared/container';
 import { BalanceCard } from './shared/balance-card';
 import { TransactionList } from './shared/transaction-list';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   AccountDetailParams,
   findCryptoAccountInUserAccountByAddress,
@@ -14,9 +14,11 @@ import {
 import swal from 'sweetalert';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { ApiContext } from '../hooks/api-context';
+import { ChainType } from '@nodewallet/constants';
 
 export const AccountDetail = () => {
 
+  const navigate = useNavigate();
   const errorHandler = useContext(ErrorHandlerContext);
   const api = useContext(ApiContext);
   const {
@@ -29,6 +31,12 @@ export const AccountDetail = () => {
   const {
     userAccount,
   } = useSelector(({ appState }: RootState) => appState);
+
+  useEffect(() => {
+    if(userAccount?.settings.hideTestnets && chainId === ChainType.TESTNET) {
+      navigate(RouteBuilder.wallets.fullPath());
+    }
+  }, [chainId, navigate, userAccount?.settings.hideTestnets]);
 
   if(!userAccount || !walletId || !networkId || !chainId || !address) {
     return null;

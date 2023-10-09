@@ -158,6 +158,7 @@ export const Navbar = () => {
             :
             <ul className={'dropdown-menu'}>
               {[ChainType.MAINNET, ChainType.TESTNET]
+                .filter((chainType) => userAccount?.settings.hideTestnets ? chainType !== ChainType.TESTNET : true)
                 .map((chainType) => {
                   return (
                     <li key={chainType}><a className="dropdown-item" href="#" onClick={e => onChainClick(e, chainType)}>{chainType}</a></li>

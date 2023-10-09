@@ -7,7 +7,8 @@ export interface AllowedOrigin {
   host: string
 }
 export interface UserSettings {
-  showTestnets: boolean
+  hideTestnets: boolean
+  lockTimeout: number // in minutes
 }
 export interface UserAccount {
   language: AppLang,

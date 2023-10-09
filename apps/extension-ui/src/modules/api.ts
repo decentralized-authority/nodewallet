@@ -28,7 +28,7 @@ import {
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
-  UnlockUserAccountResult,
+  UnlockUserAccountResult, UpdateUserSettingsParams, UpdateUserSettingsResult,
   ValidateMnemonicParams,
   ValidateMnemonicResult,
 } from '@nodewallet/types';
@@ -148,6 +148,10 @@ export class API implements ClientAPI {
         },
       };
     }
+  }
+
+  async updateUserSettings(params: UpdateUserSettingsParams): Promise<UpdateUserSettingsResult> {
+    return await this._messager.send(APIEvent.UPDATE_USER_SETTINGS, params);
   }
 
 }

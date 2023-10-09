@@ -1,5 +1,5 @@
 import { ChainType, CoinType, UserStatus } from '@nodewallet/constants';
-import { UserAccount } from './user';
+import { UserAccount, UserSettings } from './user';
 import { CryptoAccount, UserWallet } from './wallet';
 import { AccountTransaction } from './index';
 
@@ -28,6 +28,7 @@ export enum APIEvent {
   DISCONNECT_SITE = 'DISCONNECT_SITE',
   GET_ACTIVE_TAB_ORIGIN = 'GET_ACTIVE_TAB_ORIGIN',
   GET_VERSION = 'GET_VERSION',
+  UPDATE_USER_SETTINGS = 'UPDATE_USER_SETTINGS',
 }
 
 export interface ErrorResult {
@@ -165,6 +166,10 @@ export type GetActiveTabOriginResult = ErrorResult | {
 export type GetVersionResult = ErrorResult | {
   result: string
 }
+export type UpdateUserSettingsParams = Partial<UserSettings>
+export type UpdateUserSettingsResult = ErrorResult | {
+  result: UserSettings
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -214,5 +219,7 @@ export interface ClientAPI {
   getActiveTabOrigin(): Promise<GetActiveTabOriginResult>
 
   getVersion(): Promise<GetVersionResult>
+
+  updateUserSettings(params: UpdateUserSettingsParams): Promise<UpdateUserSettingsResult>
 
 }

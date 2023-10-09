@@ -2,7 +2,7 @@ import {
   AlarmName,
   AppLang,
   ChainType,
-  CoinType,
+  CoinType, defaultHideTestnets, defaultLockTimeout,
   LocalStorageKey,
   POPUP_HEIGHT,
   POPUP_WIDTH,
@@ -49,8 +49,8 @@ import {
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
-  UnlockUserAccountResult,
-  UserAccount,
+  UnlockUserAccountResult, UpdateUserSettingsParams, UpdateUserSettingsResult,
+  UserAccount, UserSettings,
   UserWallet,
   ValidateMnemonicParams,
   ValidateMnemonicResult,
@@ -92,6 +92,7 @@ import {
   RequestAccountResult
 } from '@nodewallet/types/dist/content-api';
 import MessageSender = chrome.runtime.MessageSender;
+import isNumber from 'lodash/isNumber';
 
 interface ExtendedCryptoAccount extends CryptoAccount {
   privateKey: EncryptionResult
@@ -201,20 +202,6 @@ sessionSecretManager.initialize()
   })
   .catch(console.error);
 
-const resetLockTimer = () => {
-  chrome.alarms.clear(AlarmName.LOCK_USER_ACCOUNT)
-    .then(() => {
-      chrome.alarms.create(AlarmName.LOCK_USER_ACCOUNT, {
-        delayInMinutes: 5,
-      }).catch(err => {
-        console.error(err);
-      });
-    })
-    .catch(err => {
-      console.error(err);
-    });
-};
-
 const sanitizeCryptoAccount = (account: ExtendedCryptoAccount): CryptoAccount => {
   return {
     ...omit(account, ['privateKey']),
@@ -285,6 +272,24 @@ export const startBackground = () => {
     await storageManager.set(LocalStorageKey.USER_ACCOUNT, encrypted);
   }
 
+  const resetLockTimer = async () => {
+    const userAccount = await getUserAccount();
+    if(userAccount) {
+      const timeout = isNumber(userAccount.settings.lockTimeout) ? userAccount.settings.lockTimeout : defaultLockTimeout;
+      chrome.alarms.clear(AlarmName.LOCK_USER_ACCOUNT)
+        .then(() => {
+          chrome.alarms.create(AlarmName.LOCK_USER_ACCOUNT, {
+            delayInMinutes: timeout,
+          }).catch(err => {
+            console.error(err);
+          });
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    }
+  };
+
   // messager.register(BackgroundListener.GET_LOGS, async () => {
   //   const logger = getLogger();
   //   const logs = logger.getLogs();
@@ -326,7 +331,8 @@ export const startBackground = () => {
       tosAccepted: dayjs.utc().toISOString(),
       allowedOrigins: [],
       settings: {
-        showTestnets: false,
+        hideTestnets: defaultHideTestnets,
+        lockTimeout: defaultLockTimeout,
       },
       wallets: [],
     };
@@ -371,6 +377,8 @@ export const startBackground = () => {
     try {
       const decrypted: ExtendedUserAccount = await decrypt(encrypted);
       await sessionManager.set(SessionStorageKey.USER_ACCOUNT, decrypted);
+
+      await resetLockTimer();
 
       await Promise.all([
         updateBalances(),
@@ -908,6 +916,24 @@ export const startBackground = () => {
     };
   });
 
+  messager.register(APIEvent.UPDATE_USER_SETTINGS, async (params: UpdateUserSettingsParams): Promise<UpdateUserSettingsResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const newSettings: UserSettings = {
+      ...userAccount.settings,
+      ...params,
+    };
+    userAccount.settings = newSettings;
+    await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
+    await encryptSaveUserAccount(userAccount);
+    await resetLockTimer();
+    return {
+      result: newSettings,
+    };
+  });
+
   const createPopupWindow = async (url: string): Promise<chrome.windows.Window> => {
     const currentWindow = await chrome.windows.getCurrent();
     // @ts-ignore
@@ -1127,8 +1153,8 @@ export const startBackground = () => {
     }
   });
 
-  chrome.runtime.onMessage.addListener(() => {
-    resetLockTimer();
+  chrome.runtime.onMessage.addListener(async () => {
+    await resetLockTimer();
   });
 
   chrome.alarms.onAlarm.addListener(async (alarm) => {

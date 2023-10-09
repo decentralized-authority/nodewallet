@@ -50,3 +50,6 @@ export enum AlarmName {
 
 export const POPUP_WIDTH = 400;
 export const POPUP_HEIGHT = 600;
+
+export const defaultHideTestnets = false;
+export const defaultLockTimeout = 5; // in minutes
