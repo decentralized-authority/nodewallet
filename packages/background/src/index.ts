@@ -603,6 +603,24 @@ export const startBackground = () => {
     return {result: true};
   });
 
+  const rpcTries = 2;
+
+  const poktMultiSyncGetBalance = async (endpoint: string, address: string, inUPokt = false): Promise<string> => {
+    for(let i = 0; i < rpcTries; i++) {
+      try {
+        const res = await PoktUtils.getBalance(endpoint, address);
+        if(inUPokt) {
+          return res.toString();
+        } else {
+          return PoktUtils.fromBaseDenom(res).toString();
+        }
+      } catch(err) {
+        // do nothing and let loop continue
+      }
+    }
+    return '0';
+  };
+
   const updateBalances = async (): Promise<void> => {
     const userAccount = await getUserAccount();
     if(!userAccount) {
@@ -620,12 +638,7 @@ export const startBackground = () => {
                 if(!endpoint) {
                   balances[account.id] = '0';
                 } else {
-                  try {
-                    const res = await PoktUtils.getBalance(endpoint, account.address);
-                    balances[account.id] = PoktUtils.fromBaseDenom(res).toString();
-                  } catch(err) {
-                    balances[account.id] = '0';
-                  }
+                  balances[account.id] = await poktMultiSyncGetBalance(endpoint, account.address);
                 }
                 break;
               } default: {
@@ -1014,12 +1027,7 @@ export const startBackground = () => {
         if(!endpoint) {
           throw new Error(`No RPC endpoint found for ${cryptoAccount.network} ${cryptoAccount.chain}.`);
         } else {
-          try {
-            const res = await PoktUtils.getBalance(endpoint, cryptoAccount.address);
-            result = res.toString();
-          } catch(err) {
-            result = '0';
-          }
+          result = await poktMultiSyncGetBalance(endpoint, cryptoAccount.address, true);
         }
         return {
           result,
