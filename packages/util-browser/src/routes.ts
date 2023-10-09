@@ -77,6 +77,9 @@ export class ConnectRoute extends RouteMeta {
 export class SelectAccountRoute extends RouteMeta {
   readonly _path = 'select-account';
 }
+export class SettingsRoute extends RouteMeta {
+  readonly _path = 'settings';
+}
 
 export class RouteBuilder {
   static accountDetail = new AccountDetailRoute();
@@ -90,4 +93,5 @@ export class RouteBuilder {
   static openPopupInfo = new OpenPopupInfoRoute();
   static connect = new ConnectRoute();
   static selectAccount = new SelectAccountRoute();
+  static settings = new SettingsRoute();
 }

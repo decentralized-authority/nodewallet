@@ -22,6 +22,7 @@ import { RegisterAccount } from './components/register-account';
 import { NewHdWallet } from './components/new-hd-wallet';
 import { OpenPopupInfo } from './components/open-popup-info';
 import { Connect } from './components/connect';
+import { Settings } from './components/settings';
 
 window.Buffer = Buffer;
 
@@ -83,6 +84,10 @@ const start = () => {
         {
           path: RouteBuilder.selectAccount.path(),
           element: <ManageWallets selectAccount={true} />,
+        },
+        {
+          path: RouteBuilder.settings.path(),
+          element: <Settings />,
         },
       ],
     },

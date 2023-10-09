@@ -71,7 +71,7 @@ export const Navbar = () => {
   const onSettingsClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     try {
       e.preventDefault();
-      navigate(RouteBuilder.wallets.fullPath());
+      navigate(RouteBuilder.settings.fullPath());
     } catch(err: any) {
       errorHandler.handle(err);
     }
