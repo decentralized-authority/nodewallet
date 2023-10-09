@@ -32,9 +32,6 @@ export const WalletCard = ({ wallet, selectAccount = false }: WalletCardProps) =
         return;
       }
       setDisableNewAddress(true);
-      setTimeout(() => {
-        setDisableNewAddress(false);
-      }, 1000);
       const res = await api.insertCryptoAccount({
         walletId: wallet.id,
         network: CoinType.POKT,
@@ -67,6 +64,7 @@ export const WalletCard = ({ wallet, selectAccount = false }: WalletCardProps) =
     } catch(err: any) {
       errorHandler.handle(err);
     }
+    setDisableNewAddress(false);
   };
 
   const onOpenAccountClick = async (e: React.MouseEvent, accountId: string) => {
