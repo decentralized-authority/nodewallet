@@ -12,8 +12,9 @@ import { RouteBuilder, truncateAtDecimalPlace } from '@nodewallet/util-browser';
 
 interface WalletCardProps {
   wallet: UserWallet,
+  selectAccount?: boolean
 }
-export const WalletCard = ({wallet}: WalletCardProps) => {
+export const WalletCard = ({ wallet, selectAccount = false }: WalletCardProps) => {
 
   const errorHandler = useContext(ErrorHandlerContext);
   const api = useContext(ApiContext);
@@ -70,9 +71,15 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
 
   const onOpenAccountClick = async (e: React.MouseEvent, accountId: string) => {
     try {
+      if(selectAccount) {
+        e.preventDefault();
+      }
       await api.saveActiveAccount({
         accountId,
       });
+      if(selectAccount) {
+        window.close();
+      }
     } catch(err: any) {
       errorHandler.handle(err);
     }
@@ -90,7 +97,7 @@ export const WalletCard = ({wallet}: WalletCardProps) => {
       <div className={'card-header pt-2 pb-1 ps-2 pe-2'}>
         <div className={'d-flex flex-row justify-content-between align-items-center'}>
           <h4 className={'mt-0 mb-0'}>{wallet.name} <a href={'#'} title={'Edit wallet name'} className={'d-none'}><i className={' mdi mdi-pencil'} /></a></h4>
-          {!wallet.legacy ? <h4 className={'mt-0 mb-0'}><a href={'#'} onClick={onNewAddressClick} title={'New address'}><i className={' mdi mdi-plus-thick'} /> address</a></h4> : null}
+          {!wallet.legacy && !selectAccount ? <h4 className={'mt-0 mb-0'}><a href={'#'} onClick={onNewAddressClick} title={'New address'}><i className={' mdi mdi-plus-thick'} /> address</a></h4> : null}
         </div>
       </div>
       <div className={'card-body pt-0 pb-2 ps-2 pe-2'}>

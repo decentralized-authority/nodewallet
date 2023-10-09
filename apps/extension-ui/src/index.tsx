@@ -80,6 +80,10 @@ const start = () => {
           path: RouteBuilder.connect.path(),
           element: <Connect />,
         },
+        {
+          path: RouteBuilder.selectAccount.path(),
+          element: <ManageWallets selectAccount={true} />,
+        },
       ],
     },
   ]);

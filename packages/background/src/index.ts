@@ -979,10 +979,18 @@ export const startBackground = () => {
       checkIfOriginAllowedAndThrow(userAccount, sender);
     }
 
-    const activeAccount = await getActiveAccount();
+    let activeAccount = await getActiveAccount();
     if(!activeAccount) {
-      throw new Error('No account selected.');
+      const urlPath = RouteBuilder.selectAccount.generateFullPath({});
+      const url = chrome.runtime.getURL(`index.html#${urlPath}?content=true`);
+      const popup = await createPopupWindow(url);
+      await waitForWindowClose(popup);
+      activeAccount = await getActiveAccount();
+      if(!activeAccount) {
+        throw new Error('No account selected.');
+      }
     }
+
     const cryptoAccount = findCryptoAccountInUserAccount(userAccount, activeAccount);
     if(!cryptoAccount) {
       throw new Error('Account not found.');
