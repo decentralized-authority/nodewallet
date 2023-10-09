@@ -67,6 +67,14 @@ export const Navbar = () => {
       errorHandler.handle(err);
     }
   };
+  const onSettingsClick = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    try {
+      e.preventDefault();
+      navigate(RouteBuilder.wallets.fullPath());
+    } catch(err: any) {
+      errorHandler.handle(err);
+    }
+  };
   const onOriginAllowedClick = async (e: React.MouseEvent) => {
     try {
       e.preventDefault();
@@ -117,6 +125,8 @@ export const Navbar = () => {
     || accountDetailPatt.test(location.pathname)
     || walletsPatt.test(location.pathname);
 
+  const showMenuDropdown = !fromContentScript;
+
   const styles = {
     nav: {
       minHeight: 36,
@@ -160,13 +170,33 @@ export const Navbar = () => {
         null
       }
       <div className={'flex-grow-1'} />
-      {/*<a href={'#'} title={'Menu'} onClick={onMenuClick}><i className={'mdi mdi-menu fs-2'} /></a>*/}
       {originAllowed ?
         <a href={'#'} title={'Tab allowed access to wallet'} onClick={onOriginAllowedClick}><i className={`mdi mdi-link fs-2 text-success ${fromContentScript ? 'd-none' : ''}`} /></a>
         :
         <a title={'Tab not allowed access to wallet'}><i className={`mdi mdi-link-off fs-2 ${fromContentScript ? 'd-none' : ''}`} /></a>
       }
-      <a href={'#'} title={'Lock Wallets'} onClick={onLockClick} className={'ms-2'}><i className={`mdi mdi-lock-outline fs-2 ${fromContentScript ? 'd-none' : ''}`} /></a>
+      {showMenuDropdown ?
+        <div className={'ms-2 position-relative'}>
+          <a
+            href={'#'}
+            title={'Menu'}
+            data-bs-toggle="dropdown"
+            ref={(node) => {
+              if(node) {
+                new bootstrap.Dropdown(node);
+              }
+            }}
+          ><i className={'mdi mdi-menu fs-2'} /></a>
+          <ul className={'dropdown-menu dropdown-menu-end'}>
+            <li><a className="dropdown-item" href="#" onClick={onSettingsClick}><i className={'mdi mdi-cog'} /> {'Settings'}</a></li>
+            <li><a className="dropdown-item" href="#" onClick={onLockClick}><i className={'mdi mdi-lock-outline'} /> {'Lock Wallet'}</a></li>
+            <li><hr className="dropdown-divider" /></li>
+            <li><a className="dropdown-item disabled">NodeWallet v<span className={'font-monospace fs-6'}>{'0.1.0'}</span></a></li>
+          </ul>
+        </div>
+        :
+        null
+      }
     </nav>
   );
 };
