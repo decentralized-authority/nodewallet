@@ -49,7 +49,7 @@ import {
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
-  UnlockUserAccountResult,
+  UnlockUserAccountResult, UpdateAccountNameParams, UpdateAccountNameResult,
   UpdateUserSettingsParams,
   UpdateUserSettingsResult,
   UpdateWalletNameParams,
@@ -954,6 +954,29 @@ export const startBackground = () => {
     return {
       result: true,
     };
+  });
+
+  messager.register(APIEvent.UPDATE_ACCOUNT_NAME, async (params: UpdateAccountNameParams): Promise<UpdateAccountNameResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    for(let i = 0; i < userAccount.wallets.length; i++) {
+      for(let j = 0; j < userAccount.wallets[i].accounts.length; j++) {
+        for(let k = 0; k < userAccount.wallets[i].accounts[j].accounts.length; k++) {
+          const account = userAccount.wallets[i].accounts[j].accounts[k];
+          if(account.id === params.id) {
+            account.name = params.name;
+            await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
+            await encryptSaveUserAccount(userAccount);
+            return {
+              result: true,
+            };
+          }
+        }
+      }
+    }
+    throw new Error(`Account ${params.id} not found.`);
   });
 
   const createPopupWindow = async (url: string): Promise<chrome.windows.Window> => {
