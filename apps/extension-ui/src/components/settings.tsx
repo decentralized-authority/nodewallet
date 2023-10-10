@@ -117,7 +117,14 @@ export const Settings = () => {
         <div className={'mb-3'}>
           <label htmlFor={'keyHashingAlgorithm'} className={'form-label'}>Key Hashing Algorithm</label>
           <select id={'keyHashingAlgorithm'} className={'form-select'}>
-            <option value={'argon2'}>Argon2</option>
+            <option value={'argon2'}>Argon2id</option>
+          </select>
+        </div>
+
+        <div className={'mb-3'}>
+          <label htmlFor={'encryptionAlgorithm'} className={'form-label'}>User Data Encryption Algorithm</label>
+          <select id={'encryptionAlgorithm'} className={'form-select'}>
+            <option value={'aes-256-gcm'}>AES 256 GCM</option>
           </select>
         </div>
 
