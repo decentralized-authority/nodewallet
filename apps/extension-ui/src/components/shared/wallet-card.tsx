@@ -9,6 +9,7 @@ import { ErrorHandlerContext } from '../../hooks/error-handler-context';
 import { CoinType } from '@nodewallet/constants';
 import { Link } from 'react-router-dom';
 import { RouteBuilder, truncateAtDecimalPlace } from '@nodewallet/util-browser';
+import swal from 'sweetalert';
 
 interface WalletCardProps {
   wallet: UserWallet,
@@ -83,6 +84,60 @@ export const WalletCard = ({ wallet, selectAccount = false }: WalletCardProps) =
     }
   };
 
+  const onEditWalletNameClick = async (e: React.MouseEvent) => {
+    try {
+      e.preventDefault();
+      const val = await swal({
+        buttons: {
+          cancel: {
+            text: 'Cancel',
+            visible: true,
+          },
+          confirm: {
+            text: 'Save Changes',
+            closeModal: false,
+            visible: true,
+          }
+        },
+        title: 'Update wallet name',
+        content: {
+          element: 'input',
+          attributes: {
+            type: 'text',
+            placeholder: 'Enter wallet name',
+            value: wallet.name,
+            style: 'color:#333',
+          },
+        },
+      });
+      const name = val ? val.trim() : '';
+      if(!name || name === wallet.name) {
+        // @ts-ignore
+        swal.close();
+        return;
+      }
+      const res = await api.updateWalletName({
+        id: wallet.id,
+        name,
+      });
+      if('error' in res) {
+        errorHandler.handle(res.error);
+        return;
+      } else {
+        const updatedUserAccount = await api.getUserAccount();
+        if('error' in updatedUserAccount) {
+          errorHandler.handle(updatedUserAccount.error);
+        } else if(updatedUserAccount.result) {
+          dispatch(setUserAccount({userAccount: updatedUserAccount.result}));
+        }
+      }
+      // @ts-ignore
+      swal.close();
+    } catch(err: any) {
+      errorHandler.handle(err);
+    }
+  };
+
   const longestBalance = Object
     .values(accountBalances)
     .map(b => parseInt(b))
@@ -94,7 +149,7 @@ export const WalletCard = ({ wallet, selectAccount = false }: WalletCardProps) =
     <div className={'card ms-1 me-1 mb-2 nw-bg-gradient-horizontal'}>
       <div className={'card-header pt-2 pb-1 ps-2 pe-2'}>
         <div className={'d-flex flex-row justify-content-between align-items-center'}>
-          <h4 className={'mt-0 mb-0'}>{wallet.name} <a href={'#'} title={'Edit wallet name'} className={'d-none'}><i className={' mdi mdi-pencil'} /></a></h4>
+          <h4 className={'mt-0 mb-0'}>{wallet.name} <a href={'#'} title={'Edit wallet name'} onClick={onEditWalletNameClick}><i className={' mdi mdi-pencil'} /></a></h4>
           {!wallet.legacy && !selectAccount ? <h4 className={'mt-0 mb-0'}><a href={'#'} onClick={onNewAddressClick} title={'New address'}><i className={' mdi mdi-plus-thick'} /> address</a></h4> : null}
         </div>
       </div>

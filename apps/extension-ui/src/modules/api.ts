@@ -1,16 +1,24 @@
 import {
   APIEvent,
-  ClientAPI, ConnectSiteParams, ConnectSiteResult, DisconnectSiteParams, DisconnectSiteResult,
+  ClientAPI,
+  ConnectSiteParams,
+  ConnectSiteResult,
+  DisconnectSiteParams,
+  DisconnectSiteResult,
   ExportKeyfileParams,
   ExportKeyfileResult,
   ExportPrivateKeyParams,
   ExportPrivateKeyResult,
   GenerateMnemonicResult,
   GetAccountBalancesParams,
-  GetAccountBalancesResult, GetAccountTransactionsParams, GetAccountTransactionsResult,
-  GetActiveAccountResult, GetActiveTabOriginResult,
+  GetAccountBalancesResult,
+  GetAccountTransactionsParams,
+  GetAccountTransactionsResult,
+  GetActiveAccountResult,
+  GetActiveTabOriginResult,
   GetUserAccountResult,
-  GetUserStatusResult, GetVersionResult,
+  GetUserStatusResult,
+  GetVersionResult,
   InsertCryptoAccountParams,
   InsertCryptoAccountResult,
   InsertHdWalletParams,
@@ -28,7 +36,11 @@ import {
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
-  UnlockUserAccountResult, UpdateUserSettingsParams, UpdateUserSettingsResult,
+  UnlockUserAccountResult, UpdateAccountNameParams, UpdateAccountNameResult,
+  UpdateUserSettingsParams,
+  UpdateUserSettingsResult,
+  UpdateWalletNameParams,
+  UpdateWalletNameResult,
   ValidateMnemonicParams,
   ValidateMnemonicResult,
 } from '@nodewallet/types';
@@ -152,6 +164,14 @@ export class API implements ClientAPI {
 
   async updateUserSettings(params: UpdateUserSettingsParams): Promise<UpdateUserSettingsResult> {
     return await this._messager.send(APIEvent.UPDATE_USER_SETTINGS, params);
+  }
+
+  async updateWalletName(params: UpdateWalletNameParams): Promise<UpdateWalletNameResult> {
+    return await this._messager.send(APIEvent.UPDATE_WALLET_NAME, params);
+  }
+
+  async updateAccountName(params: UpdateAccountNameParams): Promise<UpdateAccountNameResult> {
+    return await this._messager.send(APIEvent.UPDATE_ACCOUNT_NAME, params);
   }
 
 }

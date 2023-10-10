@@ -49,8 +49,13 @@ import {
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
-  UnlockUserAccountResult, UpdateUserSettingsParams, UpdateUserSettingsResult,
-  UserAccount, UserSettings,
+  UnlockUserAccountResult,
+  UpdateUserSettingsParams,
+  UpdateUserSettingsResult,
+  UpdateWalletNameParams,
+  UpdateWalletNameResult,
+  UserAccount,
+  UserSettings,
   UserWallet,
   ValidateMnemonicParams,
   ValidateMnemonicResult,
@@ -931,6 +936,23 @@ export const startBackground = () => {
     await resetLockTimer();
     return {
       result: newSettings,
+    };
+  });
+
+  messager.register(APIEvent.UPDATE_WALLET_NAME, async (params: UpdateWalletNameParams): Promise<UpdateWalletNameResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const walletIdx = userAccount.wallets.findIndex(w => w.id === params.id);
+    if(walletIdx < 0) {
+      throw new Error(`Wallet ${params.id} not found.`);
+    }
+    userAccount.wallets[walletIdx].name = params.name;
+    await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
+    await encryptSaveUserAccount(userAccount);
+    return {
+      result: true,
     };
   });
 

@@ -29,6 +29,8 @@ export enum APIEvent {
   GET_ACTIVE_TAB_ORIGIN = 'GET_ACTIVE_TAB_ORIGIN',
   GET_VERSION = 'GET_VERSION',
   UPDATE_USER_SETTINGS = 'UPDATE_USER_SETTINGS',
+  UPDATE_WALLET_NAME = 'UPDATE_WALLET_NAME',
+  UPDATE_ACCOUNT_NAME = 'UPDATE_ACCOUNT_NAME',
 }
 
 export interface ErrorResult {
@@ -170,6 +172,20 @@ export type UpdateUserSettingsParams = Partial<UserSettings>
 export type UpdateUserSettingsResult = ErrorResult | {
   result: UserSettings
 }
+export interface UpdateWalletNameParams {
+  id: string
+  name: string
+}
+export type UpdateWalletNameResult = ErrorResult | {
+  result: boolean
+}
+export interface UpdateAccountNameParams {
+  id: string
+  name: string
+}
+export type UpdateAccountNameResult = ErrorResult | {
+  result: boolean
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -221,5 +237,9 @@ export interface ClientAPI {
   getVersion(): Promise<GetVersionResult>
 
   updateUserSettings(params: UpdateUserSettingsParams): Promise<UpdateUserSettingsResult>
+
+  updateWalletName(params: UpdateWalletNameParams): Promise<UpdateWalletNameResult>
+
+  updateAccountName(params: UpdateAccountNameParams): Promise<UpdateAccountNameResult>
 
 }
