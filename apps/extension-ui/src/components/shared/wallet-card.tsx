@@ -158,7 +158,7 @@ export const WalletCard = ({ wallet, selectAccount = false }: WalletCardProps) =
           <thead>
           <tr>
             <th>Address</th>
-            <th>Balance</th>
+            <th>POKT</th>
           </tr>
           </thead>
           <tbody>
@@ -185,8 +185,8 @@ export const WalletCard = ({ wallet, selectAccount = false }: WalletCardProps) =
 
                     return (
                       <tr key={ca.id}>
-                        <td className={'font-monospace'}><Link to={accountDetailPath} title={'View account details'} onClick={e => onOpenAccountClick(e, ca.id)}>{truncateAddress(ca.address)}</Link></td>
-                        <td><span className={'font-monospace'}><span className={'visibility-hidden'}>{padding}</span>{balance}</span> <span className={'opacity-75'}>POKT</span></td>
+                        <td><Link to={accountDetailPath} title={'View account details'} onClick={e => onOpenAccountClick(e, ca.id)}>{ca.name} (<span className={'font-monospace fs-6'}>{truncateAddress(ca.address, 4)}</span>)</Link></td>
+                        <td><span className={'font-monospace'}><span className={'visibility-hidden'}>{padding}</span>{balance}</span></td>
                       </tr>
                     );
                   });

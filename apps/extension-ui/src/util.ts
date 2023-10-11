@@ -13,8 +13,8 @@ export const generateFakeAddress = () => {
   return uuid.v4().replace(/-/g, '');
 };
 
-export const truncateAddress = (address: string) => {
-  return `${address.slice(0, 6)}...${address.slice(-6)}`;
+export const truncateAddress = (address: string, num = 6) => {
+  return `${address.slice(0, num)}\u2026${address.slice(-1 * num)}`;
 };
 
 export const isDev = (): boolean => {
