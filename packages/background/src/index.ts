@@ -45,7 +45,7 @@ import {
   SaveActiveAccountResult,
   SaveFileParams,
   SendTransactionParams,
-  SendTransactionResult,
+  SendTransactionResult, SignMessageParams, SignMessageResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
@@ -761,6 +761,37 @@ export const startBackground = () => {
     }
   });
 
+  messager.register(APIEvent.SIGN_MESSAGE, async (params: SignMessageParams): Promise<SignMessageResult> => {
+    const { accountId, message } = params;
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const cryptoAccount = findCryptoAccountInUserAccount(userAccount, accountId);
+    if(!cryptoAccount) {
+      throw new Error('Account not found.');
+    }
+    switch(cryptoAccount.network) {
+      case CoinType.POKT: {
+        const endpoint = rpcEndpoints[cryptoAccount.network][cryptoAccount.chain];
+        if(!endpoint) {
+          throw new Error(`${cryptoAccount.network} ${cryptoAccount.chain} endpoint not found.`);
+        } else if(!cryptoAccount.privateKey) {
+          throw new Error('Private key not found.');
+        }
+        const privateKey = await decrypt(cryptoAccount.privateKey);
+        const signature = await PoktUtils.sign(message, privateKey);
+        return {
+          result: {
+            signature,
+          },
+        };
+      } default: {
+        throw new Error('Unsupported network.');
+      }
+    }
+  });
+
   messager.register(APIEvent.SAVE_ACTIVE_ACCOUNT, async (params: SaveActiveAccountParams): Promise<SaveActiveAccountResult> => {
     const { accountId } = params;
     const encrypted = await encrypt(accountId);
@@ -1186,6 +1217,43 @@ export const startBackground = () => {
     return {
       result: {
         txid,
+      },
+    };
+  });
+
+
+  messager.register(ContentAPIEvent.SIGN_MESSAGE, async ({ accountId, message }: SignMessageParams, sender): Promise<SignMessageResult> => {
+    const userAccount = await unlockAndGetUserAccount();
+    checkIfOriginAllowedAndThrow(userAccount, sender);
+    const cryptoAccount = findCryptoAccountInUserAccountWithWalletId(userAccount, accountId);
+    if(!cryptoAccount) {
+      throw new Error('Account not found.');
+    }
+    const urlPath = RouteBuilder.sign.generateFullPath({
+      walletId: cryptoAccount.walletId,
+      networkId: cryptoAccount.network,
+      chainId: cryptoAccount.chain,
+      address: cryptoAccount.address,
+    });
+    const url = chrome.runtime.getURL(`index.html#${urlPath}?message=${encodeURIComponent(message)}&content=true`);
+    const popup = await createPopupWindow(url);
+    let signature = '';
+    const signatureListener = (message: {type: string, payload: string}, sender: MessageSender) => {
+      const { type, payload } = message;
+      if(sender.tab?.windowId === popup.id && type === 'signature') {
+        chrome.runtime.onMessage.removeListener(signatureListener);
+        signature = payload;
+      }
+    };
+    chrome.runtime.onMessage.addListener(signatureListener);
+    await waitForWindowClose(popup);
+    if(!signature) {
+      chrome.runtime.onMessage.removeListener(signatureListener);
+      throw new Error('Sign cancelled.');
+    }
+    return {
+      result: {
+        signature,
       },
     };
   });

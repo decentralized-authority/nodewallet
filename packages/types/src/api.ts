@@ -19,6 +19,7 @@ export enum APIEvent {
   GET_ACCOUNT_BALANCES = 'GET_ACCOUNT_BALANCES',
   GET_ACCOUNT_TRANSACTIONS = 'GET_ACCOUNT_TRANSACTIONS',
   SEND_TRANSACTION = 'SEND_TRANSACTION',
+  SIGN_MESSAGE = 'SIGN_MESSAGE',
   SAVE_ACTIVE_ACCOUNT = 'SAVE_ACTIVE_ACCOUNT',
   GET_ACTIVE_ACCOUNT = 'GET_ACTIVE_ACCOUNT',
   EXPORT_PRIVATE_KEY = 'EXPORT_PRIVATE_KEY',
@@ -122,6 +123,15 @@ export type SendTransactionResult = ErrorResult | {
     txid: string
   }
 }
+export interface SignMessageParams {
+  accountId: string
+  message: string
+}
+export type SignMessageResult = ErrorResult | {
+  result: {
+    signature: string
+  }
+}
 export interface SaveActiveAccountParams {
   accountId: string
 }
@@ -217,6 +227,8 @@ export interface ClientAPI {
   getAccountTransactions(params?: GetAccountTransactionsParams): Promise<GetAccountTransactionsResult>
 
   sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult>
+
+  signMessage(params: SignMessageParams): Promise<SignMessageResult>
 
   saveActiveAccount(params: SaveActiveAccountParams): Promise<SaveActiveAccountResult>
 

@@ -23,6 +23,7 @@ import { NewHdWallet } from './components/new-hd-wallet';
 import { OpenPopupInfo } from './components/open-popup-info';
 import { Connect } from './components/connect';
 import { Settings } from './components/settings';
+import { Sign } from './components/sign';
 
 window.Buffer = Buffer;
 
@@ -60,6 +61,10 @@ const start = () => {
         {
           path: RouteBuilder.send.path(),
           element: <Send />,
+        },
+        {
+          path: RouteBuilder.sign.path(),
+          element: <Sign />,
         },
         {
           path: RouteBuilder.accountDetail.path(),

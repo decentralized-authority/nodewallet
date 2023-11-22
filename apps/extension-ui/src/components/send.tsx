@@ -158,6 +158,14 @@ export const Send = () => {
       setDisableSubmit(false);
     }
   };
+  const onCancelClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if(fromContentScript) {
+      window.close();
+    } else {
+      navigate(-1);
+    }
+  };
 
   const balance = accountBalances[cryptoAccount.id] || '0';
   let amountGood: boolean;
@@ -171,8 +179,12 @@ export const Send = () => {
   }
 
   const styles = {
+    buttonContainer: {
+      gap: '.75em',
+    },
     button: {
-      minWidth: 120,
+      flex: 1,
+      flexBasis: '1px',
     },
   };
 
@@ -246,7 +258,14 @@ export const Send = () => {
               />
             </div>
 
-            <div className={'d-flex flex-row justify-content-center'}>
+            <div className={'d-flex flex-row justify-content-start'} style={styles.buttonContainer}>
+              <button
+                type={'button'}
+                onClick={onCancelClick}
+                className={'btn btn-secondary text-uppercase'}
+                style={styles.button}
+                disabled={disableSubmit}
+              >{'Cancel'}</button>
               <button
                 type={'submit'}
                 className={'btn btn-primary'}

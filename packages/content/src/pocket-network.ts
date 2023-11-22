@@ -11,6 +11,7 @@ export enum PocketNetworkMethod {
   REQUEST_ACCOUNTS = 'pokt_requestAccounts',
   BALANCE = 'pokt_balance',
   SEND_TRANSACTION = 'pokt_sendTransaction',
+  SIGN_MESSAGE = 'pokt_signMessage',
   TX = 'pokt_tx',
   HEIGHT = 'pokt_height',
   CHAIN = 'pokt_chain',
@@ -95,6 +96,30 @@ const sendTransaction = async (paramsArr: {amount: string, to: string, from: str
   return {hash: res.result.txid};
 };
 
+const signMessage = async(paramsArr: {message: string, address: string}[], api: API): Promise<{signature: string}> => {
+  checkConnected();
+  const [ params ] = paramsArr || [];
+  if(!params || !isString(params.message) || !isString(params.address)) {
+    throw new Error(`${PocketNetworkMethod.SIGN_MESSAGE} method params must be an array containing an object with a message string and address string`);
+  }
+  const address = params.address.trim();
+  const { message } = params;
+  if(!address || !isHex(address)) {
+    throw new Error('invalid address');
+  } else if(!message) {
+    throw new Error('invalid message');
+  }
+  const account = getAccount(address);
+  const res = await api.signMessage({
+    accountId: account.id,
+    message,
+  });
+  if('error' in res) {
+    throw new Error(res.error.message);
+  }
+  return {signature: res.result.signature};
+};
+
 const tx = async (paramsArr: {hash: string}[], api: API): Promise<any> => {
   checkConnected();
   const [ params ] = paramsArr || [];
@@ -158,6 +183,8 @@ export class PocketNetwork extends EventEmitter implements ContentBridge {
         return balance(params, this._api);
       case PocketNetworkMethod.SEND_TRANSACTION:
         return sendTransaction(params, this._api);
+      case PocketNetworkMethod.SIGN_MESSAGE:
+        return signMessage(params, this._api);
       case PocketNetworkMethod.TX:
         return tx(params, this._api);
       case PocketNetworkMethod.HEIGHT:

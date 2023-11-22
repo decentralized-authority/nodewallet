@@ -72,4 +72,12 @@ describe('PoktUtils', function() {
     });
   });
 
+  describe('static sign()', function() {
+    it('should sign an arbitrary payload', async function() {
+      const payload = 'something';
+      const signature = await PoktUtils.sign(payload, key);
+      should(signature).be.a.String();
+    });
+  });
+
 });

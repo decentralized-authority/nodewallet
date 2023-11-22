@@ -1,5 +1,5 @@
 import { CryptoAccount } from './wallet';
-import { ErrorResult } from './api';
+import { ErrorResult, SendTransactionParams, SendTransactionResult, SignMessageParams, SignMessageResult } from './api';
 import { ChainType, CoinType } from '@nodewallet/constants';
 
 export enum ContentAPIEvent {
@@ -8,6 +8,7 @@ export enum ContentAPIEvent {
   SEND_TRANSACTION = 'CONTENT_SEND_TRANSACTION',
   GET_TRANSACTION = 'CONTENT_GET_TRANSACTION',
   GET_HEIGHT = 'CONTENT_GET_HEIGHT',
+  SIGN_MESSAGE = 'CONTENT_SIGN_MESSAGE',
 }
 
 export interface RequestAccountParams {
@@ -21,17 +22,6 @@ export interface GetBalanceParams {
 }
 export type GetBalanceResult = ErrorResult | {
   result: string
-}
-export interface SendTransactionParams {
-  accountId: string
-  amount: string
-  recipient: string
-  memo?: string
-}
-export type SendTransactionResult = ErrorResult | {
-  result: {
-    txid: string
-  }
 }
 export interface GetTransactionParams {
   txid: string
@@ -56,6 +46,8 @@ export interface ContentAPI {
   getBalance(params: GetBalanceParams): Promise<GetBalanceResult>
 
   sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult>
+
+  signMessage(params: SignMessageParams): Promise<SignMessageResult>
 
   getTransaction(params: GetTransactionParams): Promise<GetTransactionResult>
 

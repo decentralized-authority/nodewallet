@@ -26,6 +26,7 @@ export interface AccountDetailParams {
   address: string;
 }
 export interface SendParams extends AccountDetailParams {}
+export interface SignParams extends AccountDetailParams {}
 export class AccountDetailRoute extends RouteMeta {
 
   readonly _path = 'wallets/:walletId/network/:networkId/chain/:chainId/account/:address';
@@ -48,6 +49,16 @@ export class SelectNewWalletTypeRoute extends RouteMeta {
 }
 export class SendRoute extends RouteMeta {
   readonly _path = 'wallets/:walletId/network/:networkId/chain/:chainId/account/:address/send';
+  generateFullPath(params: AccountDetailParams): string {
+    return this.fullPath()
+      .replace(':walletId', params.walletId)
+      .replace(':networkId', params.networkId)
+      .replace(':chainId', params.chainId)
+      .replace(':address', params.address);
+  }
+}
+export class SignRoute extends RouteMeta {
+  readonly _path = 'wallets/:walletId/network/:networkId/chain/:chainId/account/:address/sign';
   generateFullPath(params: AccountDetailParams): string {
     return this.fullPath()
       .replace(':walletId', params.walletId)
@@ -87,6 +98,7 @@ export class RouteBuilder {
   static registerAccount = new RegisterAccountRoute();
   static selectNewWalletType = new SelectNewWalletTypeRoute();
   static send = new SendRoute();
+  static sign = new SignRoute();
   static tos = new TosRoute();
   static unlock = new UnlockRoute();
   static wallets = new WalletsRoute();

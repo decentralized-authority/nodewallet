@@ -127,6 +127,11 @@ export class PoktUtils {
     return txHash;
   }
 
+  static async sign(payload: string, key: string): Promise<string> {
+    const signer = await KeyManager.fromPrivateKey(key);
+    return await signer.sign(payload);
+  }
+
   static async getAccountFromPrivateKey(privateKey: string): Promise<{address: string, privateKey: string, publicKey: string}> {
     if(privateKey.length !== 128 || !isHex(privateKey)) {
       throw new Error('Invalid private key');

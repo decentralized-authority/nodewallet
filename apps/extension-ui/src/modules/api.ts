@@ -32,7 +32,7 @@ import {
   SaveActiveAccountResult,
   SaveFileParams,
   SendTransactionParams,
-  SendTransactionResult,
+  SendTransactionResult, SignMessageParams, SignMessageResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
@@ -112,6 +112,10 @@ export class API implements ClientAPI {
 
   async sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult> {
     return await this._messager.send(APIEvent.SEND_TRANSACTION, params);
+  }
+
+  async signMessage(params: SignMessageParams): Promise<SignMessageResult> {
+    return await this._messager.send(APIEvent.SIGN_MESSAGE, params);
   }
 
   async saveActiveAccount(params: SaveActiveAccountParams): Promise<SaveActiveAccountResult> {
