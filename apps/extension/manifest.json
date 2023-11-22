@@ -1,7 +1,7 @@
 {
   "name": "NodeWallet",
   "description": "A browser extension wallet from Decentralized Authority.",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "manifest_version": 3,
   "permissions": [
     "activeTab",
