@@ -9,7 +9,6 @@ import {
   RequestAccountParams,
   RequestAccountResult,
 } from '@nodewallet/types/dist/content-api';
-import { ChainType, CoinType } from '@nodewallet/constants';
 import { SendTransactionParams, SendTransactionResult, SignMessageParams, SignMessageResult } from '@nodewallet/types';
 import { Messager } from '@nodewallet/util-browser';
 
@@ -43,6 +42,10 @@ export class API implements ContentAPI {
 
   async getHeight(params: GetHeightParams): Promise<GetHeightResult> {
     return await this._messager.send(ContentAPIEvent.GET_HEIGHT, params);
+  }
+
+  async poktRpcRequest(params: any): Promise<any> {
+    return await this._messager.send(ContentAPIEvent.POKT_RPC_REQUEST, params);
   }
 
 }

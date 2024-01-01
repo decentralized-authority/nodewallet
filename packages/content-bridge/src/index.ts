@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { ContentBridge } from '@nodewallet/content';
+import { ContentBridge, NodeWalletMethod } from '@nodewallet/content';
 import { PocketNetworkMethod } from '@nodewallet/content';
 import * as uuid from 'uuid';
 
@@ -20,9 +20,9 @@ window.addEventListener('message', async (event) => {
   }
 });
 
-class PocketNetwork extends EventEmitter implements ContentBridge {
+export class PocketNetwork extends EventEmitter implements ContentBridge {
 
-  async send(method: PocketNetworkMethod, params?: any[]): Promise<any> {
+  async send(method: PocketNetworkMethod|NodeWalletMethod, params?: any[]): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       const id = uuid.v4();
       callbacks[id] = (res) => {
