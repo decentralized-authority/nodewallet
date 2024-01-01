@@ -6,16 +6,44 @@ import { isHex } from '@nodewallet/util-browser';
 import { API } from './api';
 import { CryptoAccount } from '@nodewallet/types';
 import { CoinType } from '@nodewallet/constants';
+import {
+  PoktRpcGetAccountParams, PoktRpcGetAccountResult,
+  PoktRpcGetAppParams,
+  PoktRpcGetBalanceParams,
+  PoktRpcGetBalanceResult,
+  PoktRpcGetBlockNumberParams,
+  PoktRpcGetBlockNumberResult,
+  PoktRpcGetBlockParams,
+  PoktRpcGetBlockResult,
+  PoktRpcGetNodeParams, PoktRpcGetNodeResult,
+  PoktRpcGetTransactionParams,
+  PoktRpcGetTransactionResult
+} from '@nodewallet/types/dist/content-api';
+import { isPlainObject } from 'lodash';
 
 export enum PocketNetworkMethod {
   REQUEST_ACCOUNTS = 'pokt_requestAccounts',
   BALANCE = 'pokt_balance',
   SEND_TRANSACTION = 'pokt_sendTransaction',
-  SIGN_MESSAGE = 'pokt_signMessage',
   TX = 'pokt_tx',
   HEIGHT = 'pokt_height',
-  CHAIN = 'pokt_chain',
   // BLOCK = 'pokt_block',
+
+  // Not available in SendWallet
+  CHAIN = 'pokt_chain',
+  SIGN_MESSAGE = 'pokt_signMessage',
+  RPC_REQUEST = 'pokt_rpcRequest',
+  // RPC_GET_BALANCE = 'pokt_rpcGetBalance',
+  // RPC_GET_BLOCK = 'pokt_rpcGetBlock',
+  // RPC_GET_TRANSACTION = 'pokt_rpcGetTransaction',
+  // RPC_GET_BLOCK_NUMBER = 'pokt_rpcGetBlockNumber',
+  // RPC_GET_NODE = 'pokt_rpcGetNode',
+  // RPC_GET_APP = 'pokt_rpcGetApp',
+  // RPC_GET_ACCOUNT = 'pokt_rpcGetAccount',
+}
+
+export enum NodeWalletMethod {
+  IS_NODE_WALLET_SDK_OPTIMIZED = 'nw_isNodeWalletSdkOptimized',
 }
 
 const notConnectedErrorMessage = 'Not connected. You must run requestAccounts first.';
@@ -161,6 +189,27 @@ const chain = async (): Promise<{chain: string}> => {
   return {chain: account.chain};
 };
 
+function rpcRequest(paramsArr: PoktRpcGetBalanceParams[], api: API): Promise<PoktRpcGetBalanceResult>
+function rpcRequest(paramsArr: PoktRpcGetBlockParams[], api: API): Promise<PoktRpcGetBlockResult>
+function rpcRequest(paramsArr: PoktRpcGetTransactionParams[], api: API): Promise<PoktRpcGetTransactionResult>
+function rpcRequest(paramsArr: PoktRpcGetBlockNumberParams[], api: API): Promise<PoktRpcGetBlockNumberResult>
+function rpcRequest(paramsArr: PoktRpcGetNodeParams[], api: API): Promise<PoktRpcGetNodeResult>
+function rpcRequest(paramsArr: PoktRpcGetAppParams[], api: API): Promise<PoktRpcGetAppParams>
+function rpcRequest(paramsArr: PoktRpcGetAccountParams[], api: API): Promise<PoktRpcGetAccountResult>
+
+async function rpcRequest (paramsArr: any, api: API): Promise<any> {
+  checkConnected();
+  const [ params ] = paramsArr || [];
+  if(!params || !isPlainObject(params) || !isString(params.method) || (params.params && !isPlainObject(params.params))) {
+    throw new Error(`${PocketNetworkMethod.RPC_REQUEST} method parameters must be an array containing an object with an rpc method string and an optional params object`);
+  }
+  const res = await api.poktRpcRequest(params);
+  if('error' in res) {
+    throw new Error(res.error.message);
+  }
+  return res.result;
+}
+
 export class PocketNetwork extends EventEmitter implements ContentBridge {
 
   _api: API;
@@ -170,7 +219,7 @@ export class PocketNetwork extends EventEmitter implements ContentBridge {
     this._api = api;
   }
 
-  async send(method: PocketNetworkMethod, params: any[]): Promise<any> {
+  async send(method: PocketNetworkMethod|NodeWalletMethod, params: any[]): Promise<any> {
     if(!isString(method)) {
       throw new Error('Method must be a string');
     } else if(params && !isArray(params)) {
@@ -191,6 +240,10 @@ export class PocketNetwork extends EventEmitter implements ContentBridge {
         return height(this._api);
       case PocketNetworkMethod.CHAIN:
         return chain();
+      case PocketNetworkMethod.RPC_REQUEST:
+        return rpcRequest(params, this._api);
+      case NodeWalletMethod.IS_NODE_WALLET_SDK_OPTIMIZED:
+        return true;
       default:
         throw new Error(`Unknown method: ${method}`);
     }

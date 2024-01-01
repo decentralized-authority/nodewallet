@@ -12,6 +12,7 @@
     "test": "ts-mocha -p ./tsconfig.json './src/**/*.spec.ts'"
   },
   "dependencies": {
-    "@nodewallet/constants": "*"
+    "@nodewallet/constants": "*",
+    "@pokt-foundation/pocketjs-types": "^2.1.3"
   }
 }

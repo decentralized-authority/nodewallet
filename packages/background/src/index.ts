@@ -92,9 +92,14 @@ import {
   GetHeightParams,
   GetHeightResult,
   GetTransactionParams,
-  GetTransactionResult,
+  GetTransactionResult, PoktRpcGetAccountParams, PoktRpcGetAccountResult, PoktRpcGetAppParams, PoktRpcGetAppResult,
+  PoktRpcGetBalanceParams,
+  PoktRpcGetBalanceResult, PoktRpcGetBlockNumberParams, PoktRpcGetBlockNumberResult,
+  PoktRpcGetBlockParams,
+  PoktRpcGetBlockResult, PoktRpcGetNodeParams, PoktRpcGetNodeResult,
+  PoktRpcGetTransactionParams, PoktRpcGetTransactionResult,
   RequestAccountParams,
-  RequestAccountResult
+  RequestAccountResult,
 } from '@nodewallet/types/dist/content-api';
 import MessageSender = chrome.runtime.MessageSender;
 import isNumber from 'lodash/isNumber';
@@ -1139,6 +1144,108 @@ export const startBackground = () => {
       }
     }
   });
+
+  // messager.register(ContentAPIEvent.RPC_GET_BALANCE, async ({ network, chain, address }: RpcGetBalanceParams, sender): Promise<RpcGetBalanceResult> => {
+  //   const userAccount = await unlockAndGetUserAccount();
+  //   checkIfOriginAllowedAndThrow(userAccount, sender);
+  //   let result: string;
+  //   switch(network) {
+  //     case CoinType.POKT: {
+  //       const endpoint = rpcEndpoints[network][chain];
+  //       if(!endpoint) {
+  //         throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
+  //       }
+  //       const balance = await PoktUtils.getBalance(endpoint, address);
+  //       return {
+  //         result: balance.toString(),
+  //       };
+  //     } default: {
+  //       throw new Error('Unsupported network.');
+  //     }
+  //   }
+  // });
+
+  function poktRpcRequestHandler(params: PoktRpcGetBalanceParams): Promise<PoktRpcGetBalanceResult>
+  function poktRpcRequestHandler(params: PoktRpcGetBlockParams): Promise<PoktRpcGetBlockResult>
+  function poktRpcRequestHandler(params: PoktRpcGetTransactionParams): Promise<PoktRpcGetTransactionResult>
+  function poktRpcRequestHandler(params: PoktRpcGetBlockNumberParams): Promise<PoktRpcGetBlockNumberResult>
+  function poktRpcRequestHandler(params: PoktRpcGetNodeParams): Promise<PoktRpcGetNodeResult>
+  function poktRpcRequestHandler(params: PoktRpcGetAppParams): Promise<PoktRpcGetAppResult>
+  function poktRpcRequestHandler(params: PoktRpcGetAccountParams): Promise<PoktRpcGetAccountResult>
+  async function poktRpcRequestHandler(params: any): Promise<any> {
+    const network = CoinType.POKT;
+    const { chain } = params.params;
+    const endpoint = rpcEndpoints[network][chain];
+    if(!endpoint) {
+      throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
+    }
+    switch(params.method) {
+      case 'getBalance': {
+        const { address } = params.params;
+        const balance = await PoktUtils.getBalance(endpoint, address);
+        return {
+          result: balance.toString(),
+        };
+      } case 'getBlock': {
+        const { height } = params.params;
+        const block = await PoktUtils.getBlock(endpoint, height);
+        return {
+          result: block,
+        };
+      } case 'getTransaction': {
+        const { hash } = params.params;
+        const transaction = await PoktUtils.getTransaction(endpoint, hash);
+        return {
+          result: transaction,
+        };
+      } case 'getBlockNumber': {
+        const { height } = params.params;
+        const blockNumber = await PoktUtils.getBlockHeight(endpoint);
+        return {
+          result: Number(blockNumber.toString()),
+        };
+      } case 'getNode': {
+        const { address, height } = params.params;
+        const node = await PoktUtils.getNode(endpoint, address, height);
+        return {
+          result: node,
+        };
+      } case 'getApp': {
+        const { address, height } = params.params;
+        const app = await PoktUtils.getApp(endpoint, address, height);
+        return {
+          result: app,
+        };
+      } case 'getAccount': {
+        const { address } = params.params;
+        const account = await PoktUtils.getAccount(endpoint, address);
+        return {
+          result: account,
+        };
+      } default:
+        throw new Error('Unsupported method.');
+    }
+  }
+
+  // messager.register(ContentAPIEvent.POKT_RPC_REQUEST, async ({ method, params }: PoktRpc, sender): Promise<RpcGetBalanceResult> => {
+  //   const userAccount = await unlockAndGetUserAccount();
+  //   checkIfOriginAllowedAndThrow(userAccount, sender);
+  //   let result: string;
+  //   switch(network) {
+  //     case CoinType.POKT: {
+  //       const endpoint = rpcEndpoints[network][chain];
+  //       if(!endpoint) {
+  //         throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
+  //       }
+  //       const balance = await PoktUtils.getBalance(endpoint, address);
+  //       return {
+  //         result: balance.toString(),
+  //       };
+  //     } default: {
+  //       throw new Error('Unsupported network.');
+  //     }
+  //   }
+  // });
 
   messager.register(ContentAPIEvent.GET_HEIGHT, async ({ network, chain }: GetHeightParams, sender): Promise<GetHeightResult> => {
     const userAccount = await unlockAndGetUserAccount();

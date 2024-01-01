@@ -8,7 +8,7 @@ import { ChainMeta } from '../interfaces';
 import { ChainType, CoinType, KeyType } from '@nodewallet/constants';
 import { isHex } from '@nodewallet/util-browser';
 import { AccountTransaction } from '@nodewallet/types';
-import { Transaction } from '@pokt-foundation/pocketjs-types';
+import { Account, App, Node, Transaction } from '@pokt-foundation/pocketjs-types';
 
 // https://github.com/satoshilabs/slips/blob/master/slip-0044.md
 const bip44Type = bip44Constants.findIndex((c) => c[1] === 'POKT');
@@ -223,6 +223,26 @@ export class PoktUtils {
   static async getTransaction(endpoint: string, txid: string): Promise<any> {
     const provider = new JsonRpcProvider({rpcUrl: endpoint});
     return await provider.getTransaction(txid);
+  }
+
+  static async getBlock(endpoint: string, height: number): Promise<any> {
+    const provider = new JsonRpcProvider({rpcUrl: endpoint});
+    return await provider.getBlock(height);
+  }
+
+  static async getNode(endpoint: string, address: string, height?: number): Promise<Node> {
+    const provider = new JsonRpcProvider({rpcUrl: endpoint});
+    return await provider.getNode({address, blockHeight: height});
+  }
+
+  static async getApp(endpoint: string, address: string, height?: number): Promise<App> {
+    const provider = new JsonRpcProvider({rpcUrl: endpoint});
+    return await provider.getApp({address, blockHeight: height});
+  }
+
+  static async getAccount(endpoint: string, address: string, height?: number): Promise<Account> {
+    const provider = new JsonRpcProvider({rpcUrl: endpoint});
+    return await provider.getAccount(address);
   }
 
   _chain: ChainType;
