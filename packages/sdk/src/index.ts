@@ -60,22 +60,3 @@ export class NodeWalletSDK {
   }
 
 }
-
-// (async function() {
-//
-//   const sdk = new NodeWalletSDK({
-//     connectTimeout: 30000,
-//     requestTimeout: 30000,
-//   });
-//
-//   const pocket = await sdk.getPocket();
-//   const address = await pocket.connect();
-//   console.log('Connected to NodeWallet', address);
-//   const balance = await pocket.getBalance(address);
-//   console.log('Balance', balance);
-//   const blockHeight = await pocket.getBlockNumber();
-//   console.log('Block height', blockHeight);
-//   const block = await pocket.getBlock(blockHeight);
-//   console.log('Block', block);
-//
-// })();

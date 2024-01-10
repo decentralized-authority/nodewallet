@@ -27,19 +27,12 @@ export enum PocketNetworkMethod {
   SEND_TRANSACTION = 'pokt_sendTransaction',
   TX = 'pokt_tx',
   HEIGHT = 'pokt_height',
-  // BLOCK = 'pokt_block',
 
   // Not available in SendWallet
   CHAIN = 'pokt_chain',
+  PUBLIC_KEY = 'pokt_publicKey',
   SIGN_MESSAGE = 'pokt_signMessage',
   RPC_REQUEST = 'pokt_rpcRequest',
-  // RPC_GET_BALANCE = 'pokt_rpcGetBalance',
-  // RPC_GET_BLOCK = 'pokt_rpcGetBlock',
-  // RPC_GET_TRANSACTION = 'pokt_rpcGetTransaction',
-  // RPC_GET_BLOCK_NUMBER = 'pokt_rpcGetBlockNumber',
-  // RPC_GET_NODE = 'pokt_rpcGetNode',
-  // RPC_GET_APP = 'pokt_rpcGetApp',
-  // RPC_GET_ACCOUNT = 'pokt_rpcGetAccount',
 }
 
 export enum NodeWalletMethod {
@@ -189,6 +182,16 @@ const chain = async (): Promise<{chain: string}> => {
   return {chain: account.chain};
 };
 
+const publicKey = async (paramsArr: {address: string}[]): Promise<{publicKey: string}> => {
+  checkConnected();
+  const [ params ] = paramsArr || [];
+  if(!params || !params.address || !isString(params.address)) {
+    throw new Error(`${PocketNetworkMethod.PUBLIC_KEY} method params must be an array containing an object with an address string`);
+  }
+  const account = getAccount(params.address);
+  return {publicKey: account.publicKey};
+};
+
 function rpcRequest(paramsArr: PoktRpcGetBalanceParams[], api: API): Promise<PoktRpcGetBalanceResult>
 function rpcRequest(paramsArr: PoktRpcGetBlockParams[], api: API): Promise<PoktRpcGetBlockResult>
 function rpcRequest(paramsArr: PoktRpcGetTransactionParams[], api: API): Promise<PoktRpcGetTransactionResult>
@@ -240,6 +243,8 @@ export class PocketNetwork extends EventEmitter implements ContentBridge {
         return height(this._api);
       case PocketNetworkMethod.CHAIN:
         return chain();
+      case PocketNetworkMethod.PUBLIC_KEY:
+        return publicKey(params);
       case PocketNetworkMethod.RPC_REQUEST:
         return rpcRequest(params, this._api);
       case NodeWalletMethod.IS_NODE_WALLET_SDK_OPTIMIZED:

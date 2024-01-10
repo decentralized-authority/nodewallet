@@ -1174,7 +1174,7 @@ export const startBackground = () => {
   function poktRpcRequestHandler(params: PoktRpcGetAccountParams): Promise<PoktRpcGetAccountResult>
   async function poktRpcRequestHandler(params: any): Promise<any> {
     const network = CoinType.POKT;
-    const { chain } = params.params;
+    const { chain } = params;
     const endpoint = rpcEndpoints[network][chain];
     if(!endpoint) {
       throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
@@ -1199,7 +1199,6 @@ export const startBackground = () => {
           result: transaction,
         };
       } case 'getBlockNumber': {
-        const { height } = params.params;
         const blockNumber = await PoktUtils.getBlockHeight(endpoint);
         return {
           result: Number(blockNumber.toString()),
@@ -1227,25 +1226,11 @@ export const startBackground = () => {
     }
   }
 
-  // messager.register(ContentAPIEvent.POKT_RPC_REQUEST, async ({ method, params }: PoktRpc, sender): Promise<RpcGetBalanceResult> => {
-  //   const userAccount = await unlockAndGetUserAccount();
-  //   checkIfOriginAllowedAndThrow(userAccount, sender);
-  //   let result: string;
-  //   switch(network) {
-  //     case CoinType.POKT: {
-  //       const endpoint = rpcEndpoints[network][chain];
-  //       if(!endpoint) {
-  //         throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
-  //       }
-  //       const balance = await PoktUtils.getBalance(endpoint, address);
-  //       return {
-  //         result: balance.toString(),
-  //       };
-  //     } default: {
-  //       throw new Error('Unsupported network.');
-  //     }
-  //   }
-  // });
+  messager.register(ContentAPIEvent.POKT_RPC_REQUEST, async (params: any, sender): Promise<any> => {
+    const userAccount = await unlockAndGetUserAccount();
+    checkIfOriginAllowedAndThrow(userAccount, sender);
+    return await poktRpcRequestHandler(params);
+  });
 
   messager.register(ContentAPIEvent.GET_HEIGHT, async ({ network, chain }: GetHeightParams, sender): Promise<GetHeightResult> => {
     const userAccount = await unlockAndGetUserAccount();
