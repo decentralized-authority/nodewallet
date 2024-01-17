@@ -2,6 +2,7 @@ import { EventEmitter } from 'events';
 import { PocketProvider } from './pocket-provider';
 import { PocketNetwork } from '@nodewallet/content-bridge';
 
+export * from './pocket-provider';
 export { ChainType } from '@nodewallet/constants';
 
 // export interface NodeWalletSDKEvent {

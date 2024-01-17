@@ -9,7 +9,7 @@
     "dist/**"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
     "clean": "node scripts/clean.js dist .turbo node_modules",
     "dev": "tsc -w",
     "lint": "eslint \"src/**/*.ts*\"",
@@ -31,8 +31,6 @@
   },
   "dependencies": {
     "@nodewallet/content": "*",
-    "@nodewallet/types": "*",
-    "@nodewallet/util-browser": "*",
     "@pokt-foundation/pocketjs-types": "^2.1.3",
     "events": "^3.3.0",
     "lodash": "^4.17.21",

@@ -6,14 +6,20 @@
       "dependsOn": []
     },
     "build": {
-      "dependsOn": ["^build"]
+      "cache": false,
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    "build-ui": {
+      "dependsOn": ["^build"],
+      "outputs": ["build/**"]
     },
     "clean": {
       "dependsOn": ["^clean"]
     },
     "bundle": {
       "cache": false,
-      "dependsOn": ["^bundle"]
+      "dependsOn": ["^build"]
     },
     "dev": {
       "cache": false,

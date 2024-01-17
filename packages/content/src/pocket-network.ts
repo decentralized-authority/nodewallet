@@ -4,10 +4,10 @@ import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
 import { isHex } from '@nodewallet/util-browser';
 import { API } from './api';
-import { CryptoAccount } from '@nodewallet/types';
-import { CoinType } from '@nodewallet/constants';
 import {
-  PoktRpcGetAccountParams, PoktRpcGetAccountResult,
+  CryptoAccount,
+  PoktRpcGetAccountParams,
+  PoktRpcGetAccountResult,
   PoktRpcGetAppParams,
   PoktRpcGetBalanceParams,
   PoktRpcGetBalanceResult,
@@ -18,7 +18,8 @@ import {
   PoktRpcGetNodeParams, PoktRpcGetNodeResult,
   PoktRpcGetTransactionParams,
   PoktRpcGetTransactionResult
-} from '@nodewallet/types/dist/content-api';
+} from '@nodewallet/types';
+import { CoinType } from '@nodewallet/constants';
 import { isPlainObject } from 'lodash';
 
 export enum PocketNetworkMethod {

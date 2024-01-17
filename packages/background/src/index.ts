@@ -60,6 +60,20 @@ import {
   ValidateMnemonicParams,
   ValidateMnemonicResult,
   WalletAccount,
+  ContentAPIEvent,
+  GetBalanceParams,
+  GetBalanceResult,
+  GetHeightParams,
+  GetHeightResult,
+  GetTransactionParams,
+  GetTransactionResult, PoktRpcGetAccountParams, PoktRpcGetAccountResult, PoktRpcGetAppParams, PoktRpcGetAppResult,
+  PoktRpcGetBalanceParams,
+  PoktRpcGetBalanceResult, PoktRpcGetBlockNumberParams, PoktRpcGetBlockNumberResult,
+  PoktRpcGetBlockParams,
+  PoktRpcGetBlockResult, PoktRpcGetNodeParams, PoktRpcGetNodeResult,
+  PoktRpcGetTransactionParams, PoktRpcGetTransactionResult,
+  RequestAccountParams,
+  RequestAccountResult,
 } from '@nodewallet/types';
 import { getHostFromOrigin, Messager, prepMnemonic, RouteBuilder } from '@nodewallet/util-browser';
 import dayjs from 'dayjs';
@@ -85,22 +99,6 @@ import {
 } from '@nodewallet/wallet-utils';
 import omit from 'lodash/omit';
 import { SessionSecretManager } from './session-secret-manager';
-import {
-  ContentAPIEvent,
-  GetBalanceParams,
-  GetBalanceResult,
-  GetHeightParams,
-  GetHeightResult,
-  GetTransactionParams,
-  GetTransactionResult, PoktRpcGetAccountParams, PoktRpcGetAccountResult, PoktRpcGetAppParams, PoktRpcGetAppResult,
-  PoktRpcGetBalanceParams,
-  PoktRpcGetBalanceResult, PoktRpcGetBlockNumberParams, PoktRpcGetBlockNumberResult,
-  PoktRpcGetBlockParams,
-  PoktRpcGetBlockResult, PoktRpcGetNodeParams, PoktRpcGetNodeResult,
-  PoktRpcGetTransactionParams, PoktRpcGetTransactionResult,
-  RequestAccountParams,
-  RequestAccountResult,
-} from '@nodewallet/types/dist/content-api';
 import MessageSender = chrome.runtime.MessageSender;
 import isNumber from 'lodash/isNumber';
 
