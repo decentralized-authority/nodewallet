@@ -26,8 +26,9 @@ class PocketProviderWallet {
   balance(address: string): Promise<{balance: number}>
   height(): Promise<{height: number}>
   tx(hash: string): Promise<Transaction>
-  sendTransaction({ amount, to, from, memo = '' }: {amount: string, to: string, from: string, memo?: string}): Promise<{hash: string}>
-  signMessage({ message, address }: {message: string, address: string}): Promise<{signature: string}>
+  sendTransaction(params: {amount: string, to: string, from: string, memo?: string}): Promise<{hash: string}>
+  signMessage(params: {message: string, address: string}): Promise<{signature: string}>
+  stakeNode(params: {amount: string, address: string, operatorPublicKey: string, chains: string[], serviceURL: string}): Promise<{hash: string}>
 }
 
 class PocketProviderRpc {
@@ -35,8 +36,8 @@ class PocketProviderRpc {
   getBlock(blockNumber: number): Promise<Block>
   getTransaction(transactionHash: string): Promise<Transaction>
   getBlockNumber(): Promise<number>
-  getNode({ address, blockHeight }: {address: string, blockHeight?: number}): Promise<Node>
-  getApp({ address, blockHeight }: {address: string, blockHeight?: number}): Promise<App>
+  getNode(params: {address: string, blockHeight?: number}): Promise<Node>
+  getApp(params: {address: string, blockHeight?: number}): Promise<App>
   getAccount(address: string): Promise<Account>
 }
 ```

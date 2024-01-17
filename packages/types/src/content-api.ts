@@ -1,5 +1,12 @@
 import { CryptoAccount } from './wallet';
-import { ErrorResult, SendTransactionParams, SendTransactionResult, SignMessageParams, SignMessageResult } from './api';
+import {
+  ErrorResult,
+  SendTransactionParams,
+  SendTransactionResult,
+  SignMessageParams,
+  SignMessageResult,
+  StakeNodeParams, StakeNodeResult
+} from './api';
 import { ChainType, CoinType } from '@nodewallet/constants';
 import { Account, App, Block, Node, Transaction } from '@pokt-foundation/pocketjs-types';
 
@@ -10,6 +17,7 @@ export enum ContentAPIEvent {
   GET_TRANSACTION = 'CONTENT_GET_TRANSACTION',
   GET_HEIGHT = 'CONTENT_GET_HEIGHT',
   SIGN_MESSAGE = 'CONTENT_SIGN_MESSAGE',
+  STAKE_NODE = 'CONTENT_STAKE_NODE',
   POKT_RPC_REQUEST = 'CONTENT_POKT_RPC_REQUEST',
 }
 
@@ -118,6 +126,8 @@ export interface ContentAPI {
   getBalance(params: GetBalanceParams): Promise<GetBalanceResult>
 
   sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult>
+
+  stakeNode(params: StakeNodeParams): Promise<StakeNodeResult>
 
   signMessage(params: SignMessageParams): Promise<SignMessageResult>
 

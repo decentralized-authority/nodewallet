@@ -32,7 +32,7 @@ import {
   SaveActiveAccountResult,
   SaveFileParams,
   SendTransactionParams,
-  SendTransactionResult, SignMessageParams, SignMessageResult,
+  SendTransactionResult, SignMessageParams, SignMessageResult, StakeNodeParams, StakeNodeResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
@@ -112,6 +112,10 @@ export class API implements ClientAPI {
 
   async sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult> {
     return await this._messager.send(APIEvent.SEND_TRANSACTION, params);
+  }
+
+  async stakeNode(params: StakeNodeParams): Promise<StakeNodeResult> {
+    return await this._messager.send(APIEvent.STAKE_NODE, params);
   }
 
   async signMessage(params: SignMessageParams): Promise<SignMessageResult> {

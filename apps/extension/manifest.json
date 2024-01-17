@@ -19,14 +19,16 @@
       "js": [
         "content.js"
       ],
-      "world": "ISOLATED"
+      "world": "ISOLATED",
+      "run_at": "document_start"
     },
     {
       "matches": ["<all_urls>"],
       "js": [
         "content-bridge.js"
       ],
-      "world": "MAIN"
+      "world": "MAIN",
+      "run_at": "document_start"
     }
   ],
   "action": {

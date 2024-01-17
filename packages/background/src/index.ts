@@ -45,7 +45,7 @@ import {
   SaveActiveAccountResult,
   SaveFileParams,
   SendTransactionParams,
-  SendTransactionResult, SignMessageParams, SignMessageResult,
+  SendTransactionResult, SignMessageParams, SignMessageResult, StakeNodeParams, StakeNodeResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
@@ -764,6 +764,94 @@ export const startBackground = () => {
         throw new Error('Unsupported network.');
       }
     }
+  });
+
+  messager.register(APIEvent.STAKE_NODE, async (params: StakeNodeParams): Promise<StakeNodeResult> => {
+    const {
+      accountId,
+      operatorPublicKey = '',
+      amount,
+      chains,
+      serviceURL,
+    } = params;
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const cryptoAccount = findCryptoAccountInUserAccount(userAccount, accountId);
+    if(!cryptoAccount) {
+      throw new Error('Account not found.');
+    }
+    switch(cryptoAccount.network) {
+      case CoinType.POKT: {
+        const endpoint = rpcEndpoints[cryptoAccount.network][cryptoAccount.chain];
+        if(!endpoint) {
+          throw new Error(`${cryptoAccount.network} ${cryptoAccount.chain} endpoint not found.`);
+        } else if(!cryptoAccount.privateKey) {
+          throw new Error('Private key not found.');
+        }
+        const privateKey = await decrypt(cryptoAccount.privateKey);
+        const res = await PoktUtils.stakeNode({
+          endpoint,
+          network: cryptoAccount.chain,
+          operatorPublicKey,
+          ownerPrivateKey: privateKey,
+          amount: PoktUtils.toBaseDenom(amount),
+          serviceURL,
+          chains,
+        });
+        return {
+          result: {
+            txid: res,
+          },
+        };
+      } default: {
+        throw new Error('Unsupported network.');
+      }
+    }
+  });
+
+  messager.register(ContentAPIEvent.STAKE_NODE, async (params: StakeNodeParams, sender): Promise<StakeNodeResult> => {
+    const {
+      accountId,
+      operatorPublicKey = '',
+      amount,
+      chains,
+      serviceURL,
+    } = params;
+    const userAccount = await unlockAndGetUserAccount();
+    checkIfOriginAllowedAndThrow(userAccount, sender);
+    const cryptoAccount = findCryptoAccountInUserAccountWithWalletId(userAccount, accountId);
+    if(!cryptoAccount) {
+      throw new Error('Account not found.');
+    }
+    const urlPath = RouteBuilder.stake.generateFullPath({
+      walletId: cryptoAccount.walletId,
+      networkId: cryptoAccount.network,
+      chainId: cryptoAccount.chain,
+      address: cryptoAccount.address,
+    });
+    const url = chrome.runtime.getURL(`index.html#${urlPath}?amount=${encodeURIComponent(Number(amount) / 1000000)}&operator=${encodeURIComponent(operatorPublicKey)}${chains.length > 0 ? `&chains=${encodeURIComponent(chains.join(','))}` : ''}&serviceurl=${encodeURIComponent(serviceURL)}&content=true`);
+    const popup = await createPopupWindow(url);
+    let txid = '';
+    const txidListener = (message: {type: string, payload: string}, sender: MessageSender) => {
+      const { type, payload } = message;
+      if(sender.tab?.windowId === popup.id && type === 'txid') {
+        chrome.runtime.onMessage.removeListener(txidListener);
+        txid = payload;
+      }
+    };
+    chrome.runtime.onMessage.addListener(txidListener);
+    await waitForWindowClose(popup);
+    if(!txid) {
+      chrome.runtime.onMessage.removeListener(txidListener);
+      throw new Error('Transaction cancelled.');
+    }
+    return {
+      result: {
+        txid,
+      },
+    };
   });
 
   messager.register(APIEvent.SIGN_MESSAGE, async (params: SignMessageParams): Promise<SignMessageResult> => {

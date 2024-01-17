@@ -17,6 +17,7 @@ import { UnlockAccount } from './components/unlock-account';
 import { ManageWallets } from './components/manage-wallets';
 import { AccountDetail } from './components/account-detail';
 import { Send } from './components/send';
+import { Stake } from './components/stake';
 import { SelectNewWalletType } from './components/select-new-wallet-type';
 import { RegisterAccount } from './components/register-account';
 import { NewHdWallet } from './components/new-hd-wallet';
@@ -61,6 +62,10 @@ const start = () => {
         {
           path: RouteBuilder.send.path(),
           element: <Send />,
+        },
+        {
+          path: RouteBuilder.stake.path(),
+          element: <Stake />,
         },
         {
           path: RouteBuilder.sign.path(),

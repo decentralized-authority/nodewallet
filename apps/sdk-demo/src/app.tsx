@@ -25,6 +25,10 @@ export const App = () => {
   const [ signature, setSignature ] = useState<string>('');
   const [ txid, setTxid ] = useState<string>('');
   const [ transaction, setTransaction ] = useState<any>(null);
+  const [ stakeAmount, setStakeAmount ] = useState<string>('');
+  const [ stakeServiceUrl, setStakeServiceUrl ] = useState<string>('');
+  const [ stakeChains, setStakeChains ] = useState<string>('');
+  const [ stakeOperatorPublicKey, setStakeOperatorPublicKey ] = useState<string>('');
 
   useEffect(() => {
     const sdk = new NodeWalletSDK();
@@ -98,6 +102,22 @@ export const App = () => {
     e.preventDefault();
     setTxid(e.target.value);
   };
+  const onStakeAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setStakeAmount(e.target.value);
+  };
+  const onStakeServiceUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setStakeServiceUrl(e.target.value);
+  };
+  const onStakeChainsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setStakeChains(e.target.value);
+  };
+  const onStakeOperatorPublicKeyChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+    setStakeOperatorPublicKey(e.target.value);
+  };
 
   // Send Transaction
   const onSendTransactionSubmit = async (e: React.FormEvent) => {
@@ -154,6 +174,31 @@ export const App = () => {
       const pocket = pocketRef.current;
       const tx = await pocket.wallet.tx(txid);
       setTransaction(tx);
+    } catch (err) {
+      handleError(err);
+    }
+  };
+
+  // Stake Node
+  const onStakeSubmit = async (e: React.FormEvent) => {
+    try {
+      e.preventDefault();
+      if (!pocketRef.current) {
+        return;
+      }
+      const pocket = pocketRef.current;
+      const { hash } = await pocket.wallet.stakeNode({
+        amount: stakeAmount,
+        chains: stakeChains.split(','),
+        address,
+        operatorPublicKey: stakeOperatorPublicKey,
+        serviceURL: stakeServiceUrl,
+      });
+      alert(`Stake transaction sent with hash:\n\n${hash}`);
+      setStakeAmount('');
+      setStakeServiceUrl('');
+      setStakeChains('');
+      setStakeOperatorPublicKey('');
     } catch (err) {
       handleError(err);
     }
@@ -262,6 +307,33 @@ export const App = () => {
         }
       </div>
 
+      <div>
+        <h2>Stake Node</h2>
+        <form onSubmit={onStakeSubmit}>
+          <div>
+            <label>Amount in uPOKT:</label>
+            <input type="number" placeholder="Enter amount to stake" value={stakeAmount}
+                   onChange={onStakeAmountChange}/>
+          </div>
+          <div>
+            <label>Service URL:</label>
+            <input type="text" placeholder="Enter service URL" value={stakeServiceUrl}
+                   onChange={onStakeServiceUrlChange}/>
+          </div>
+          <div>
+            <label>Chains:</label>
+            <input type="text" placeholder="Enter chains, separated by comma" value={stakeChains}
+                   onChange={onStakeChainsChange}/>
+          </div>
+          <div>
+            <label>Operator Public Key:</label>
+            <textarea rows={3} style={styles.textarea as React.CSSProperties} placeholder="Enter operator public key"
+                      value={stakeOperatorPublicKey} onChange={onStakeOperatorPublicKeyChange}/>
+          </div>
+          <button type="submit">Stake Node</button>
+        </form>
+      </div>
+
     </div>
   );
 };
@@ -274,5 +346,8 @@ const styles = {
   txContainer: {
     fontFamily: 'monospace',
     whiteSpace: 'pre',
+  },
+  textarea: {
+    resize: 'vertical',
   },
 }

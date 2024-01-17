@@ -127,6 +127,42 @@ export class PoktUtils {
     return txHash;
   }
 
+  static async stakeNode({
+    endpoint,
+    network,
+    operatorPublicKey,
+    ownerPrivateKey,
+    amount,
+    serviceURL,
+    chains,
+    fee = PoktUtils.baseFee,
+  }: {endpoint: string, network: ChainType, operatorPublicKey?: string, ownerPrivateKey: string, amount: string | BigNumber, serviceURL: string, chains: string[], fee?: string | BigNumber}): Promise<string> {
+    const amountStr = isString(amount) ? amount : amount.toString();
+    const feeStr = isString(fee) ? fee : fee.toString();
+    const provider = new JsonRpcProvider({
+      rpcUrl: endpoint,
+    });
+    const signer = await KeyManager.fromPrivateKey(ownerPrivateKey);
+    const transactionBuilder = new TransactionBuilder({
+      provider,
+      signer,
+      // @ts-ignore
+      chainID: network.toLowerCase(),
+    });
+    const txMsg = transactionBuilder.nodeStake({
+      nodePubKey: (operatorPublicKey && isString(operatorPublicKey)) ? operatorPublicKey : signer.getPublicKey(),
+      outputAddress: signer.getAddress(),
+      chains,
+      amount: amountStr,
+      serviceURL: new URL(serviceURL),
+    });
+    const { txHash } = await transactionBuilder.submit({
+      fee: feeStr,
+      txMsg,
+    });
+    return txHash;
+  }
+
   static async sign(payload: string, key: string): Promise<string> {
     const signer = await KeyManager.fromPrivateKey(key);
     return await signer.sign(payload);

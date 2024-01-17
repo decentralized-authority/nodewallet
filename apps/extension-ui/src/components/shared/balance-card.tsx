@@ -105,6 +105,12 @@ export const BalanceCard = ({ walletId, account, hideButtons, backRoute }: Balan
     chainId: account.chain,
     address: account.address,
   });
+  const stakePath = RouteBuilder.stake.generateFullPath({
+    walletId,
+    networkId: account.network,
+    chainId: account.chain,
+    address: account.address,
+  });
 
   const balance = accountBalances[account.id] || '0';
 
@@ -123,7 +129,7 @@ export const BalanceCard = ({ walletId, account, hideButtons, backRoute }: Balan
         </div>
         {!hideButtons ?
           <div className={'d-flex flex-row justify-content-evenly'}>
-            <button style={styles.button} className={'btn btn-outline-success text-uppercase fw-bold'} disabled={true}>Stake</button>
+            <Link to={stakePath} style={styles.button} className={'btn btn-outline-success text-uppercase fw-bold'}>Stake</Link>
             <Link to={sendPath} style={styles.button} className={'btn btn-outline-success text-uppercase fw-bold'}>Send</Link>
           </div>
           :

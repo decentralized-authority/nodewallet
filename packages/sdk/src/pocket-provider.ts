@@ -129,6 +129,10 @@ export class PocketProviderWallet {
     return this._pocketNetwork.send(PocketNetworkMethod.SEND_TRANSACTION, [{amount, to, from, memo}]);
   }
 
+  stakeNode({ address, amount, operatorPublicKey, chains, serviceURL }: {amount: string, address: string, operatorPublicKey: string, chains: string[], serviceURL: string}): Promise<{hash: string}> {
+    return this._pocketNetwork.send(PocketNetworkMethod.STAKE_NODE, [{amount, address, operatorPublicKey, chains, serviceURL}]);
+  }
+
   signMessage({ message, address }: {message: string, address: string}): Promise<{signature: string}> {
     return this._pocketNetwork.send(PocketNetworkMethod.SIGN_MESSAGE, [{message, address}]);
   }

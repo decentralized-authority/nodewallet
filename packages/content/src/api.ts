@@ -9,7 +9,13 @@ import {
   RequestAccountParams,
   RequestAccountResult,
 } from '@nodewallet/types/dist/content-api';
-import { SendTransactionParams, SendTransactionResult, SignMessageParams, SignMessageResult } from '@nodewallet/types';
+import {
+  SendTransactionParams,
+  SendTransactionResult,
+  SignMessageParams,
+  SignMessageResult,
+  StakeNodeParams, StakeNodeResult
+} from '@nodewallet/types';
 import { Messager } from '@nodewallet/util-browser';
 
 export class API implements ContentAPI {
@@ -30,6 +36,10 @@ export class API implements ContentAPI {
 
   async sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult> {
     return await this._messager.send(ContentAPIEvent.SEND_TRANSACTION, params);
+  }
+
+  async stakeNode(params: StakeNodeParams): Promise<StakeNodeResult> {
+    return await this._messager.send(ContentAPIEvent.STAKE_NODE, params);
   }
 
   async signMessage(params: SignMessageParams): Promise<SignMessageResult> {

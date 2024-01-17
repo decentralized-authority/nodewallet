@@ -19,6 +19,7 @@ export enum APIEvent {
   GET_ACCOUNT_BALANCES = 'GET_ACCOUNT_BALANCES',
   GET_ACCOUNT_TRANSACTIONS = 'GET_ACCOUNT_TRANSACTIONS',
   SEND_TRANSACTION = 'SEND_TRANSACTION',
+  STAKE_NODE = 'STAKE_NODE',
   SIGN_MESSAGE = 'SIGN_MESSAGE',
   SAVE_ACTIVE_ACCOUNT = 'SAVE_ACTIVE_ACCOUNT',
   GET_ACTIVE_ACCOUNT = 'GET_ACTIVE_ACCOUNT',
@@ -119,6 +120,18 @@ export interface SendTransactionParams {
   memo?: string
 }
 export type SendTransactionResult = ErrorResult | {
+  result: {
+    txid: string
+  }
+}
+export interface StakeNodeParams {
+  accountId: string
+  operatorPublicKey?: string
+  amount: string
+  chains: string[]
+  serviceURL: string
+}
+export type StakeNodeResult = ErrorResult | {
   result: {
     txid: string
   }
@@ -227,6 +240,8 @@ export interface ClientAPI {
   getAccountTransactions(params?: GetAccountTransactionsParams): Promise<GetAccountTransactionsResult>
 
   sendTransaction(params: SendTransactionParams): Promise<SendTransactionResult>
+
+  stakeNode(params: StakeNodeParams): Promise<StakeNodeResult>
 
   signMessage(params: SignMessageParams): Promise<SignMessageResult>
 

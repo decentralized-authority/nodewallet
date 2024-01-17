@@ -31,6 +31,7 @@ export enum PocketNetworkMethod {
   // Not available in SendWallet
   CHAIN = 'pokt_chain',
   PUBLIC_KEY = 'pokt_publicKey',
+  STAKE_NODE = 'pokt_stakeNode',
   SIGN_MESSAGE = 'pokt_signMessage',
   RPC_REQUEST = 'pokt_rpcRequest',
 }
@@ -110,6 +111,42 @@ const sendTransaction = async (paramsArr: {amount: string, to: string, from: str
     amount,
     recipient: to,
     memo: memo,
+  });
+  if('error' in res) {
+    throw new Error(res.error.message);
+  }
+  return {hash: res.result.txid};
+};
+
+const stakeNode = async (paramsArr: {amount: string, chains: string[], serviceURL: string, address: string, operatorPublicKey?: string}[], api: API): Promise<{hash: string}> => {
+  checkConnected();
+  const [ params ] = paramsArr || [];
+  if(!params || !isString(params.amount) || !isArray(params.chains) || !isString(params.serviceURL) || !isString(params.address) || (params.operatorPublicKey && !isString(params.operatorPublicKey))) {
+    throw new Error(`${PocketNetworkMethod.STAKE_NODE} method params must be an array containing an object with an amount string, chains array, serviceURL string, address string, and an optional operatorPublicKey string`);
+  }
+  const amount = params.amount.trim();
+  const chains = params.chains;
+  const serviceURL = params.serviceURL.trim();
+  const address = params.address.trim();
+  const operatorPublicKey = params.operatorPublicKey ? params.operatorPublicKey.trim() : '';
+  const account = getAccount(address);
+  if(!amount || /\D/.test(amount)) {
+    throw new Error('invalid amount');
+  } else if(!chains || !isArray(chains)) {
+    throw new Error('invalid chains');
+  } else if(!serviceURL) {
+    throw new Error('invalid serviceURL');
+  } else if(!address || !isHex(address)) {
+    throw new Error('invalid from address');
+  } else if(operatorPublicKey && !isHex(operatorPublicKey)) {
+    throw new Error('invalid operatorPublicKey');
+  }
+  const res = await api.stakeNode({
+    accountId: account.id,
+    amount,
+    chains,
+    serviceURL,
+    operatorPublicKey,
   });
   if('error' in res) {
     throw new Error(res.error.message);
@@ -235,6 +272,8 @@ export class PocketNetwork extends EventEmitter implements ContentBridge {
         return balance(params, this._api);
       case PocketNetworkMethod.SEND_TRANSACTION:
         return sendTransaction(params, this._api);
+      case PocketNetworkMethod.STAKE_NODE:
+        return stakeNode(params, this._api);
       case PocketNetworkMethod.SIGN_MESSAGE:
         return signMessage(params, this._api);
       case PocketNetworkMethod.TX:

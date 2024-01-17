@@ -1,81 +1,78 @@
-# Turborepo starter
+# NodeWallet
 
-This is an official starter Turborepo.
+This is the NodeWallet browser extension wallet. To learn how to interact with NodeWallet via web applications, check out the [NodeWallet SDK](https://github.com/decentralized-authority/nodewallet/blob/master/packages/sdk/README.md).
 
-## Using this example
+## Getting Started
 
-Run the following command:
-
+### 1. Install dependencies:
 ```sh
-npx create-turbo@latest
+npm install
 ```
 
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `ui`: a stub React component library shared by both `web` and `docs` applications
-- `eslint-config-custom`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `tsconfig`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
+### 2. Create necessary `.env` files
+Location: `/apps/extension/.env`
+Contents: *(replace with your own values)*
 ```
-cd my-turborepo
-pnpm build
+POKT_MAINNET_ENDPOINT=https://your-pokt-mainnet-endpoint.com
+POKT_TESTNET_ENDPOINT=https://your-pokt-testnet-endpoint.com
+```
+Location: `/apps/extension-ui/.env.development.local`
+Contents:
+```
+REACT_APP_TOS_URL=https://files.decentralizedauthority.com/tos.md
+```
+Location: `/apps/extension-ui/.env.production.local`
+Contents:
+```
+REACT_APP_TOS_URL=https://files.decentralizedauthority.com/tos.md
 ```
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
+### 3. Build the project
+```sh
+npm run build
 ```
 
-### Remote Caching
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
+### 4. Bundle the extension
+```sh
+npm run bundle
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### 5. Load the extension
+1. Open Chrome
+2. Go to `chrome://extensions`
+3. Enable `Developer mode`
+4. Drag and drop the `/apps/extension/dist` folder into the browser window
+5. If subsequent changes are made and the build and bundle scripts are run again, you can click the refresh button on the extension card in `chrome://extensions` rather than repeat step 4.
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## Project Structure
 
-```
-npx turbo link
-```
+This project is a monorepo that uses [Turborepo](https://turbo.build/repo) and contains the following projects:
 
-## Useful Links
+* `apps/extension` This is the main extension project. It is built and bundled as the (NodeWallet Chrome extension)[https://chromewebstore.google.com/detail/nodewallet/ilibmadejjooogcniiomgdgbojkmlbim].
+* `apps/extension-ui` This is the UI for the extension. It is a React app that is built using [create-react-app](https://create-react-app.dev/).
+* `apps/sdk-demo` This is a React app that demonstrates how to use the NodeWallet SDK. It is built using [create-react-app](https://create-react-app.dev/).
+* `packages/sdk` This is the [NodeWallet SDK](https://github.com/decentralized-authority/nodewallet/blob/master/packages/sdk/README.md). It is a TypeScript library that can be used by browser applications to easily interact with the NodeWallet extension.
+* `packages/types` This package is a TypeScript library that contains shared types used by the NodeWallet SDK and the NodeWallet extension.
+* `packages/background` This package contains the background scripts.
+* `packages/content` This package contains the content scripts.
+* `packages/content-bridge` This package contains the content bridge scripts that are exposed to the browser page.
+* `packages/util` This package contains utility scripts that are used by the extension.
+* `packages/util-browser` This package contains utility scripts that are used only by the front end of the extension.
+*  `wallet-utils` This package contains crypto and coin-specific functionality used by the extension's background scripts.
 
-Learn more about the power of Turborepo:
+## Development mode
+In ordery to run the project in development mode, you need to:
+1. Install dependencies
+2. Build the project
+3. Set the environment variable `BROWSER=none`
+4. Run the project with `npm start`
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+*One important note is that you cannot edit the UI in real time and see it in the browser. Because of manifest v3 security protections, the extension cannot load a URL from the local file system. You can still work in the project and fix and debug, but you will need to build, bundle, and then refresh the extension in the browser to see your changes.*
+
+## Contributions
+Contributions are welcome! If you have any issues and/or contributions you would like to make, feel free to file an issue and/or issue a pull request.
+
+## License
+[Apache License Version 2.0](https://github.com/decentralized-authority/nodewallet/blob/master/LICENSE)
+
+Copyright (c) 2024 by [Decentralized Authority](https://decentralizedauthority.com/).

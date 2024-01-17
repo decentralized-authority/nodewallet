@@ -6,19 +6,24 @@ import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { Container } from './shared/container';
 import { BalanceCard } from './shared/balance-card';
 import * as math from 'mathjs';
-import { findCryptoAccountInUserAccountByAddress, isHex, RouteBuilder, SendParams } from '@nodewallet/util-browser';
+import {
+  findCryptoAccountInUserAccountByAddress,
+  isHex,
+  RouteBuilder,
+  StakeParams,
+} from '@nodewallet/util-browser';
 import swal from 'sweetalert';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { calledFromContentScript } from '../util';
+import { calledFromContentScript, truncateAddress } from '../util';
 
-export const Send = () => {
+export const Stake = () => {
 
   const {
     walletId,
     networkId,
     chainId,
     address,
-  } = useParams<Partial<SendParams>>();
+  } = useParams<Partial<StakeParams>>();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -31,26 +36,35 @@ export const Send = () => {
   } = useSelector(({ appState }: RootState) => appState);
   const fromContentScript = calledFromContentScript(location);
 
-  const [ toAddress, setToAddress ] = useState('');
-  const [ toAddressError, setToAddressError ] = useState('');
+  const [ operatorPublicKey, setOperatorPublicKey ] = useState('');
+  const [ operatorPublicKeyError, setOperatorPublicKeyError ] = useState('');
+  const [ chains, setChains ] = useState<string>('');
+  const [ serviceURL, setServiceURL ] = useState('');
+  const [ serviceUrlError, setServiceUrlError ] = useState('');
   const [ amount, setAmount ] = useState('');
   // const [ amountError, setAmountError ] = useState('');
-  const [ memo, setMemo ] = useState('');
   const [ disableSubmit, setDisableSubmit ] = useState(false);
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const amount = queryParams.get('amount') || '';
-    const recipient = queryParams.get('recipient') || '';
-    const memo = queryParams.get('memo') || '';
-    if(amount && recipient) {
+    const operator = queryParams.get('operator') || '';
+    const chains = queryParams.get('chains') || '';
+    const serviceURL = queryParams.get('serviceurl') || '';
+    if (amount && operator && serviceURL) {
       setAmount(amount);
-      setToAddress(recipient);
-      setMemo(memo);
+      setOperatorPublicKey(operator);
+      setChains(chains
+        .split(',')
+        .map((chain) => chain.trim())
+        .filter((chain) => !!chain)
+        .join(',')
+      );
+      setServiceURL(serviceURL);
     }
   }, []);
 
-  if(!userAccount || !walletId || !networkId || !chainId || !address) {
+  if (!userAccount || !walletId || !networkId || !chainId || !address) {
     return null;
   }
 
@@ -94,19 +108,30 @@ export const Send = () => {
         throw new Error('Invalid amount.');
       }
 
-      const preppedAddress = toAddress.trim();
-      if(!isHex(preppedAddress)) {
-        setToAddressError('Invalid address.');
+      const preppedOperator = operatorPublicKey.trim();
+      if(!isHex(operatorPublicKey)) {
+        setOperatorPublicKeyError('Invalid public key.');
         setDisableSubmit(false);
         return;
       }
 
-      const preppedMemo = memo.trim();
+      const preppedServiceURL = serviceURL.trim();
+      if(!preppedServiceURL) {
+        setServiceUrlError('Invalid service URL.');
+        setDisableSubmit(false);
+        return;
+      }
 
-      const modalText = `You are about to send ${preppedAmount} POKT to the following address:\n\n${preppedAddress}\n\nPlease confirm that you want to continue.`;
+      const preppedChains = chains
+        .trim()
+        .split(',')
+        .map((chain) => chain.trim())
+        .filter((chain) => !!chain);
+
+      const modalText = `You are about to stake ${preppedAmount} POKT for the following account:\n${cryptoAccount.address}\n\nWith Node Operator:\n${truncateAddress(preppedOperator)}\n\nService URL:\n${preppedServiceURL}\n\nAnd chains:\n${preppedChains.join(', ')}\n\nPlease confirm that you want to continue.`;
 
       const confirmed = await swal({
-        title: 'Confirm Transaction',
+        title: 'Confirm Stake Node',
         icon: 'warning',
         text: modalText,
         buttons: {
@@ -124,12 +149,15 @@ export const Send = () => {
       if(!confirmed) {
         setDisableSubmit(false);
         return;
+      } else {
+        console.log('confirmed');
       }
-      const res = await api.sendTransaction({
+      const res = await api.stakeNode({
         accountId: cryptoAccount.id,
         amount: preppedAmount,
-        recipient: toAddress,
-        memo: preppedMemo,
+        operatorPublicKey: preppedOperator,
+        serviceURL: preppedServiceURL,
+        chains: preppedChains,
       });
       if('error' in res) {
         if(fromContentScript) {
@@ -153,7 +181,7 @@ export const Send = () => {
         await swal({
           title: 'Success!',
           icon: 'success',
-          text: `Your transaction has been successfully submitted to the network. The transaction ID is:\n\n${res.result.txid}`,
+          text: `Your stake transaction has been successfully submitted to the network. The transaction ID is:\n\n${res.result.txid}`,
         });
         if(fromContentScript) {
           window.close();
@@ -205,66 +233,78 @@ export const Send = () => {
         hideButtons={true}
         backRoute={accountDetailRoute}
       />
-      <h4 className={'text-uppercase pt-2 pb-2 ps-2 pe-2'}>Send {cryptoAccount.network}</h4>
+      <h4 className={'text-uppercase pt-2 pb-2 ps-2 pe-2'}>{cryptoAccount.network} Node Stake</h4>
       <div className={'flex-grow-1 position-relative'}>
         <form onSubmit={onSubmit} className={'ps-2 pe-2 position-absolute top-0 bottom-0 start-0 end-0 overflow-y-auto overflow-x-hidden'}>
-          <div className={'mb-3'}>
+          <div className={'mb-1'}>
 
-            <div className={'mb-2'}>
-              <label htmlFor={'amount'} className={'form-label'}>Amount to send</label>
+            <div className={'mb-1'}>
+              <label htmlFor={'amount'} className={'form-label'}>Amount to stake</label>
               <input
                 type={'number'}
-                className={'form-control font-monospace'}
+                className={'form-control form-control-sm font-monospace'}
                 id={'amount'}
                 value={amount}
-                placeholder={'Enter amount of POKT to send'}
+                placeholder={'Enter amount of POKT to stake'}
                 autoFocus={true}
                 readOnly={fromContentScript}
                 onChange={(e) => setAmount(e.target.value)}
-                onBlur={() => {
-                  if(toAddressError && isHex(toAddress)) {
-                    setToAddressError('');
-                  } else if(toAddress && !isHex(toAddress)) {
-                    setToAddressError('Invalid address.');
-                  }
-                }}
               />
-              {!amountGood ? <div className={'form-text text-danger'}>{'Amount must be less than your balance.'}</div> : null}
+              {!amountGood ?
+                <div className={'form-text text-danger'}>{'Amount must be less than your balance.'}</div> : null}
             </div>
 
-            <div className={'mb-2'}>
-              <label htmlFor={'address'} className={'form-label'}>Recipient Address</label>
+            <div className={'mb-1'}>
+              <label htmlFor={'serviceurl'} className={'form-label'}>Service URL</label>
               <input
                 type={'text'}
                 spellCheck={false}
-                className={'form-control font-monospace'}
-                id={'address'}
-                value={toAddress}
-                placeholder={`Enter recipient POKT ${activeChain.toLowerCase()} address`}
+                className={'form-control form-control-sm font-monospace'}
+                id={'serviceurl'}
+                value={serviceURL}
+                placeholder={'Enter service URL'}
                 readOnly={fromContentScript}
-                onChange={(e) => setToAddress(e.target.value.trim())}
-                onBlur={() => {
-                  if(toAddressError && isHex(toAddress)) {
-                    setToAddressError('');
-                  } else if(toAddress && !isHex(toAddress)) {
-                    setToAddressError('Invalid address.');
-                  }
-                }}
+                onChange={(e) => setServiceURL(e.target.value.trim())}
               />
-              {toAddressError ? <div className={'form-text text-danger'}>{toAddressError}</div> : null}
+              {serviceUrlError ? <div className={'form-text text-danger'}>{serviceUrlError}</div> : null}
+            </div>
+
+            <div className={'mb-1'}>
+              <label htmlFor={'chains'} className={'form-label'}>Chains</label>
+              <input
+                type={'text'}
+                spellCheck={false}
+                className={'form-control form-control-sm font-monospace'}
+                id={'chains'}
+                value={chains}
+                placeholder={'Enter chains, separated by comma'}
+                readOnly={fromContentScript}
+                onChange={(e) => setChains(e.target.value.trim())}
+              />
+              {serviceUrlError ? <div className={'form-text text-danger'}>{serviceUrlError}</div> : null}
             </div>
 
             <div className={'mb-3'}>
-              <label htmlFor={'memo'} className={'form-label'}>Memo</label>
+              <label htmlFor={'operator'} className={'form-label'}>Operator Public Key</label>
               <textarea
-                className={'form-control'}
-                id={'memo'}
-                value={memo}
-                placeholder={'Enter optional memo'}
+                rows={1}
+                spellCheck={false}
+                className={'form-control form-control-sm'}
+                id={'operator'}
+                value={operatorPublicKey}
+                placeholder={'Enter hex-encoded operator public key'}
                 style={{resize: 'vertical'}}
                 readOnly={fromContentScript}
-                onChange={(e) => setMemo(e.target.value)}
+                onChange={(e) => setOperatorPublicKey(e.target.value.trim())}
+                onBlur={() => {
+                  if (operatorPublicKey && isHex(operatorPublicKey)) {
+                    setOperatorPublicKeyError('');
+                  } else if (operatorPublicKey && !isHex(operatorPublicKey)) {
+                    setOperatorPublicKeyError('Invalid operator public key.');
+                  }
+                }}
               />
+              {operatorPublicKeyError ? <div className={'form-text text-danger'}>{operatorPublicKeyError}</div> : null}
             </div>
 
             <div className={'d-flex flex-row justify-content-start'} style={styles.buttonContainer}>
@@ -279,8 +319,8 @@ export const Send = () => {
                 type={'submit'}
                 className={'btn btn-primary'}
                 style={styles.button}
-                disabled={disableSubmit || !amountGood || !toAddress || !amount}
-              >{`Send ${amount} POKT`}</button>
+                disabled={disableSubmit || !amountGood || !operatorPublicKey || !amount || !serviceURL}
+              >{`Stake ${amount} POKT`}</button>
             </div>
 
           </div>
