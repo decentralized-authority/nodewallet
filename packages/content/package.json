@@ -1,7 +1,6 @@
 {
   "name": "@nodewallet/content",
   "version": "0.1.0",
-  "private": true,
   "main": "./dist/index.js",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
