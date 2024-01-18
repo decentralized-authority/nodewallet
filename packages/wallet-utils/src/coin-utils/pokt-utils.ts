@@ -165,7 +165,7 @@ export class PoktUtils {
 
   static async sign(payload: string, key: string): Promise<string> {
     const signer = await KeyManager.fromPrivateKey(key);
-    return await signer.sign(payload);
+    return await signer.sign(Buffer.from(payload, 'utf8').toString('hex'));
   }
 
   static async getAccountFromPrivateKey(privateKey: string): Promise<{address: string, privateKey: string, publicKey: string}> {

@@ -1,6 +1,7 @@
 import should from 'should';
 import { PoktUtils } from './pokt-utils';
 import * as math from 'mathjs';
+import { Buffer } from 'buffer';
 
 describe('PoktUtils', function() {
 
@@ -73,10 +74,18 @@ describe('PoktUtils', function() {
   });
 
   describe('static sign()', function() {
-    it('should sign an arbitrary payload', async function() {
-      const payload = 'something';
-      const signature = await PoktUtils.sign(payload, key);
-      should(signature).be.a.String();
+    it('should sign a utf8-encoded string payload', async function() {
+      const payloads = [
+        'something',
+        'nuno',
+      ];
+      const signatures: string[] = [];
+      for(const payload of payloads) {
+        const signature = await PoktUtils.sign(payload, key);
+        should(signature).be.a.String();
+        signatures.push(signature);
+      }
+      should(signatures[0]).not.equal(signatures[1]);
     });
   });
 
