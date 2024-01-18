@@ -20,7 +20,7 @@
     "build": "turbo run build",
     "build-ui": "turbo run build-ui",
     "force-build": "turbo run build --no-cache",
-    "clean": "turbo run clean",
+    "clean": "node clean",
     "build:extension": "turbo run build --filter=extension",
     "build:extension-ui": "turbo run build --filter=extension-ui",
     "build:background": "turbo run build --filter=@nodewallet/background",

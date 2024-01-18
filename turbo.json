@@ -17,8 +17,7 @@
       "dependsOn": ["^clean"]
     },
     "bundle": {
-      "cache": false,
-      "dependsOn": ["^build"]
+      "cache": false
     },
     "dev": {
       "cache": false,
