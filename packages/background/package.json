@@ -40,6 +40,8 @@
     "@nodewallet/util-browser": "*",
     "@nodewallet/wallet-utils": "*",
     "buffer": "^6.0.3",
-    "dayjs": "^1.11.9"
+    "dayjs": "^1.11.9",
+    "events": "^3.3.0",
+    "lodash": "^4.17.21"
   }
 }
