@@ -1,9 +1,9 @@
 import { EventEmitter } from 'events';
 import { PocketProvider } from './pocket-provider';
-import { PocketNetwork } from '@nodewallet/content-bridge';
+import { PocketNetwork } from '@decentralizedauthority/nodewallet-content-bridge';
 
 export * from './pocket-provider';
-export { ChainType } from '@nodewallet/constants';
+export { ChainType } from '@decentralizedauthority/nodewallet-constants';
 
 // export interface NodeWalletSDKEvent {
 //   'accountsChanged': (account: string[]) => void;

@@ -1,12 +1,12 @@
 import React, { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { CryptoAccount } from '@nodewallet/types';
+import { CryptoAccount } from '@decentralizedauthority/nodewallet-types';
 import { calledFromContentScript, truncateAddress } from '../../util';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
 import { RootState } from '../../store';
 import { Link, useLocation } from 'react-router-dom';
-import { RouteBuilder } from '@nodewallet/util-browser';
-import { ChainType } from '@nodewallet/constants';
+import { RouteBuilder } from '@decentralizedauthority/nodewallet-util-browser';
+import { ChainType } from '@decentralizedauthority/nodewallet-constants';
 import { Pricing } from '../../modules/pricing';
 import swal from 'sweetalert';
 import { setUserAccount } from '../../reducers/app-reducer';

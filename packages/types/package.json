@@ -1,5 +1,5 @@
 {
-  "name": "@nodewallet/types",
+  "name": "@decentralizedauthority/nodewallet-types",
   "version": "0.1.0",
   "main": "./dist/index.js",
   "source": "./src/index.ts",
@@ -11,7 +11,7 @@
     "test": "ts-mocha -p ./tsconfig.json './src/**/*.spec.ts'"
   },
   "dependencies": {
-    "@nodewallet/constants": "*",
+    "@decentralizedauthority/nodewallet-constants": "*",
     "@pokt-foundation/pocketjs-types": "^2.1.3"
   }
 }

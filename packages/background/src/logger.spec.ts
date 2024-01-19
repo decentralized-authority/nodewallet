@@ -1,10 +1,10 @@
 import should from 'should';
 import { Logger } from './logger';
-import { timeout } from '@nodewallet/util-browser';
+import { timeout } from '@decentralizedauthority/nodewallet-util-browser';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import escapeRegExp from 'lodash/escapeRegExp';
-import { LocalStorageKey } from '@nodewallet/constants';
+import { LocalStorageKey } from '@decentralizedauthority/nodewallet-constants';
 
 dayjs.extend(utc);
 

@@ -1,6 +1,6 @@
 import { bignumber, multiply } from 'mathjs';
 import { EventEmitter } from 'events';
-import { CoinType } from '@nodewallet/constants';
+import { CoinType } from '@decentralizedauthority/nodewallet-constants';
 import cloneDeep from 'lodash/cloneDeep';
 
 export type PricingMultipliers = {[ticker: string]: string}

@@ -1,4 +1,4 @@
-import { startBackground } from '@nodewallet/background';
+import { startBackground } from '@decentralizedauthority/nodewallet-background';
 
 startBackground();
 

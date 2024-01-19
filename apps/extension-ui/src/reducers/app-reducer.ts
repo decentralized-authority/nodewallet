@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AccountTransaction, UserAccount } from '@nodewallet/types';
-import { ChainType, UserStatus } from '@nodewallet/constants';
+import { AccountTransaction, UserAccount } from '@decentralizedauthority/nodewallet-types';
+import { ChainType, UserStatus } from '@decentralizedauthority/nodewallet-constants';
 import { PricingMultipliers } from '../modules/pricing';
 
 export type AccountBalances = {[id: string]: string}

@@ -7,7 +7,7 @@ import {
   SignMessageResult,
   StakeNodeParams, StakeNodeResult
 } from './api';
-import { ChainType, CoinType } from '@nodewallet/constants';
+import { ChainType, CoinType } from '@decentralizedauthority/nodewallet-constants';
 import { Account, App, Block, Node, Transaction } from '@pokt-foundation/pocketjs-types';
 
 export enum ContentAPIEvent {

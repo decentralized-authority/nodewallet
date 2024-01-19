@@ -1,5 +1,5 @@
 {
-  "name": "@nodewallet/content",
+  "name": "@decentralizedauthority/nodewallet-content",
   "version": "0.1.0",
   "main": "./dist/index.js",
   "source": "./src/index.ts",
@@ -29,9 +29,9 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
-    "@nodewallet/constants": "*",
-    "@nodewallet/types": "*",
-    "@nodewallet/util-browser": "*",
+    "@decentralizedauthority/nodewallet-constants": "*",
+    "@decentralizedauthority/nodewallet-types": "*",
+    "@decentralizedauthority/nodewallet-util-browser": "*",
     "events": "^3.3.0",
     "lodash": "^4.17.21"
   }

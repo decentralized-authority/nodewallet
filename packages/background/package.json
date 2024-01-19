@@ -1,5 +1,5 @@
 {
-  "name": "@nodewallet/background",
+  "name": "@decentralizedauthority/nodewallet-background",
   "version": "0.1.0",
   "private": true,
   "main": "./dist/index.js",
@@ -34,11 +34,11 @@
     "util-ex": "^1.0.3"
   },
   "dependencies": {
-    "@nodewallet/constants": "*",
-    "@nodewallet/types": "*",
-    "@nodewallet/util": "*",
-    "@nodewallet/util-browser": "*",
-    "@nodewallet/wallet-utils": "*",
+    "@decentralizedauthority/nodewallet-constants": "*",
+    "@decentralizedauthority/nodewallet-types": "*",
+    "@decentralizedauthority/nodewallet-util": "*",
+    "@decentralizedauthority/nodewallet-util-browser": "*",
+    "@decentralizedauthority/nodewallet-wallet-utils": "*",
     "buffer": "^6.0.3",
     "dayjs": "^1.11.9",
     "events": "^3.3.0",

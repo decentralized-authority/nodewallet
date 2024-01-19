@@ -11,7 +11,7 @@ const clean = () => {
       subDirs0.forEach(subDir0 => {
         const subDirs1 = fs.readdirSync(path.join(root, dir, subDir0));
         subDirs1.forEach(subDir1 => {
-          if (subDir1 === 'node_modules' || subDir1 === 'dist' || subDir1 === 'build') {
+          if (['node_modules', 'dist', 'build', '.turbo'].includes(subDir1)) {
             fs.rmSync(path.join(root, dir, subDir0, subDir1), { recursive: true });
           }
         });

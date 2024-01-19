@@ -1,4 +1,4 @@
-import { startContentBridge } from '@nodewallet/content-bridge';
+import { startContentBridge } from '@decentralizedauthority/nodewallet-content-bridge';
 
 startContentBridge();
 

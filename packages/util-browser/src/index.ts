@@ -1,5 +1,5 @@
-import { CryptoAccount, UserAccount } from '@nodewallet/types';
-import { ChainType, CoinType } from '@nodewallet/constants';
+import { CryptoAccount, UserAccount } from '@decentralizedauthority/nodewallet-types';
+import { ChainType, CoinType } from '@decentralizedauthority/nodewallet-constants';
 import { AccountDetailParams } from './routes';
 
 export * from './messager';

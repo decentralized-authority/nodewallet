@@ -1,4 +1,4 @@
-import { ChainType, CoinType } from '@nodewallet/constants';
+import { ChainType, CoinType } from '@decentralizedauthority/nodewallet-constants';
 
 export class RouteMeta {
   readonly _path: string = '';

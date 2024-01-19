@@ -1,5 +1,5 @@
 import * as bip39 from 'bip39';
-import { defaultSeedBits } from '@nodewallet/util';
+import { defaultSeedBits } from '@decentralizedauthority/nodewallet-util';
 
 export const getWordlist = (lang: string): string[] => {
   let wordlist: string[]|undefined = bip39.wordlists[lang.toUpperCase()];

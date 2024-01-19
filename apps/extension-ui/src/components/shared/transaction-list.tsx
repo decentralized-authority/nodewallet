@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import { truncateAddress } from '../../util';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
-import { CryptoAccount } from '@nodewallet/types';
+import { CryptoAccount } from '@decentralizedauthority/nodewallet-types';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
-import { ChainType } from '@nodewallet/constants';
+import { ChainType } from '@decentralizedauthority/nodewallet-constants';
 
 export interface TransactionListProps {
   account: CryptoAccount,

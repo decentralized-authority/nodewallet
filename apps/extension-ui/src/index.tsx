@@ -9,7 +9,7 @@ import { ErrorHandlerContext } from './hooks/error-handler-context';
 import { ErrorHandler } from './modules/error-handler';
 import { ApiContext } from './hooks/api-context';
 import { API } from './modules/api';
-import { Messager, RouteBuilder } from '@nodewallet/util-browser';
+import { Messager, RouteBuilder } from '@decentralizedauthority/nodewallet-util-browser';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { TOS } from './components/tos';
 import { ErrorView } from './components/error-view';

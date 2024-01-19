@@ -6,7 +6,7 @@ import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { Container } from './shared/container';
 import { BalanceCard } from './shared/balance-card';
 import * as math from 'mathjs';
-import { findCryptoAccountInUserAccountByAddress, isHex, RouteBuilder, SendParams } from '@nodewallet/util-browser';
+import { findCryptoAccountInUserAccountByAddress, isHex, RouteBuilder, SendParams } from '@decentralizedauthority/nodewallet-util-browser';
 import swal from 'sweetalert';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { calledFromContentScript } from '../util';

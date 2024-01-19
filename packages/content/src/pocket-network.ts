@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { ContentBridge } from './content-bridge';
 import isString from 'lodash/isString';
 import isArray from 'lodash/isArray';
-import { isHex } from '@nodewallet/util-browser';
+import { isHex } from '@decentralizedauthority/nodewallet-util-browser';
 import { API } from './api';
 import {
   CryptoAccount,
@@ -18,8 +18,8 @@ import {
   PoktRpcGetNodeParams, PoktRpcGetNodeResult,
   PoktRpcGetTransactionParams,
   PoktRpcGetTransactionResult
-} from '@nodewallet/types';
-import { CoinType } from '@nodewallet/constants';
+} from '@decentralizedauthority/nodewallet-types';
+import { CoinType } from '@decentralizedauthority/nodewallet-constants';
 import { isPlainObject } from 'lodash';
 
 export enum PocketNetworkMethod {

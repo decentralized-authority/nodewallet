@@ -7,8 +7,8 @@ import swal from 'sweetalert';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { ApiContext } from '../hooks/api-context';
 import { useNavigate } from 'react-router-dom';
-import { RouteBuilder } from '@nodewallet/util-browser';
-import { ChainType, CoinType } from '@nodewallet/constants';
+import { RouteBuilder } from '@decentralizedauthority/nodewallet-util-browser';
+import { ChainType, CoinType } from '@decentralizedauthority/nodewallet-constants';
 
 export const SelectNewWalletType = () => {
 

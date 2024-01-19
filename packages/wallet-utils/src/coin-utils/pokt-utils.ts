@@ -5,9 +5,9 @@ import { KeyManager } from '@pokt-foundation/pocketjs-signer';
 import { TransactionBuilder } from '@pokt-foundation/pocketjs-transaction-builder';
 import bip44Constants from 'bip44-constants';
 import { ChainMeta } from '../interfaces';
-import { ChainType, CoinType, KeyType } from '@nodewallet/constants';
-import { isHex } from '@nodewallet/util-browser';
-import { AccountTransaction } from '@nodewallet/types';
+import { ChainType, CoinType, KeyType } from '@decentralizedauthority/nodewallet-constants';
+import { isHex } from '@decentralizedauthority/nodewallet-util-browser';
+import { AccountTransaction } from '@decentralizedauthority/nodewallet-types';
 import { Account, App, Node, Transaction } from '@pokt-foundation/pocketjs-types';
 
 // https://github.com/satoshilabs/slips/blob/master/slip-0044.md

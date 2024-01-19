@@ -8,7 +8,7 @@ import {
   POPUP_WIDTH,
   SessionStorageKey,
   UserStatus
-} from '@nodewallet/constants';
+} from '@decentralizedauthority/nodewallet-constants';
 import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
@@ -74,8 +74,8 @@ import {
   PoktRpcGetTransactionParams, PoktRpcGetTransactionResult,
   RequestAccountParams,
   RequestAccountResult,
-} from '@nodewallet/types';
-import { getHostFromOrigin, Messager, prepMnemonic, RouteBuilder } from '@nodewallet/util-browser';
+} from '@decentralizedauthority/nodewallet-types';
+import { getHostFromOrigin, Messager, prepMnemonic, RouteBuilder } from '@decentralizedauthority/nodewallet-util-browser';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import {
@@ -88,7 +88,7 @@ import {
   encryptAES256GCM,
   EncryptionResult,
   generateSalt
-} from '@nodewallet/util';
+} from '@decentralizedauthority/nodewallet-util';
 import {
   ED25519Utils,
   generateMnemonic,
@@ -96,7 +96,7 @@ import {
   mnemonicToSeed,
   PoktUtils,
   seedToMasterId
-} from '@nodewallet/wallet-utils';
+} from '@decentralizedauthority/nodewallet-wallet-utils';
 import omit from 'lodash/omit';
 import { SessionSecretManager } from './session-secret-manager';
 import MessageSender = chrome.runtime.MessageSender;

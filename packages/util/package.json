@@ -1,5 +1,5 @@
 {
-  "name": "@nodewallet/util",
+  "name": "@decentralizedauthority/nodewallet-util",
   "version": "0.1.0",
   "private": true,
   "main": "./dist/index.js",
@@ -20,7 +20,7 @@
     "@types/argon2-browser": "^1.18.1",
     "@types/mocha": "^8.2.3",
     "mocha": "^8.0.0",
-    "@nodewallet/constants": "*",
+    "@decentralizedauthority/nodewallet-constants": "*",
     "should": "^13.2.3"
   }
 }

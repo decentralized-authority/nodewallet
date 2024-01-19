@@ -7,7 +7,7 @@ import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { calledFromContentScript } from '../util';
 // @ts-ignore
 import logo from '../images/logo.svg';
-import { getHostFromOrigin } from '@nodewallet/util-browser';
+import { getHostFromOrigin } from '@decentralizedauthority/nodewallet-util-browser';
 
 export const Connect = () => {
 

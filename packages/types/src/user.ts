@@ -1,5 +1,5 @@
 import { UserWallet } from './wallet';
-import { AppLang } from '@nodewallet/constants';
+import { AppLang } from '@decentralizedauthority/nodewallet-constants';
 
 export interface AllowedOrigin {
   date: string

@@ -13,8 +13,8 @@ import {
   GetTransactionResult,
   RequestAccountParams,
   RequestAccountResult,
-} from '@nodewallet/types';
-import { Messager } from '@nodewallet/util-browser';
+} from '@decentralizedauthority/nodewallet-types';
+import { Messager } from '@decentralizedauthority/nodewallet-util-browser';
 
 export class API implements ContentAPI {
 

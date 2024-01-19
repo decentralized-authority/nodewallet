@@ -1,4 +1,4 @@
-import { ErrorResult } from '@nodewallet/types';
+import { ErrorResult } from '@decentralizedauthority/nodewallet-types';
 
 export class Messager {
 
