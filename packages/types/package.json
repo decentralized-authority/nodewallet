@@ -1,9 +1,13 @@
 {
   "name": "@decentralizedauthority/nodewallet-types",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "./dist/index.js",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist/",
+    "src/"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
     "clean": "node scripts/clean.js dist .turbo node_modules",
