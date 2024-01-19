@@ -13,5 +13,9 @@
     "clean": "node scripts/clean.js dist .turbo node_modules",
     "dev": "tsc -w",
     "test": "ts-mocha -p ./tsconfig.json './src/**/*.spec.ts'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/decentralized-authority/pokt-browser-wallet.git"
   }
 }

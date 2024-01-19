@@ -36,5 +36,9 @@
     "@decentralizedauthority/nodewallet-content-bridge": "*",
     "events": "^3.3.0",
     "lodash": "^4.17.21"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/decentralized-authority/pokt-browser-wallet.git"
   }
 }
