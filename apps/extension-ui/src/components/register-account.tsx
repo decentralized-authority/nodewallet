@@ -6,9 +6,9 @@ import { PASSWORD_MIN_LENGTH } from '../constants';
 import { isValidPassword } from '../util';
 import { ApiContext } from '../hooks/api-context';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
-import { UserStatus } from '@nodewallet/constants';
+import { UserStatus } from '@decentralizedauthority/nodewallet-constants';
 import { useNavigate } from 'react-router-dom';
-import { RouteBuilder } from '@nodewallet/util-browser';
+import { RouteBuilder } from '@decentralizedauthority/nodewallet-util-browser';
 
 export const RegisterAccount = () => {
 

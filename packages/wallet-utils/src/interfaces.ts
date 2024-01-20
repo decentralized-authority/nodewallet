@@ -1,4 +1,4 @@
-import { ChainType, KeyType } from '@nodewallet/constants';
+import { ChainType, KeyType } from '@decentralizedauthority/nodewallet-constants';
 
 export interface ChainMeta {
   chain: ChainType

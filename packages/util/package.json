@@ -1,5 +1,5 @@
 {
-  "name": "@nodewallet/util",
+  "name": "@decentralizedauthority/nodewallet-util",
   "version": "0.1.0",
   "private": true,
   "main": "./dist/index.js",
@@ -11,14 +11,16 @@
     "dev": "tsc -w",
     "test": "ts-mocha -p ./tsconfig.json './src/**/*.spec.ts'"
   },
-  "devDependencies": {
+  "dependencies": {
     "@ethersproject/pbkdf2": "^5.7.0",
     "@ethersproject/strings": "^5.7.0",
+    "argon2-browser": "^1.18.0"
+  },
+  "devDependencies": {
     "@types/argon2-browser": "^1.18.1",
     "@types/mocha": "^8.2.3",
-    "argon2-browser": "^1.18.0",
     "mocha": "^8.0.0",
-    "@nodewallet/constants": "*",
+    "@decentralizedauthority/nodewallet-constants": "*",
     "should": "^13.2.3"
   }
 }

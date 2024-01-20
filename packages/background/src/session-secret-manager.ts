@@ -6,7 +6,7 @@ import {
   encryptAES256GCM,
   EncryptionResult,
   generateRandom
-} from '@nodewallet/util';
+} from '@decentralizedauthority/nodewallet-util';
 
 export class SessionSecretManager {
 

@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { setUserAccount } from '../reducers/app-reducer';
 import { ApiContext } from '../hooks/api-context';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
-import { joinMnemonic, RouteBuilder, splitMnemonic } from '@nodewallet/util-browser';
+import { joinMnemonic, RouteBuilder, splitMnemonic } from '@decentralizedauthority/nodewallet-util-browser';
 import swal from 'sweetalert';
 import { useNavigate } from 'react-router-dom';
 

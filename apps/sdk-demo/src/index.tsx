@@ -2,8 +2,9 @@ import './css/sakura-dark.css';
 import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { App } from './app';
 import { Buffer } from 'buffer';
+import { App } from './app';
+// import { AppContainer as App } from './app-hooks';
 
 window.Buffer = Buffer;
 

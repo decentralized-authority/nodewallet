@@ -1,15 +1,16 @@
 {
-  "name": "@decentralizedauthority/nodewallet-content",
+  "name": "@decentralizedauthority/nodewallet-react-sdk",
   "version": "0.1.0",
   "main": "./dist/index.js",
-  "source": "./src/index.ts",
+  "source": "./src/index.tsx",
   "types": "./dist/index.d.ts",
   "files": [
     "dist/",
-    "src/"
+    "src/",
+    "README.md"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "build": "tsup src/index.tsx --format cjs,esm --dts",
     "clean": "node scripts/clean.js dist .turbo node_modules",
     "dev": "tsc -w",
     "lint": "eslint \"src/**/*.ts*\"",
@@ -19,22 +20,19 @@
     "preset": "jest-presets/jest/node"
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.243",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^20.4.6",
+    "@types/react": "^18.2.18",
+    "@types/react-dom": "^18.2.7",
     "eslint": "^7.32.0",
     "eslint-config-custom": "*",
     "fs-extra": "^11.1.1",
-    "jest": "^27.5.1",
+    "react": "^18.2.0",
     "tsconfig": "*",
-    "typescript": "^4.8.3"
+    "tsup": "^5.10.1",
+    "typescript": "^4.9.5"
   },
   "dependencies": {
-    "@decentralizedauthority/nodewallet-constants": "*",
-    "@decentralizedauthority/nodewallet-types": "*",
-    "@decentralizedauthority/nodewallet-util-browser": "*",
-    "events": "^3.3.0",
-    "lodash": "^4.17.21"
+    "@decentralizedauthority/nodewallet-sdk": "*",
+    "react": "^18.2.0"
   },
   "repository": {
     "type": "git",

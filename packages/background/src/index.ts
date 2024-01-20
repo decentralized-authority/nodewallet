@@ -8,7 +8,7 @@ import {
   POPUP_WIDTH,
   SessionStorageKey,
   UserStatus
-} from '@nodewallet/constants';
+} from '@decentralizedauthority/nodewallet-constants';
 import { Logger } from './logger';
 import { StorageManager } from './storage-manager';
 import {
@@ -60,32 +60,6 @@ import {
   ValidateMnemonicParams,
   ValidateMnemonicResult,
   WalletAccount,
-} from '@nodewallet/types';
-import { getHostFromOrigin, Messager, prepMnemonic, RouteBuilder } from '@nodewallet/util-browser';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import {
-  AES256GCMConfig,
-  argon2,
-  decrypt as generalDecrypt,
-  defaultAES256GCMConfig,
-  defaultArgon2Config,
-  defaultSeedBits,
-  encryptAES256GCM,
-  EncryptionResult,
-  generateSalt
-} from '@nodewallet/util';
-import {
-  ED25519Utils,
-  generateMnemonic,
-  isValidMnemonic,
-  mnemonicToSeed,
-  PoktUtils,
-  seedToMasterId
-} from '@nodewallet/wallet-utils';
-import omit from 'lodash/omit';
-import { SessionSecretManager } from './session-secret-manager';
-import {
   ContentAPIEvent,
   GetBalanceParams,
   GetBalanceResult,
@@ -100,7 +74,31 @@ import {
   PoktRpcGetTransactionParams, PoktRpcGetTransactionResult,
   RequestAccountParams,
   RequestAccountResult,
-} from '@nodewallet/types/dist/content-api';
+} from '@decentralizedauthority/nodewallet-types';
+import { getHostFromOrigin, Messager, prepMnemonic, RouteBuilder } from '@decentralizedauthority/nodewallet-util-browser';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import {
+  AES256GCMConfig,
+  argon2,
+  decrypt as generalDecrypt,
+  defaultAES256GCMConfig,
+  defaultArgon2Config,
+  defaultSeedBits,
+  encryptAES256GCM,
+  EncryptionResult,
+  generateSalt
+} from '@decentralizedauthority/nodewallet-util';
+import {
+  ED25519Utils,
+  generateMnemonic,
+  isValidMnemonic,
+  mnemonicToSeed,
+  PoktUtils,
+  seedToMasterId
+} from '@decentralizedauthority/nodewallet-wallet-utils';
+import omit from 'lodash/omit';
+import { SessionSecretManager } from './session-secret-manager';
 import MessageSender = chrome.runtime.MessageSender;
 import isNumber from 'lodash/isNumber';
 

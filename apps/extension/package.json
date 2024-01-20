@@ -1,11 +1,11 @@
 {
-  "name": "@nodewallet/extension",
-  "version": "0.4.0",
+  "name": "@decentralizedauthority/nodewallet-extension",
+  "version": "0.5.3",
   "private": true,
   "dependencies": {
-    "@nodewallet/background": "*",
-    "@nodewallet/content": "*",
-    "@nodewallet/content-bridge": "*"
+    "@decentralizedauthority/nodewallet-background": "*",
+    "@decentralizedauthority/nodewallet-content": "*",
+    "@decentralizedauthority/nodewallet-content-bridge": "*"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.1",

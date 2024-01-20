@@ -10,11 +10,11 @@ import {
   findCryptoAccountInUserAccountByAddress,
   prepFilename,
   RouteBuilder
-} from '@nodewallet/util-browser';
+} from '@decentralizedauthority/nodewallet-util-browser';
 import swal from 'sweetalert';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { ApiContext } from '../hooks/api-context';
-import { ChainType } from '@nodewallet/constants';
+import { ChainType } from '@decentralizedauthority/nodewallet-constants';
 
 export const AccountDetail = () => {
 

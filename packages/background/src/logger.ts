@@ -1,5 +1,5 @@
 import { StorageManager } from './storage-manager';
-import { LocalStorageKey } from '@nodewallet/constants';
+import { LocalStorageKey } from '@decentralizedauthority/nodewallet-constants';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import EventEmitter from 'events';

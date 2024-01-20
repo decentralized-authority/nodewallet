@@ -1,15 +1,15 @@
 {
-  "name": "@nodewallet/content-bridge",
+  "name": "@decentralizedauthority/nodewallet-content-bridge",
   "version": "0.1.0",
-  "private": true,
   "main": "./dist/index.js",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist/**"
+    "dist/",
+    "src/"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
     "clean": "node scripts/clean.js dist .turbo node_modules",
     "dev": "tsc -w",
     "lint": "eslint \"src/**/*.ts*\"",
@@ -30,12 +30,14 @@
     "typescript": "^4.8.3"
   },
   "dependencies": {
-    "@nodewallet/content": "*",
-    "@nodewallet/types": "*",
-    "@nodewallet/util-browser": "*",
+    "@decentralizedauthority/nodewallet-content": "*",
     "@pokt-foundation/pocketjs-types": "^2.1.3",
     "events": "^3.3.0",
     "lodash": "^4.17.21",
     "uuid": "^9.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/decentralized-authority/pokt-browser-wallet.git"
   }
 }

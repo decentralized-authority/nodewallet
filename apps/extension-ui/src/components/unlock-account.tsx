@@ -6,13 +6,13 @@ import { calledFromContentScript, isTab, isValidPassword } from '../util';
 import { ApiContext } from '../hooks/api-context';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import isNull from 'lodash/isNull';
-import { UserStatus } from '@nodewallet/constants';
+import { UserStatus } from '@decentralizedauthority/nodewallet-constants';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
   findCryptoAccountInUserAccount,
   getAccountDetailParamsFromUserAccount,
   RouteBuilder
-} from '@nodewallet/util-browser';
+} from '@decentralizedauthority/nodewallet-util-browser';
 
 export const UnlockAccount = () => {
 

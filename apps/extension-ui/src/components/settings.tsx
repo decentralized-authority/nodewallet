@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import isNumber from 'lodash/isNumber';
-import { ChainType, defaultLockTimeout, LocalStorageKey } from '@nodewallet/constants';
+import { ChainType, defaultLockTimeout, LocalStorageKey } from '@decentralizedauthority/nodewallet-constants';
 import { ErrorHandlerContext } from '../hooks/error-handler-context';
 import { ApiContext } from '../hooks/api-context';
 import { setActiveChain, setUserAccount } from '../reducers/app-reducer';

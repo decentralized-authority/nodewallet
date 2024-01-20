@@ -1,4 +1,4 @@
-import { AppLang, ChainType, CoinType } from '@nodewallet/constants';
+import { AppLang, ChainType, CoinType } from '@decentralizedauthority/nodewallet-constants';
 
 export interface CryptoAccount {
   id: string

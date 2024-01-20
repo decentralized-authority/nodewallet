@@ -27,17 +27,22 @@ Contents:
 REACT_APP_TOS_URL=https://files.decentralizedauthority.com/tos.md
 ```
 
-### 3. Build the project
+### 3. Build the packages
 ```sh
 npm run build
 ```
 
-### 4. Bundle the extension
+### 4. Build the ui
+```sh
+npm run build-ui
+```
+
+### 5. Bundle the extension
 ```sh
 npm run bundle
 ```
 
-### 5. Load the extension
+### 6. Load the extension
 1. Open Chrome
 2. Go to `chrome://extensions`
 3. Enable `Developer mode`
@@ -65,7 +70,7 @@ In ordery to run the project in development mode, you need to:
 1. Install dependencies
 2. Build the project
 3. Set the environment variable `BROWSER=none`
-4. Run the project with `npm start`
+4. Run the project with `npm run dev`
 
 *One important note is that you cannot edit the UI in real time and see it in the browser. Because of manifest v3 security protections, the extension cannot load a URL from the local file system. You can still work in the project and fix and debug, but you will need to build, bundle, and then refresh the extension in the browser to see your changes.*
 

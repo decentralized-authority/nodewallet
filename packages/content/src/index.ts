@@ -1,6 +1,6 @@
 import { PocketNetwork } from './pocket-network';
 import { API } from './api';
-import { Messager } from '@nodewallet/util-browser';
+import { Messager } from '@decentralizedauthority/nodewallet-util-browser';
 
 declare global {
   interface Window {

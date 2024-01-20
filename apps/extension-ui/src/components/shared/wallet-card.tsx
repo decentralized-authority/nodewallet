@@ -2,13 +2,13 @@ import React, { useContext, useState } from 'react';
 import { truncateAddress } from '../../util';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAccountBalances, setAccountTransactions, setUserAccount } from '../../reducers/app-reducer';
-import { UserWallet } from '@nodewallet/types';
+import { UserWallet } from '@decentralizedauthority/nodewallet-types';
 import { RootState } from '../../store';
 import { ApiContext } from '../../hooks/api-context';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
-import { CoinType } from '@nodewallet/constants';
+import { CoinType } from '@decentralizedauthority/nodewallet-constants';
 import { Link } from 'react-router-dom';
-import { RouteBuilder, truncateAtDecimalPlace } from '@nodewallet/util-browser';
+import { RouteBuilder, truncateAtDecimalPlace } from '@decentralizedauthority/nodewallet-util-browser';
 import swal from 'sweetalert';
 
 interface WalletCardProps {

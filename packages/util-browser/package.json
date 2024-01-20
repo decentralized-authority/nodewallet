@@ -1,22 +1,30 @@
 {
-  "name": "@nodewallet/util-browser",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@decentralizedauthority/nodewallet-util-browser",
+  "version": "0.1.1",
   "main": "./dist/index.js",
   "source": "./src/index.ts",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist/",
+    "src/"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
     "clean": "node scripts/clean.js dist .turbo node_modules",
     "dev": "tsc -w",
     "test": "ts-mocha -p ./tsconfig.json './src/**/*.spec.ts'"
   },
+  "dependencies": {
+    "@decentralizedauthority/nodewallet-constants": "*",
+    "@decentralizedauthority/nodewallet-types": "*"
+  },
   "devDependencies": {
     "@types/mocha": "^8.2.3",
-    "argon2-browser": "^1.18.0",
     "mocha": "^8.0.0",
-    "@nodewallet/constants": "*",
-    "@nodewallet/types": "*",
     "should": "^13.2.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/decentralized-authority/pokt-browser-wallet.git"
   }
 }

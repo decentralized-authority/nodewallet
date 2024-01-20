@@ -12,17 +12,17 @@ import {
   setUserAccount,
   setUserStatus, setVersion
 } from './reducers/app-reducer';
-import { GetActiveTabOriginResult, GetUserStatusResult, GetVersionResult } from '@nodewallet/types';
+import { GetActiveTabOriginResult, GetUserStatusResult, GetVersionResult } from '@decentralizedauthority/nodewallet-types';
 import { ApiContext } from './hooks/api-context';
 import { ErrorHandlerContext } from './hooks/error-handler-context';
-import { ChainType, LocalStorageKey, POPUP_HEIGHT, POPUP_WIDTH, SessionStorageKey, UserStatus } from '@nodewallet/constants';
+import { ChainType, LocalStorageKey, POPUP_HEIGHT, POPUP_WIDTH, SessionStorageKey, UserStatus } from '@decentralizedauthority/nodewallet-constants';
 import isNull from 'lodash/isNull';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   findCryptoAccountInUserAccount,
   getAccountDetailParamsFromUserAccount,
   RouteBuilder
-} from '@nodewallet/util-browser';
+} from '@decentralizedauthority/nodewallet-util-browser';
 import { Pricing, PricingEvent, PricingMultipliers } from './modules/pricing';
 
 export const App = () => {

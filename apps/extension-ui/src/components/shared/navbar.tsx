@@ -4,10 +4,10 @@ import { RootState } from '../../store';
 import { ErrorHandlerContext } from '../../hooks/error-handler-context';
 import { ApiContext } from '../../hooks/api-context';
 import * as bootstrap from 'bootstrap';
-import { ChainType, LocalStorageKey } from '@nodewallet/constants';
+import { ChainType, LocalStorageKey } from '@decentralizedauthority/nodewallet-constants';
 import { setActiveChain, setUserAccount } from '../../reducers/app-reducer';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { RouteBuilder } from '@nodewallet/util-browser';
+import { RouteBuilder } from '@decentralizedauthority/nodewallet-util-browser';
 import { calledFromContentScript } from '../../util';
 import swal from 'sweetalert';
 

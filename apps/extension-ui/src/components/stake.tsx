@@ -11,7 +11,7 @@ import {
   isHex,
   RouteBuilder,
   StakeParams,
-} from '@nodewallet/util-browser';
+} from '@decentralizedauthority/nodewallet-util-browser';
 import swal from 'sweetalert';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { calledFromContentScript, truncateAddress } from '../util';

@@ -1,7 +1,7 @@
 import * as uuid from 'uuid';
 import { PASSWORD_MIN_LENGTH } from './constants';
 import { Location } from 'react-router-dom';
-import { POPUP_WIDTH } from '@nodewallet/constants';
+import { POPUP_WIDTH } from '@decentralizedauthority/nodewallet-constants';
 
 export const getRandomInt = (min: number, max: number) => {
   min = Math.ceil(min);

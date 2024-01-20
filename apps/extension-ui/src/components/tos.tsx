@@ -2,7 +2,7 @@ import React from 'react';
 import { Container } from './shared/container';
 import { TosContainer } from './shared/tos-container';
 import { useNavigate } from 'react-router-dom';
-import { RouteBuilder } from '@nodewallet/util-browser';
+import { RouteBuilder } from '@decentralizedauthority/nodewallet-util-browser';
 
 export const TOS = () => {
 

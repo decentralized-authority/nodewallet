@@ -1,4 +1,4 @@
-import { ChainType, CoinType, UserStatus } from '@nodewallet/constants';
+import { ChainType, CoinType, UserStatus } from '@decentralizedauthority/nodewallet-constants';
 import { UserAccount, UserSettings } from './user';
 import { CryptoAccount, UserWallet } from './wallet';
 import { AccountTransaction } from './index';

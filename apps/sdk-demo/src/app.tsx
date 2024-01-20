@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ChainType, NodeWalletSDK } from '@nodewallet/sdk';
+import { ChainType, NodeWalletSDK, PocketProvider } from '@decentralizedauthority/nodewallet-sdk';
 import isNull from 'lodash/isNull';
-import { PocketProvider } from '@nodewallet/sdk/dist/pocket-provider';
 
 const handleError = (err: any) => {
   console.error(err);

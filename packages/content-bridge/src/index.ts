@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import { ContentBridge, NodeWalletMethod } from '@nodewallet/content';
-import { PocketNetworkMethod } from '@nodewallet/content';
+import { ContentBridge, NodeWalletMethod } from '@decentralizedauthority/nodewallet-content';
+import { PocketNetworkMethod } from '@decentralizedauthority/nodewallet-content';
 import * as uuid from 'uuid';
 
 let key = uuid.v4();

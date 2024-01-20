@@ -1,5 +1,10 @@
 import {
   ContentAPI, ContentAPIEvent,
+  SendTransactionParams,
+  SendTransactionResult,
+  SignMessageParams,
+  SignMessageResult,
+  StakeNodeParams, StakeNodeResult,
   GetBalanceParams,
   GetBalanceResult,
   GetHeightParams,
@@ -8,15 +13,8 @@ import {
   GetTransactionResult,
   RequestAccountParams,
   RequestAccountResult,
-} from '@nodewallet/types/dist/content-api';
-import {
-  SendTransactionParams,
-  SendTransactionResult,
-  SignMessageParams,
-  SignMessageResult,
-  StakeNodeParams, StakeNodeResult
-} from '@nodewallet/types';
-import { Messager } from '@nodewallet/util-browser';
+} from '@decentralizedauthority/nodewallet-types';
+import { Messager } from '@decentralizedauthority/nodewallet-util-browser';
 
 export class API implements ContentAPI {
 

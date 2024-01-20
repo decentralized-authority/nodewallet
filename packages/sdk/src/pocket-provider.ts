@@ -1,5 +1,5 @@
-import { PocketNetwork } from '@nodewallet/content-bridge';
-import { ChainType } from '@nodewallet/constants';
+import { PocketNetwork } from '@decentralizedauthority/nodewallet-content-bridge';
+import { ChainType } from '@decentralizedauthority/nodewallet-constants';
 import {
   Account,
   AccountWithTransactions,
@@ -9,7 +9,7 @@ import {
   Node,
   Transaction
 } from '@pokt-foundation/pocketjs-types';
-import { NodeWalletMethod, PocketNetworkMethod } from '@nodewallet/content';
+import { NodeWalletMethod, PocketNetworkMethod } from '@decentralizedauthority/nodewallet-content';
 
 export class PocketProviderRpc {
 
