@@ -4,7 +4,7 @@ Provides straightforward, programmatic access to the NodeWallet extension in Rea
 ## Usage
 Add the NodeWallet React SDK to your project:
 ```sh
-npm install --save @decentralized-authority/nodewallet-react-sdk
+npm install --save @decentralizedauthority/nodewallet-react-sdk
 ```
 Add `NodeWalletProvider` to the top level of your application:
 ```tsx
@@ -37,7 +37,7 @@ Use the available hooks to interact with the NodeWallet extension:
 import {
   useNodeWallet,
   useNodeWalletConnect,
-} from '@decentralized-authority/nodewallet-react-sdk';
+} from '@decentralizedauthority/nodewallet-react-sdk';
 
 export const App = () => {
 
