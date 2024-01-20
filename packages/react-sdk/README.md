@@ -10,7 +10,7 @@ Add `NodeWalletProvider` to the top level of your application:
 ```tsx
 import {
   NodeWalletProvider,
-} from '@decentralized-authority/nodewallet-react-sdk';
+} from '@decentralizedauthority/nodewallet-react-sdk';
 
 const AppContainer = () => {
   
