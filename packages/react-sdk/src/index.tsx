@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { ChainType } from '@decentralizedauthority/nodewallet-constants';
-import { NodeWalletSDK, PocketProvider } from '@decentralizedauthority/nodewallet-sdk';
+import { ChainType, NodeWalletSDK, PocketProvider } from '@decentralizedauthority/nodewallet-sdk';
+import { ConnectButtonBase, ConnectButtonProps } from '@decentralizedauthority/nodewallet-ui';
 
 const defaultConnectTimeout = 10000;
 const defaultRequestTimeout = 30000;
@@ -123,4 +123,18 @@ export const NodeWalletProvider = ({ children, options }: {children: any, option
       </NodeWalletInnerProvider>
     </NodeWalletStateContext.Provider>
   );
+};
+
+export const ConnectButton = (props: ConnectButtonProps) => {
+
+  const connect = useNodeWalletConnect();
+  const { connected } = useNodeWallet();
+
+  const onConnectClick = () => {
+    if (!connected) {
+      connect();
+    }
+  };
+
+  return <ConnectButtonBase onClick={onConnectClick} {...props} />;
 };

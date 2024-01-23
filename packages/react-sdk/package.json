@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@decentralizedauthority/nodewallet-sdk": "*",
+    "@decentralizedauthority/nodewallet-ui": "*",
     "react": "^18.2.0"
   },
   "repository": {

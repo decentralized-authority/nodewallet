@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  ConnectButton,
   useNodeWallet,
   NodeWalletProvider,
   useNodeWalletConnect
@@ -16,7 +17,7 @@ export const App = () => {
     chain,
     pocket,
   } = useNodeWallet();
-  const connect = useNodeWalletConnect();
+  // const connect = useNodeWalletConnect();
 
   useEffect(() => {
     if(connected) {
@@ -31,10 +32,9 @@ export const App = () => {
     }
   }, [connected, address, pocket]);
 
-  const onConnectButtonClick = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    connect();
-  };
+  // const onConnectButtonClick = async () => {
+  //   connect();
+  // };
 
   return (
     <div>
@@ -42,7 +42,7 @@ export const App = () => {
       {connected ?
         null
         :
-        <button onClick={onConnectButtonClick}>Connect</button>
+        <ConnectButton />
       }
       {chain ?
         <div>
