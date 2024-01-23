@@ -11,8 +11,8 @@
   ],
   "scripts": {
     "build": "tsup src/index.tsx --format cjs,esm --dts",
+    "dev": "npm run build -- --watch",
     "clean": "node scripts/clean.js dist .turbo node_modules",
-    "dev": "tsc -w",
     "lint": "eslint \"src/**/*.ts*\"",
     "test": "jest"
   },
