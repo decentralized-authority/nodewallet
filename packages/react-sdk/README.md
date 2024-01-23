@@ -35,6 +35,7 @@ const AppContainer = () => {
 Use the available hooks to interact with the NodeWallet extension:
 ```tsx
 import {
+  ConnectButton,
   useNodeWallet,
   useNodeWalletConnect,
 } from '@decentralizedauthority/nodewallet-react-sdk';
@@ -50,14 +51,15 @@ export const App = () => {
   } = useNodeWallet();
 
   // provides a function to initiate a connection to NodeWallet
-  // not needed if autoConnect is set to true
-  const connect = useNodeWalletConnect();
+  // not needed if autoConnect is set to true or if using the
+  // ConnectButton component
+  // const connect = useNodeWalletConnect();
   
   return (
     <div>
       <h1>NodeWallet React SDK Demo</h1>
       {!connected ?
-        <button type={button} onClick={() => connect()}>Connect</button>
+        <ConnectButton />
         :
         <div>
           <p>Address: {address}</p>
