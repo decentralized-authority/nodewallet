@@ -1,6 +1,6 @@
 {
   "name": "@decentralizedauthority/nodewallet-react-sdk",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "main": "./dist/index.js",
   "source": "./src/index.tsx",
   "types": "./dist/index.d.ts",
