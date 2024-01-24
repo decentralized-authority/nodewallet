@@ -71,3 +71,28 @@ export const App = () => {
   );
 };
 ```
+
+## `ConnectButton` Component
+The NodeWallet React SDK provides a `ConnectButton` component that can be used to initiate a connection to NodeWallet as long as you have the `NodeWalletProvider` added to the top level of your application. It is customizable via props:
+```tsx
+interface ConnectButtonProps {
+  size?: 'sm'|'md'|'lg'
+  buttonStyle?: React.CSSProperties
+  buttonBackground?: string
+  buttonHoverBackground?: string
+  buttonOutlineColor?: string
+  buttonOutlineHoverColor?: string
+  buttonMinHeight?: number
+  buttonBorderRadius?: number
+  buttonProps?: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
+  logoContainerStyle?: React.CSSProperties
+  logoSize?: number
+  textContainerStyle?: React.CSSProperties
+  textColor?: string
+  textHoverColor?: string
+  textSize?: number
+  text?: string
+}
+```
+There are three sizes available: `sm`, `md`, and `lg`. The default size is `md`. The `buttonProps` prop can be used to pass additional props to the underlying button element. The `text` prop can be used to customize the text displayed on the button. The default text is `Connect to NodeWallet`.
+![NodeWallet button sizes example](https://files.decentralizedauthority.com/connect_to_nodewallet_button-sm.png)
