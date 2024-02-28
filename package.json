@@ -14,9 +14,9 @@
   "scripts": {
     "dev": "turbo run dev --concurrency 20",
     "test": "turbo run test",
-    "test:wallet-utils": "turbo run test --filter=@nodewallet/wallet-utils",
+    "test:wallet-utils": "turbo run test --filter=@decentralizedauthority/nodewallet-wallet-utils",
     "test:background": "turbo run test --filter=@decentralizedauthority/nodewallet-background",
-    "test:util": "turbo run test --filter=@nodewallet/util",
+    "test:util": "turbo run test --filter=@decentralizedauthority/nodewallet-util",
     "build": "turbo run build",
     "build-ui": "turbo run build-ui",
     "force-build": "turbo run build --no-cache",
