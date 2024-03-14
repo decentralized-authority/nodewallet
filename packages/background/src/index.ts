@@ -2,7 +2,9 @@ import {
   AlarmName,
   AppLang,
   ChainType,
-  CoinType, defaultHideTestnets, defaultLockTimeout,
+  CoinType,
+  defaultHideTestnets,
+  defaultLockTimeout,
   LocalStorageKey,
   POPUP_HEIGHT,
   POPUP_WIDTH,
@@ -16,6 +18,7 @@ import {
   APIEvent,
   ConnectSiteParams,
   ConnectSiteResult,
+  ContentAPIEvent,
   CryptoAccount,
   DisconnectSiteParams,
   DisconnectSiteResult,
@@ -30,6 +33,12 @@ import {
   GetAccountTransactionsResult,
   GetActiveAccountResult,
   GetActiveTabOriginResult,
+  GetBalanceParams,
+  GetBalanceResult,
+  GetHeightParams,
+  GetHeightResult, GetRpcEndpointParams, GetRpcEndpointResult,
+  GetTransactionParams,
+  GetTransactionResult,
   GetUserAccountResult,
   GetUserStatusResult,
   InsertCryptoAccountParams,
@@ -39,17 +48,39 @@ import {
   InsertLegacyWalletParams,
   InsertLegacyWalletResult,
   LockUserAccountResult,
+  PoktRpcGetAccountParams,
+  PoktRpcGetAccountResult,
+  PoktRpcGetAppParams,
+  PoktRpcGetAppResult,
+  PoktRpcGetBalanceParams,
+  PoktRpcGetBalanceResult,
+  PoktRpcGetBlockNumberParams,
+  PoktRpcGetBlockNumberResult,
+  PoktRpcGetBlockParams,
+  PoktRpcGetBlockResult,
+  PoktRpcGetNodeParams,
+  PoktRpcGetNodeResult,
+  PoktRpcGetTransactionParams,
+  PoktRpcGetTransactionResult,
   RegisterUserParams,
   RegisterUserResult,
+  RequestAccountParams,
+  RequestAccountResult,
   SaveActiveAccountParams,
   SaveActiveAccountResult,
   SaveFileParams,
   SendTransactionParams,
-  SendTransactionResult, SignMessageParams, SignMessageResult, StakeNodeParams, StakeNodeResult,
+  SendTransactionResult,
+  SignMessageParams,
+  SignMessageResult,
+  StakeNodeParams,
+  StakeNodeResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
-  UnlockUserAccountResult, UpdateAccountNameParams, UpdateAccountNameResult,
+  UnlockUserAccountResult,
+  UpdateAccountNameParams,
+  UpdateAccountNameResult, UpdateRpcEndpointParams, UpdateRpcEndpointResult,
   UpdateUserSettingsParams,
   UpdateUserSettingsResult,
   UpdateWalletNameParams,
@@ -60,22 +91,13 @@ import {
   ValidateMnemonicParams,
   ValidateMnemonicResult,
   WalletAccount,
-  ContentAPIEvent,
-  GetBalanceParams,
-  GetBalanceResult,
-  GetHeightParams,
-  GetHeightResult,
-  GetTransactionParams,
-  GetTransactionResult, PoktRpcGetAccountParams, PoktRpcGetAccountResult, PoktRpcGetAppParams, PoktRpcGetAppResult,
-  PoktRpcGetBalanceParams,
-  PoktRpcGetBalanceResult, PoktRpcGetBlockNumberParams, PoktRpcGetBlockNumberResult,
-  PoktRpcGetBlockParams,
-  PoktRpcGetBlockResult, PoktRpcGetNodeParams, PoktRpcGetNodeResult,
-  PoktRpcGetTransactionParams, PoktRpcGetTransactionResult,
-  RequestAccountParams,
-  RequestAccountResult,
 } from '@decentralizedauthority/nodewallet-types';
-import { getHostFromOrigin, Messager, prepMnemonic, RouteBuilder } from '@decentralizedauthority/nodewallet-util-browser';
+import {
+  getHostFromOrigin,
+  Messager,
+  prepMnemonic,
+  RouteBuilder
+} from '@decentralizedauthority/nodewallet-util-browser';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import {
@@ -99,8 +121,8 @@ import {
 } from '@decentralizedauthority/nodewallet-wallet-utils';
 import omit from 'lodash/omit';
 import { SessionSecretManager } from './session-secret-manager';
-import MessageSender = chrome.runtime.MessageSender;
 import isNumber from 'lodash/isNumber';
+import MessageSender = chrome.runtime.MessageSender;
 
 interface ExtendedCryptoAccount extends CryptoAccount {
   privateKey: EncryptionResult
@@ -155,7 +177,7 @@ const findCryptoAccountInUserAccountWithWalletId = (userAccount: ExtendedUserAcc
   return cryptoAccount;
 };
 
-const rpcEndpoints: {[network: string]: {[chain: string]: string}} = {
+const rpcEndpointss: {[network: string]: {[chain: string]: string}} = {
   [CoinType.POKT]: {
     [ChainType.MAINNET]: process.env.POKT_MAINNET_ENDPOINT ||'',
     [ChainType.TESTNET]: process.env.POKT_TESTNET_ENDPOINT ||'',
@@ -192,6 +214,17 @@ const messager = new Messager(chrome.runtime, true);
 
 const storageManager = new StorageManager(chrome.storage.local);
 const sessionManager = new StorageManager(chrome.storage.session);
+
+const getRpcEndpoint = async (network: CoinType, chain: ChainType): Promise<string> => {
+  if (network == CoinType.POKT && chain == ChainType.MAINNET) {
+    const customEndpoint = await storageManager.get(LocalStorageKey.POKT_MAINNET_ENDPOINT);
+    return customEndpoint || rpcEndpointss[network][chain];
+  } else if (network == CoinType.POKT && chain == ChainType.TESTNET) {
+    const customEndpoint = await storageManager.get(LocalStorageKey.POKT_TESTNET_ENDPOINT);
+    return customEndpoint || rpcEndpointss[network][chain];
+  }
+  return '';
+};
 
 let loggerInstance: Logger|null = null;
 
@@ -650,7 +683,7 @@ export const startBackground = () => {
           promises.push((async () => {
             switch(account.network) {
               case CoinType.POKT: {
-                const endpoint = rpcEndpoints[account.network][account.chain];
+                const endpoint = await getRpcEndpoint(account.network, account.chain);
                 if(!endpoint) {
                   balances[account.id] = '0';
                 } else {
@@ -693,7 +726,7 @@ export const startBackground = () => {
           promises.push((async () => {
             switch(account.network) {
               case CoinType.POKT: {
-                const endpoint = rpcEndpoints[account.network][account.chain];
+                const endpoint = await getRpcEndpoint(account.network, account.chain);
                 if(!endpoint) {
                   transactions[account.id] = [];
                 } else {
@@ -738,7 +771,7 @@ export const startBackground = () => {
     }
     switch(cryptoAccount.network) {
       case CoinType.POKT: {
-        const endpoint = rpcEndpoints[cryptoAccount.network][cryptoAccount.chain];
+        const endpoint = await getRpcEndpoint(cryptoAccount.network, cryptoAccount.chain);
         if(!endpoint) {
           throw new Error(`${cryptoAccount.network} ${cryptoAccount.chain} endpoint not found.`);
         } else if(!cryptoAccount.privateKey) {
@@ -782,7 +815,7 @@ export const startBackground = () => {
     }
     switch(cryptoAccount.network) {
       case CoinType.POKT: {
-        const endpoint = rpcEndpoints[cryptoAccount.network][cryptoAccount.chain];
+        const endpoint = await getRpcEndpoint(cryptoAccount.network, cryptoAccount.chain);
         if(!endpoint) {
           throw new Error(`${cryptoAccount.network} ${cryptoAccount.chain} endpoint not found.`);
         } else if(!cryptoAccount.privateKey) {
@@ -864,7 +897,7 @@ export const startBackground = () => {
     }
     switch(cryptoAccount.network) {
       case CoinType.POKT: {
-        const endpoint = rpcEndpoints[cryptoAccount.network][cryptoAccount.chain];
+        const endpoint = await getRpcEndpoint(cryptoAccount.network, cryptoAccount.chain);
         if(!endpoint) {
           throw new Error(`${cryptoAccount.network} ${cryptoAccount.chain} endpoint not found.`);
         } else if(!cryptoAccount.privateKey) {
@@ -1101,6 +1134,43 @@ export const startBackground = () => {
     throw new Error(`Account ${params.id} not found.`);
   });
 
+  messager.register(APIEvent.UPDATE_RPC_ENDPOINT, async (params: UpdateRpcEndpointParams): Promise<UpdateRpcEndpointResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const { network, chain, endpoint } = params;
+    if (network === CoinType.POKT && chain === ChainType.MAINNET) {
+      await storageManager.set(LocalStorageKey.POKT_MAINNET_ENDPOINT, endpoint);
+    } else if (network === CoinType.POKT && chain === ChainType.TESTNET) {
+      await storageManager.set(LocalStorageKey.POKT_TESTNET_ENDPOINT, endpoint);
+    } else {
+      return {
+        result: false,
+      };
+    }
+    return {
+      result: true,
+    };
+  });
+
+  messager.register(APIEvent.GET_RPC_ENDPOINT, async (params: GetRpcEndpointParams): Promise<GetRpcEndpointResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    const { network, chain } = params;
+    let endpoint = '';
+    if (network === CoinType.POKT && chain === ChainType.MAINNET) {
+      endpoint =  await storageManager.get(LocalStorageKey.POKT_MAINNET_ENDPOINT) as string;
+    } else if (network === CoinType.POKT && chain === ChainType.TESTNET) {
+      endpoint =  await storageManager.get(LocalStorageKey.POKT_TESTNET_ENDPOINT) as string;
+    }
+    return {
+      result: endpoint || '',
+    };
+  });
+
   const createPopupWindow = async (url: string): Promise<chrome.windows.Window> => {
     const currentWindow = await chrome.windows.getCurrent();
     // @ts-ignore
@@ -1216,7 +1286,7 @@ export const startBackground = () => {
     let result: string;
     switch(cryptoAccount.network) {
       case CoinType.POKT: {
-        const endpoint = rpcEndpoints[cryptoAccount.network][cryptoAccount.chain];
+        const endpoint = await getRpcEndpoint(cryptoAccount.network, cryptoAccount.chain);
         if(!endpoint) {
           throw new Error(`No RPC endpoint found for ${cryptoAccount.network} ${cryptoAccount.chain}.`);
         } else {
@@ -1261,7 +1331,7 @@ export const startBackground = () => {
   async function poktRpcRequestHandler(params: any): Promise<any> {
     const network = CoinType.POKT;
     const { chain } = params;
-    const endpoint = rpcEndpoints[network][chain];
+    const endpoint = await getRpcEndpoint(network, chain);
     if(!endpoint) {
       throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
     }
@@ -1324,7 +1394,7 @@ export const startBackground = () => {
     let result: string;
     switch(network) {
       case CoinType.POKT: {
-        const endpoint = rpcEndpoints[network][chain];
+        const endpoint = await getRpcEndpoint(network, chain);
         if(!endpoint) {
           throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
         } else {
@@ -1350,7 +1420,7 @@ export const startBackground = () => {
     let result: string;
     switch(network) {
       case CoinType.POKT: {
-        const endpoint = rpcEndpoints[network][chain];
+        const endpoint = await getRpcEndpoint(network, chain);
         if(!endpoint) {
           throw new Error(`No RPC endpoint found for ${network} ${chain}.`);
         }

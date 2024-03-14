@@ -38,3 +38,12 @@ export const calledFromContentScript = (location: Location): boolean => {
   const queryParams = new URLSearchParams(location.search);
   return queryParams.get('content') === 'true';
 }
+
+export const validateUrl = (url: string): string => {
+  try {
+    const res = new URL(url);
+    return res.href.replace(/\/$/, '');
+  } catch {
+    return '';
+  }
+};

@@ -33,6 +33,8 @@ export enum APIEvent {
   UPDATE_USER_SETTINGS = 'UPDATE_USER_SETTINGS',
   UPDATE_WALLET_NAME = 'UPDATE_WALLET_NAME',
   UPDATE_ACCOUNT_NAME = 'UPDATE_ACCOUNT_NAME',
+  UPDATE_RPC_ENDPOINT = 'UPDATE_RPC_ENDPOINT',
+  GET_RPC_ENDPOINT = 'GET_RPC_ENDPOINT',
 }
 
 export interface ErrorResult {
@@ -209,6 +211,21 @@ export interface UpdateAccountNameParams {
 export type UpdateAccountNameResult = ErrorResult | {
   result: boolean
 }
+export interface UpdateRpcEndpointParams {
+  network: CoinType
+  chain: ChainType
+  endpoint: string
+}
+export type UpdateRpcEndpointResult = ErrorResult | {
+  result: boolean
+}
+export interface GetRpcEndpointParams {
+  network: CoinType
+  chain: ChainType
+}
+export type GetRpcEndpointResult = ErrorResult | {
+  result: string
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -268,5 +285,9 @@ export interface ClientAPI {
   updateWalletName(params: UpdateWalletNameParams): Promise<UpdateWalletNameResult>
 
   updateAccountName(params: UpdateAccountNameParams): Promise<UpdateAccountNameResult>
+
+  updateRpcEndpoint(params: UpdateRpcEndpointParams): Promise<UpdateRpcEndpointResult>
+
+  getRpcEndpoint(params: GetRpcEndpointParams): Promise<GetRpcEndpointResult>
 
 }

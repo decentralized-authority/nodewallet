@@ -15,7 +15,7 @@ import {
   GetAccountTransactionsParams,
   GetAccountTransactionsResult,
   GetActiveAccountResult,
-  GetActiveTabOriginResult,
+  GetActiveTabOriginResult, GetRpcEndpointParams, GetRpcEndpointResult,
   GetUserAccountResult,
   GetUserStatusResult,
   GetVersionResult,
@@ -32,11 +32,19 @@ import {
   SaveActiveAccountResult,
   SaveFileParams,
   SendTransactionParams,
-  SendTransactionResult, SignMessageParams, SignMessageResult, StakeNodeParams, StakeNodeResult,
+  SendTransactionResult,
+  SignMessageParams,
+  SignMessageResult,
+  StakeNodeParams,
+  StakeNodeResult,
   StartNewWalletResult,
   StartOnboardingResult,
   UnlockUserAccountParams,
-  UnlockUserAccountResult, UpdateAccountNameParams, UpdateAccountNameResult,
+  UnlockUserAccountResult,
+  UpdateAccountNameParams,
+  UpdateAccountNameResult,
+  UpdateRpcEndpointParams,
+  UpdateRpcEndpointResult,
   UpdateUserSettingsParams,
   UpdateUserSettingsResult,
   UpdateWalletNameParams,
@@ -180,6 +188,14 @@ export class API implements ClientAPI {
 
   async updateAccountName(params: UpdateAccountNameParams): Promise<UpdateAccountNameResult> {
     return await this._messager.send(APIEvent.UPDATE_ACCOUNT_NAME, params);
+  }
+
+  async updateRpcEndpoint(params: UpdateRpcEndpointParams): Promise<UpdateRpcEndpointResult> {
+    return await this._messager.send(APIEvent.UPDATE_RPC_ENDPOINT, params);
+  }
+
+  async getRpcEndpoint(params: GetRpcEndpointParams): Promise<GetRpcEndpointResult> {
+    return await this._messager.send(APIEvent.GET_RPC_ENDPOINT, params);
   }
 
 }
