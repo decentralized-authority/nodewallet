@@ -1,7 +1,7 @@
 {
   "name": "@decentralizedauthority/nodewallet",
   "description": "Node Wallet",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "license": "Apache-2.0",
   "homepage": "https://github.com/decentralized-authority/pokt-browser-wallet#readme",
   "repository": {
