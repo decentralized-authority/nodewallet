@@ -19,7 +19,7 @@ import {
   ConnectSiteParams,
   ConnectSiteResult,
   ContentAPIEvent,
-  CryptoAccount,
+  CryptoAccount, DeleteWalletParams, DeleteWalletResult,
   DisconnectSiteParams,
   DisconnectSiteResult,
   ExportKeyfileParams,
@@ -1168,6 +1168,27 @@ export const startBackground = () => {
     }
     return {
       result: endpoint || '',
+    };
+  });
+
+  messager.register(APIEvent.DELETE_WALLET, async (params: DeleteWalletParams): Promise<DeleteWalletResult> => {
+    const userAccount = await getUserAccount();
+    if(!userAccount) {
+      throw new Error('User account locked.');
+    }
+    if (userAccount.wallets.length === 1) {
+      throw new Error('Cannot delete only wallet.');
+    }
+    const { id } = params;
+    const walletIdx = userAccount.wallets.findIndex(w => w.id === id);
+    if(walletIdx < 0) {
+      throw new Error(`Wallet ${id} not found.`);
+    }
+    userAccount.wallets.filter(w => w.id !== id);
+    await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
+    await encryptSaveUserAccount(userAccount);
+    return {
+      result: true,
     };
   });
 

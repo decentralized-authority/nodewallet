@@ -35,6 +35,7 @@ export enum APIEvent {
   UPDATE_ACCOUNT_NAME = 'UPDATE_ACCOUNT_NAME',
   UPDATE_RPC_ENDPOINT = 'UPDATE_RPC_ENDPOINT',
   GET_RPC_ENDPOINT = 'GET_RPC_ENDPOINT',
+  DELETE_WALLET = 'DELETE_WALLET',
 }
 
 export interface ErrorResult {
@@ -226,6 +227,12 @@ export interface GetRpcEndpointParams {
 export type GetRpcEndpointResult = ErrorResult | {
   result: string
 }
+export interface DeleteWalletParams {
+  id: string
+}
+export type DeleteWalletResult = ErrorResult | {
+  result: boolean
+}
 export interface ClientAPI {
 
   startOnboarding(): Promise<StartOnboardingResult>
@@ -289,5 +296,7 @@ export interface ClientAPI {
   updateRpcEndpoint(params: UpdateRpcEndpointParams): Promise<UpdateRpcEndpointResult>
 
   getRpcEndpoint(params: GetRpcEndpointParams): Promise<GetRpcEndpointResult>
+
+  deleteWallet(params: DeleteWalletParams): Promise<DeleteWalletResult>
 
 }

@@ -23,3 +23,20 @@ html {
 .visibility-hidden {
   visibility: hidden;
 }
+
+i.delete-wallet-button {
+  opacity: .2;
+  &:hover {
+    opacity: 8;
+  }
+}
+
+.confirm-delete-wallet-button {
+  background-color: lighten($danger, 10%);
+  &:hover {
+    background-color: $danger !important;
+  }
+  &:active {
+    background-color: $danger !important;
+  }
+}

@@ -2,7 +2,7 @@ import {
   APIEvent,
   ClientAPI,
   ConnectSiteParams,
-  ConnectSiteResult,
+  ConnectSiteResult, DeleteWalletParams, DeleteWalletResult,
   DisconnectSiteParams,
   DisconnectSiteResult,
   ExportKeyfileParams,
@@ -196,6 +196,10 @@ export class API implements ClientAPI {
 
   async getRpcEndpoint(params: GetRpcEndpointParams): Promise<GetRpcEndpointResult> {
     return await this._messager.send(APIEvent.GET_RPC_ENDPOINT, params);
+  }
+
+  async deleteWallet(params: DeleteWalletParams): Promise<DeleteWalletResult> {
+    return await this._messager.send(APIEvent.DELETE_WALLET, params);
   }
 
 }

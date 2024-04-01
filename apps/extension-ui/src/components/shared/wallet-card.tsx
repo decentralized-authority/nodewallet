@@ -137,6 +137,65 @@ export const WalletCard = ({ wallet, selectAccount = false }: WalletCardProps) =
       errorHandler.handle(err);
     }
   };
+  const onDeleteWalletClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    let confirmed = await swal({
+      title: `Delete ${wallet.name}`,
+      text: 'Are you sure that you want to permanently delete this wallet? This action cannot be undone!',
+      icon: 'warning',
+      buttons: {
+        cancel: {
+          text: 'Cancel',
+          visible: true,
+        },
+        confirm: {
+          className: 'confirm-delete-wallet-button',
+          text: 'Permanently Delete',
+          closeModal: false,
+          visible: true,
+        }
+      },
+    });
+    if (!confirmed) {
+      return;
+    }
+    confirmed = await swal({
+      title: `Delete ${wallet.name}`,
+      text: 'Please confirm again that you want to permanently delete this wallet.\n\nTHIS ACTION CANNOT BE UNDONE.',
+      icon: 'warning',
+      buttons: {
+        cancel: {
+          text: 'Cancel',
+          visible: true,
+        },
+        confirm: {
+          className: 'confirm-delete-wallet-button',
+          text: `Delete ${wallet.name}`,
+          closeModal: false,
+          visible: true,
+        }
+      },
+    });
+    if (!confirmed) {
+      return;
+    }
+    const res = await api.deleteWallet({
+      id: wallet.id,
+    });
+    if ('error' in res) {
+      errorHandler.handle(res.error);
+      return;
+    } else {
+      const updatedUserAccount = await api.getUserAccount();
+      if('error' in updatedUserAccount) {
+        errorHandler.handle(updatedUserAccount.error);
+      } else if(updatedUserAccount.result) {
+        dispatch(setUserAccount({userAccount: updatedUserAccount.result}));
+      }
+    }
+    // @ts-ignore
+    swal.close();
+  }
 
   const longestBalance = Object
     .values(accountBalances)
@@ -149,7 +208,7 @@ export const WalletCard = ({ wallet, selectAccount = false }: WalletCardProps) =
     <div className={'card ms-1 me-1 mb-2 nw-bg-gradient-horizontal'}>
       <div className={'card-header pt-2 pb-1 ps-2 pe-2'}>
         <div className={'d-flex flex-row justify-content-between align-items-center'}>
-          <h4 className={'mt-0 mb-0'}>{wallet.name} <a href={'#'} title={'Edit wallet name'} onClick={onEditWalletNameClick}><i className={' mdi mdi-pencil'} /></a></h4>
+          <h4 className={'mt-0 mb-0'}>{wallet.name} <a href={'#'} title={'Edit wallet name'} onClick={onEditWalletNameClick}><i className={' mdi mdi-pencil'}/></a> <a href={'#'} title={'Delete Wallet'} onClick={onDeleteWalletClick}><i className={'delete-wallet-button text-danger mdi mdi-delete'}/></a></h4>
           {!wallet.legacy && !selectAccount ? <h4 className={'mt-0 mb-0'}><a href={'#'} onClick={onNewAddressClick} title={'New address'}><i className={' mdi mdi-plus-thick'} /> address</a></h4> : null}
         </div>
       </div>
