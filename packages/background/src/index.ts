@@ -1184,7 +1184,10 @@ export const startBackground = () => {
     if(walletIdx < 0) {
       throw new Error(`Wallet ${id} not found.`);
     }
-    userAccount.wallets.filter(w => w.id !== id);
+    userAccount.wallets = [
+      ...userAccount.wallets.slice(0, walletIdx),
+      ...userAccount.wallets.slice(walletIdx + 1),
+    ];
     await sessionManager.set(SessionStorageKey.USER_ACCOUNT, userAccount);
     await encryptSaveUserAccount(userAccount);
     return {
