@@ -469,9 +469,15 @@ export const startBackground = () => {
     const ed25519Utils = new ED25519Utils(PoktUtils.chainMeta[ChainType.MAINNET].derivationPath);
     const account0Node = await ed25519Utils.fromSeed(seed, 0);
     const encryptedPrivateKey = await encrypt(account0Node.privateKey);
+    let walletCount = userAccount.wallets.filter(w => !w.legacy).length;
+    let walletName = '';
+    while (!walletName || userAccount.wallets.some(w => w.name === walletName)) {
+      walletCount++;
+      walletName = `HD Wallet ${walletCount}`;
+    }
     const newWallet: ExtendedUserWallet = {
       id,
-      name: `HD Wallet ${userAccount.wallets.filter(w => !w.legacy).length + 1}`,
+      name: walletName,
       createdAt: dayjs.utc().toISOString(),
       legacy: false,
       seed: encryptedSeed,
