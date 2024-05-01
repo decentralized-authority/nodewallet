@@ -137,7 +137,7 @@ export const Navbar = () => {
   return (
     <nav className="navbar bg-transparent pt-0 pb-0 ps-2 pe-2 d-flex flex-row justify-content-start align-items-center" style={styles.nav}>
       <a href={'#'} title={'Pocket Network'} onClick={e => e.preventDefault()}>
-        <img src={'/images/coins/pokt.png'} alt="Pocket" height={30} />
+        <img src={'/images/coins/pokt.svg'} alt="Pocket" height={30} width={30} />
       </a>
       <div className={'flex-grow-1'} />
       {showChainDropdown ?
