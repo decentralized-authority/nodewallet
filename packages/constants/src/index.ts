@@ -21,6 +21,7 @@ export enum SessionStorageKey {
   BALANCES = 'BALANCES',
   TRANSACTIONS = 'TRANSACTIONS',
   PRICING_MULTIPLIERS = 'PRICING_MULTIPLIERS',
+  OPEN_WINDOW_IDS = 'OPEN_WINDOW_IDS',
 }
 
 export enum CoinType {

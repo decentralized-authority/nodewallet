@@ -1202,12 +1202,21 @@ export const startBackground = () => {
   });
 
   const createPopupWindow = async (url: string): Promise<chrome.windows.Window> => {
+    const openWindowIds = await sessionManager.get(SessionStorageKey.OPEN_WINDOW_IDS) || [];
+    for(const id of openWindowIds) {
+      try {
+        // close any previously opened NW windows
+        await chrome.windows.remove(id);
+      } catch(err) {
+        // do nothing
+      }
+    }
     const currentWindow = await chrome.windows.getCurrent();
     // @ts-ignore
     const windowLeft = currentWindow.left + currentWindow.width - POPUP_WIDTH;
     // @ts-ignore
     const windowTop = currentWindow.top || 0;
-    return await chrome.windows.create({
+    const openedWindow = await chrome.windows.create({
       focused: true,
       url,
       width: POPUP_WIDTH,
@@ -1216,6 +1225,8 @@ export const startBackground = () => {
       left: windowLeft,
       top: windowTop + 68,
     });
+    await sessionManager.set(SessionStorageKey.OPEN_WINDOW_IDS, [openedWindow.id]);
+    return openedWindow;
   };
 
   const waitForWindowClose = (window: chrome.windows.Window): Promise<void> => {
